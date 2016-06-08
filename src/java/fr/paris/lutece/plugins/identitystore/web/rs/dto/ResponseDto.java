@@ -36,52 +36,53 @@ package fr.paris.lutece.plugins.identitystore.web.rs.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
+
 /**
  *
  * Response Dto
  *
  */
-@JsonRootName(value = DtoFormatConstants.KEY_RESPONSE)
+@JsonRootName( value = DtoFormatConstants.KEY_RESPONSE )
 public class ResponseDto
 {
-	private String _strStatus;
-	private String _strMessage;
+    private String _strStatus;
+    private String _strMessage;
 
-	/**
-	 * @return the _strStatus
-	 */
-	@JsonProperty(value = DtoFormatConstants.KEY_STATUS)
-	public String getStatus()
-	{
-		return _strStatus;
-	}
+    /**
+     * @return the _strStatus
+     */
+    @JsonProperty( value = DtoFormatConstants.KEY_STATUS )
+    public String getStatus(  )
+    {
+        return _strStatus;
+    }
 
-	/**
-	 * @param strStatus
-	 *          the _strStatus to set
-	 */
-	@JsonProperty(value = DtoFormatConstants.KEY_STATUS)
-	public void setStatus( String strStatus )
-	{
-		this._strStatus = strStatus;
-	}
+    /**
+     * @param strStatus
+     *          the _strStatus to set
+     */
+    @JsonProperty( value = DtoFormatConstants.KEY_STATUS )
+    public void setStatus( String strStatus )
+    {
+        this._strStatus = strStatus;
+    }
 
-	/**
-	 * @return the _strMessage
-	 */
-	@JsonProperty(value = DtoFormatConstants.KEY_MESSAGE)
-	public String getMessage()
-	{
-		return _strMessage;
-	}
+    /**
+     * @return the _strMessage
+     */
+    @JsonProperty( value = DtoFormatConstants.KEY_MESSAGE )
+    public String getMessage(  )
+    {
+        return _strMessage;
+    }
 
-	/**
-	 * @param strMessage
-	 *          the strMessage to set
-	 */
-	@JsonProperty(value = DtoFormatConstants.KEY_MESSAGE)
-	public void setMessage( String strMessage )
-	{
-		this._strMessage = strMessage;
-	}
+    /**
+     * @param strMessage
+     *          the strMessage to set
+     */
+    @JsonProperty( value = DtoFormatConstants.KEY_MESSAGE )
+    public void setMessage( String strMessage )
+    {
+        this._strMessage = strMessage;
+    }
 }

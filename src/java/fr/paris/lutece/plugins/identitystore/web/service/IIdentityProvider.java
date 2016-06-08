@@ -38,41 +38,43 @@ import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.ResponseDto;
 import fr.paris.lutece.portal.service.util.AppException;
 
+
 /**
  * IIdentityService
  */
 public interface IIdentityProvider
 {
-	/**
-	 * get identity matching connectionId and customerId for provided application
-	 * code
-	 * 
-	 * @param strConnectionId
-	 *          connection Id (can be null if strCustomerId is provided)
-	 * @param strCustomerId
-	 *          customer Id (can be null if strconnection Id is provided)
-	 * @param strApplicationCode
-	 *          application code of calling application
-	 * @return identity if found
-	 * @throws IdentityNotFoundException
-	 *           if no identity found for input parameters
-	 * @throws AppException
-	 *           if inconsitent parmeters provided, or errors occurs...
-	 *
-	 */
-	IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode )
-			throws IdentityNotFoundException, AppException;
+    /**
+     * get identity matching connectionId and customerId for provided application
+     * code
+     *
+     * @param strConnectionId
+     *          connection Id (can be null if strCustomerId is provided)
+     * @param strCustomerId
+     *          customer Id (can be null if strconnection Id is provided)
+     * @param strApplicationCode
+     *          application code of calling application
+     * @return identity if found
+     * @throws IdentityNotFoundException
+     *           if no identity found for input parameters
+     * @throws AppException
+     *           if inconsitent parmeters provided, or errors occurs...
+     *
+     */
+    IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode )
+        throws IdentityNotFoundException, AppException;
 
-	/**
-	 * apply changes to an identity
-	 * 
-	 * @param identityChange
-	 *          change to apply to identity
-	 * @return response with updated fields
-	 * @throws AppException
-	 *           if error occured while updating identity
-	 * @throws IdentityNotFoundException
-	 *           if no identity found for input parameters
-	 */
-	ResponseDto updateIdentity( IdentityChangeDto identityChange ) throws IdentityNotFoundException, AppException;
+    /**
+     * apply changes to an identity
+     *
+     * @param identityChange
+     *          change to apply to identity
+     * @return response with updated fields
+     * @throws AppException
+     *           if error occured while updating identity
+     * @throws IdentityNotFoundException
+     *           if no identity found for input parameters
+     */
+    ResponseDto updateIdentity( IdentityChangeDto identityChange )
+        throws IdentityNotFoundException, AppException;
 }

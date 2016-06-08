@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.identitystore.web.service;
 
 import fr.paris.lutece.portal.service.util.AppException;
 
+
 /**
  *
  * Exception thrown when no identity is found during a query
@@ -42,37 +43,37 @@ import fr.paris.lutece.portal.service.util.AppException;
  */
 public class IdentityNotFoundException extends AppException
 {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Constructor 1
-	 *
-	 * @param strMessage
-	 *          The error message
-	 */
-	public IdentityNotFoundException(String strMessage)
-	{
-		super( strMessage );
-	}
+    /**
+     * Constructor 1
+     *
+     * @param strMessage
+     *          The error message
+     */
+    public IdentityNotFoundException( String strMessage )
+    {
+        super( strMessage );
+    }
 
-	/**
-	 * Constructor 2
-	 *
-	 * @param strMessage
-	 *          The error message
-	 * @param e
-	 *          The initial exception
-	 */
-	public IdentityNotFoundException(String strMessage, Exception e)
-	{
-		super( strMessage, e );
-	}
+    /**
+     * Constructor 2
+     *
+     * @param strMessage
+     *          The error message
+     * @param e
+     *          The initial exception
+     */
+    public IdentityNotFoundException( String strMessage, Exception e )
+    {
+        super( strMessage, e );
+    }
 
-	/**
-	 * Constructor 3
-	 */
-	public IdentityNotFoundException()
-	{
-		super();
-	}
+    /**
+     * Constructor 3
+     */
+    public IdentityNotFoundException(  )
+    {
+        super(  );
+    }
 }

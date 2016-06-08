@@ -1,5 +1,5 @@
 /*
- * Copyright ( c ) 2002-2016, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,10 +22,10 @@
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
  * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES ( INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION ) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT ( INCLUDING NEGLIGENCE OR OTHERWISE )
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
@@ -41,74 +41,77 @@ import java.io.Serializable;
 
 import java.util.Map;
 
+
 /**
  *
  * Identity Dto
  */
 @JsonRootName( value = DtoFormatConstants.KEY_IDENTITY )
-@JsonPropertyOrder( { DtoFormatConstants.KEY_CONNECTION_ID, DtoFormatConstants.KEY_CUSTOMER_ID,
-		DtoFormatConstants.KEY_ATTRIBUTES } )
+@JsonPropertyOrder( {DtoFormatConstants.KEY_CONNECTION_ID,
+    DtoFormatConstants.KEY_CUSTOMER_ID,
+    DtoFormatConstants.KEY_ATTRIBUTES
+} )
 public class IdentityDto implements Serializable
 {
-	private static final long serialVersionUID = 1L;
-	private Map<String, AttributeDto> _mapAttributes;
-	private String _strConnectionId;
-	private String _strCustomerId;
+    private static final long serialVersionUID = 1L;
+    private Map<String, AttributeDto> _mapAttributes;
+    private String _strConnectionId;
+    private String _strCustomerId;
 
-	/**
-	 * @return the _mapAttributes
-	 */
-	@JsonProperty( DtoFormatConstants.KEY_ATTRIBUTES )
-	public Map<String, AttributeDto> getAttributes(  )
-	{
-		return _mapAttributes;
-	}
+    /**
+     * @return the _mapAttributes
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTES )
+    public Map<String, AttributeDto> getAttributes(  )
+    {
+        return _mapAttributes;
+    }
 
-	/**
-	 * @param mapAttributes
-	 *          the lstAttributes to set
-	 */
-	@JsonProperty( DtoFormatConstants.KEY_ATTRIBUTES )
-	public void setAttributes(  Map<String, AttributeDto> mapAttributes  )
-	{
-		this._mapAttributes = mapAttributes;
-	}
+    /**
+     * @param mapAttributes
+     *          the lstAttributes to set
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTES )
+    public void setAttributes( Map<String, AttributeDto> mapAttributes )
+    {
+        this._mapAttributes = mapAttributes;
+    }
 
-	/**
-	 * @return the _connectionId
-	 */
-	@JsonProperty( DtoFormatConstants.KEY_CONNECTION_ID )
-	public String getConnectionId(  )
-	{
-		return _strConnectionId;
-	}
+    /**
+     * @return the _connectionId
+     */
+    @JsonProperty( DtoFormatConstants.KEY_CONNECTION_ID )
+    public String getConnectionId(  )
+    {
+        return _strConnectionId;
+    }
 
-	/**
-	 * @param connectionId
-	 *          the connectionId to set
-	 */
-	@JsonProperty( DtoFormatConstants.KEY_CONNECTION_ID )
-	public void setConnectionId(  String connectionId  )
-	{
-		this._strConnectionId = connectionId;
-	}
+    /**
+     * @param connectionId
+     *          the connectionId to set
+     */
+    @JsonProperty( DtoFormatConstants.KEY_CONNECTION_ID )
+    public void setConnectionId( String connectionId )
+    {
+        this._strConnectionId = connectionId;
+    }
 
-	/**
-	 * @return the _customerId
-	 */
-	@JsonProperty( DtoFormatConstants.KEY_CUSTOMER_ID )
-	public String getCustomerId(  )
-	{
-		return _strCustomerId;
-	}
+    /**
+     * @return the _customerId
+     */
+    @JsonProperty( DtoFormatConstants.KEY_CUSTOMER_ID )
+    public String getCustomerId(  )
+    {
+        return _strCustomerId;
+    }
 
-	/**
-	 * @param strCustomerId
-	 *          the strCustomerId to set
-	 */
-	@JsonProperty( DtoFormatConstants.KEY_CUSTOMER_ID )
-	public void setCustomerId(  String strCustomerId  )
-	{
-		this._strCustomerId = strCustomerId;
-	}
+    /**
+     * @param strCustomerId
+     *          the strCustomerId to set
+     */
+    @JsonProperty( DtoFormatConstants.KEY_CUSTOMER_ID )
+    public void setCustomerId( String strCustomerId )
+    {
+        this._strCustomerId = strCustomerId;
+    }
 }

@@ -33,53 +33,54 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.rs.dto;
 
+
 /**
  * This class provides constants for formatting
  *
  */
 public final class DtoFormatConstants
 {
-	public static final String KEY_AUTHOR = "author";
-	public static final String KEY_AUTHOR_USERNAME = "user_name";
-	public static final String KEY_AUTHOR_EMAIL = "email";
-	public static final String KEY_AUTHOR_TYPE = "type";
-	public static final String KEY_AUTHOR_APPLICATION_NAME = "application_name";
-	public static final String KEY_AUTHOR_APPLICATION_CODE = "application_code";
-	public static final String KEY_CERTIFICATE = "certificate";
-	public static final String KEY_CERTIFICATE_CERTIFIER_CODE = "certifier_code";
-	public static final String KEY_CERTIFICATE_CERTIFIER_NAME = "certifier_name";
-	public static final String KEY_CERTIFICATE_LEVEL = "certificate_level";
-	public static final String KEY_CERTIFICATE_EXPIRATION_DATE = "certificate_exp_date";
-	public static final String KEY_CERTIFICATE_CERTIFICATION_DATE = "certificate_date";
-	public static final String KEY_IDENTITY = "identity";
-	public static final String KEY_ATTRIBUTES = "attributes";
-	public static final String KEY_ATTRIBUTE = "attribute";
-	public static final String KEY_ATTRIBUTE_KEY = "key";
-	public static final String KEY_ATTRIBUTE_VALUE = "value";
-	public static final String KEY_ATTRIBUTE_TYPE = "type";
-	public static final String KEY_ATTRIBUTE_WRITABLE = "readable";
-	public static final String KEY_ATTRIBUTE_READABLE = "writable";
-	public static final String KEY_ATTRIBUTE_CERTIFIABLE = "certifiable";
-	public static final String KEY_ATTRIBUTE_CERTIFIED = "certified";
-	public static final String KEY_ATTRIBUTE_CERTIFICATE = "cerificate";
-	public static final String KEY_ATTRIBUTE_LASTUPDATE = "last_update";
-	public static final String KEY_IDENTITY_CHANGE = "identity_change";
-	public static final String KEY_IDENTITY_CHANGE_IDENTITY = "identity";
-	public static final String KEY_IDENTITY_CHANGE_AUTHOR = "author";
-	public static final String KEY_CONNECTION_ID = "connection_id";
-	public static final String KEY_CUSTOMER_ID = "customer_id";
-	public static final String KEY_ID = "id";
-	public static final String KEY_LABEL = "label";
-	public static final String KEY_ERRORS = "errors";
-	public static final String KEY_ERROR = "error";
-	public static final String KEY_STATUS = "status";
-	public static final String KEY_MESSAGE = "message";
-	public static final String KEY_RESPONSE = "response";
+    public static final String KEY_AUTHOR = "author";
+    public static final String KEY_AUTHOR_USERNAME = "user_name";
+    public static final String KEY_AUTHOR_EMAIL = "email";
+    public static final String KEY_AUTHOR_TYPE = "type";
+    public static final String KEY_AUTHOR_APPLICATION_NAME = "application_name";
+    public static final String KEY_AUTHOR_APPLICATION_CODE = "application_code";
+    public static final String KEY_CERTIFICATE = "certificate";
+    public static final String KEY_CERTIFICATE_CERTIFIER_CODE = "certifier_code";
+    public static final String KEY_CERTIFICATE_CERTIFIER_NAME = "certifier_name";
+    public static final String KEY_CERTIFICATE_LEVEL = "certificate_level";
+    public static final String KEY_CERTIFICATE_EXPIRATION_DATE = "certificate_exp_date";
+    public static final String KEY_CERTIFICATE_CERTIFICATION_DATE = "certificate_date";
+    public static final String KEY_IDENTITY = "identity";
+    public static final String KEY_ATTRIBUTES = "attributes";
+    public static final String KEY_ATTRIBUTE = "attribute";
+    public static final String KEY_ATTRIBUTE_KEY = "key";
+    public static final String KEY_ATTRIBUTE_VALUE = "value";
+    public static final String KEY_ATTRIBUTE_TYPE = "type";
+    public static final String KEY_ATTRIBUTE_WRITABLE = "readable";
+    public static final String KEY_ATTRIBUTE_READABLE = "writable";
+    public static final String KEY_ATTRIBUTE_CERTIFIABLE = "certifiable";
+    public static final String KEY_ATTRIBUTE_CERTIFIED = "certified";
+    public static final String KEY_ATTRIBUTE_CERTIFICATE = "cerificate";
+    public static final String KEY_ATTRIBUTE_LASTUPDATE = "last_update";
+    public static final String KEY_IDENTITY_CHANGE = "identity_change";
+    public static final String KEY_IDENTITY_CHANGE_IDENTITY = "identity";
+    public static final String KEY_IDENTITY_CHANGE_AUTHOR = "author";
+    public static final String KEY_CONNECTION_ID = "connection_id";
+    public static final String KEY_CUSTOMER_ID = "customer_id";
+    public static final String KEY_ID = "id";
+    public static final String KEY_LABEL = "label";
+    public static final String KEY_ERRORS = "errors";
+    public static final String KEY_ERROR = "error";
+    public static final String KEY_STATUS = "status";
+    public static final String KEY_MESSAGE = "message";
+    public static final String KEY_RESPONSE = "response";
 
-	/**
-	 * Private constructor
-	 */
-	private DtoFormatConstants()
-	{
-	}
+    /**
+     * Private constructor
+     */
+    private DtoFormatConstants(  )
+    {
+    }
 }

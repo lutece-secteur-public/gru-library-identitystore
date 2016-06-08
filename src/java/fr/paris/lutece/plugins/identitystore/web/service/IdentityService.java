@@ -40,83 +40,85 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
+
 /**
  * IdentityService
  */
 public class IdentityService
 {
-	private static final String BEAN_IDENTITYSERVICE_PROVIDER = "library-identitystore.identityStoreServiceClient";
+    private static final String BEAN_IDENTITYSERVICE_PROVIDER = "library-identitystore.identityStoreServiceClient";
 
-	/** The _singleton. */
-	private static IdentityService _singleton;
-	private IIdentityProvider _identityProvider;
+    /** The _singleton. */
+    private static IdentityService _singleton;
+    private IIdentityProvider _identityProvider;
 
-	/**
-	 * Constructor initialize identity provider
-	 */
-	protected IdentityService()
-	{
-		_identityProvider = SpringContextService.getBean( BEAN_IDENTITYSERVICE_PROVIDER );
-	}
+    /**
+     * Constructor initialize identity provider
+     */
+    protected IdentityService(  )
+    {
+        _identityProvider = SpringContextService.getBean( BEAN_IDENTITYSERVICE_PROVIDER );
+    }
 
-	/**
-	 * Instance.
-	 *
-	 * @return the identity service instance
-	 */
-	public static IdentityService instance()
-	{
-		if( _singleton == null )
-		{
-			try
-			{
-				_singleton = new IdentityService();
-			}
-			catch( Exception e )
-			{
-				AppLogService.error( "Error when instantiating library IdentityService instance" + e.getMessage(), e );
-			}
-		}
+    /**
+     * Instance.
+     *
+     * @return the identity service instance
+     */
+    public static IdentityService instance(  )
+    {
+        if ( _singleton == null )
+        {
+            try
+            {
+                _singleton = new IdentityService(  );
+            }
+            catch ( Exception e )
+            {
+                AppLogService.error( "Error when instantiating library IdentityService instance" + e.getMessage(  ), e );
+            }
+        }
 
-		return _singleton;
-	}
+        return _singleton;
+    }
 
-	/**
-	 * get identity matching connectionId and customerId for provided application
-	 * code
-	 * 
-	 * @param strConnectionId
-	 *          connection Id (can be null if strCustomerId is provided)
-	 * @param strCustomerId
-	 *          customer Id (can be null if strconnection Id is provided)
-	 * @param strApplicationCode
-	 *          application code of calling application
-	 * @return identity if found
-	 * @throws IdentityNotFoundException
-	 *           if no identity found for input parameters
-	 * @throws AppException
-	 *           if inconsitent parmeters provided, or errors occurs...
-	 *
-	 */
-	public IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode )
-			throws IdentityNotFoundException, AppException
-	{
-		return _identityProvider.getIdentity( strConnectionId, strCustomerId, strApplicationCode );
-	}
+    /**
+     * get identity matching connectionId and customerId for provided application
+     * code
+     *
+     * @param strConnectionId
+     *          connection Id (can be null if strCustomerId is provided)
+     * @param strCustomerId
+     *          customer Id (can be null if strconnection Id is provided)
+     * @param strApplicationCode
+     *          application code of calling application
+     * @return identity if found
+     * @throws IdentityNotFoundException
+     *           if no identity found for input parameters
+     * @throws AppException
+     *           if inconsitent parmeters provided, or errors occurs...
+     *
+     */
+    public IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode )
+        throws IdentityNotFoundException, AppException
+    {
+        return _identityProvider.getIdentity( strConnectionId, strCustomerId, strApplicationCode );
+    }
 
-	/**
-	 * apply changes to an identity
-	 * 
-	 * @param identityChange
-	 *          change to apply to identity
-	 * @return response with updated fields
-	 * @throws AppException
-	 *           if error occured while updating identity
-	 * @throws IdentityNotFoundException
-	 *           if no identity found for input parameters
-	 */
-	public ResponseDto updateIdentity( IdentityChangeDto identityChange ) throws IdentityNotFoundException, AppException
-	{
-		return _identityProvider.updateIdentity( identityChange );
-	}
+    /**
+     * apply changes to an identity
+     *
+     * @param identityChange
+     *          change to apply to identity
+     * @return response with updated fields
+     * @throws AppException
+     *           if error occured while updating identity
+     * @throws IdentityNotFoundException
+     *           if no identity found for input parameters
+     */
+    public ResponseDto updateIdentity( IdentityChangeDto identityChange )
+        throws IdentityNotFoundException, AppException
+    {
+        return _identityProvider.updateIdentity( identityChange );
+    }
 }

@@ -59,133 +59,133 @@ import java.io.IOException;
 
 import javax.ws.rs.core.MediaType;
 
+
 /**
  * IdentityRestClientService
  */
 public final class IdentityApiManagerRestClientService implements IIdentityProvider
 {
-	private ObjectMapper _mapper = new ObjectMapper();
+    private ObjectMapper _mapper = new ObjectMapper(  );
 
-	/**
-	 * private constructor initialize mapper
-	 */
-	private IdentityApiManagerRestClientService()
-	{
-		_mapper = new ObjectMapper();
-		_mapper.enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
-		_mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
-		_mapper.enable( SerializationFeature.INDENT_OUTPUT );
-		_mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
-	}
+    /**
+     * private constructor initialize mapper
+     */
+    private IdentityApiManagerRestClientService(  )
+    {
+        _mapper = new ObjectMapper(  );
+        _mapper.enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
+        _mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
+        _mapper.enable( SerializationFeature.INDENT_OUTPUT );
+        _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode )
-			throws IdentityNotFoundException, AppException
-	{
-		AppLogService.debug( "Get identity attributes of " + strIdConnection );
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode )
+        throws IdentityNotFoundException, AppException
+    {
+        AppLogService.debug( "Get identity attributes of " + strIdConnection );
 
-		Client client = Client.create();
-		WebResource webResource = client
-				.resource(
-						AppPropertiesService.getProperty( Constants.URL_IDENTITYSTORE_ENDPOINT )
-								+ Constants.IDENTITY_PATH )
-				.queryParam( Constants.PARAM_ID_CONNECTION, strIdConnection )
-				.queryParam( Constants.PARAM_CLIENT_CODE, strClientCode );
+        Client client = Client.create(  );
+        WebResource webResource = client.resource( AppPropertiesService.getProperty( 
+                    Constants.URL_IDENTITYSTORE_ENDPOINT ) + Constants.IDENTITY_PATH )
+                                        .queryParam( Constants.PARAM_ID_CONNECTION, strIdConnection )
+                                        .queryParam( Constants.PARAM_CLIENT_CODE, strClientCode );
 
-		ClientResponse response = webResource.accept( MediaType.APPLICATION_JSON ).get( ClientResponse.class );
+        ClientResponse response = webResource.accept( MediaType.APPLICATION_JSON ).get( ClientResponse.class );
 
-		if( response.getStatus() != Status.OK.getStatusCode() )
-		{
-			if( response.getStatus() == Status.NOT_FOUND.getStatusCode() )
-			{
-				throw new IdentityNotFoundException( "no identity found for connectionId=" + strIdConnection + " customerId="
-						+ strCustomerId + " clientAppCode=" + strClientCode );
-			}
-			else
-			{
-				throw new AppException( Constants.ERROR_MESSAGE + response.getStatus() );
-			}
-		}
+        if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
+        {
+            if ( response.getStatus(  ) == Status.NOT_FOUND.getStatusCode(  ) )
+            {
+                throw new IdentityNotFoundException( "no identity found for connectionId=" + strIdConnection +
+                    " customerId=" + strCustomerId + " clientAppCode=" + strClientCode );
+            }
+            else
+            {
+                throw new AppException( Constants.ERROR_MESSAGE + response.getStatus(  ) );
+            }
+        }
 
-		IdentityDto identityDto = null;
-		String strJsonResponse = response.getEntity( String.class );
+        IdentityDto identityDto = null;
+        String strJsonResponse = response.getEntity( String.class );
 
-		if( JSONUtils.mayBeJSON( strJsonResponse ) )
-		{
-			try
-			{
-				identityDto = _mapper.readValue( strJsonResponse, IdentityDto.class );
-			}
-			catch( IOException e )
-			{
-				throw new AppException( Constants.ERROR_MESSAGE + e.getMessage() );
-			}
-		}
-		else
-		{
-			throw new AppException( Constants.ERROR_MESSAGE + " not json response " + strJsonResponse );
-		}
+        if ( JSONUtils.mayBeJSON( strJsonResponse ) )
+        {
+            try
+            {
+                identityDto = _mapper.readValue( strJsonResponse, IdentityDto.class );
+            }
+            catch ( IOException e )
+            {
+                throw new AppException( Constants.ERROR_MESSAGE + e.getMessage(  ) );
+            }
+        }
+        else
+        {
+            throw new AppException( Constants.ERROR_MESSAGE + " not json response " + strJsonResponse );
+        }
 
-		return identityDto;
-	}
+        return identityDto;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseDto updateIdentity( IdentityChangeDto identityChange )
-	{
-		AppLogService.debug( "Update identity attributes" );
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseDto updateIdentity( IdentityChangeDto identityChange )
+    {
+        AppLogService.debug( "Update identity attributes" );
 
-		Client client = Client.create();
+        Client client = Client.create(  );
 
-		WebResource webResource = client.resource( AppPropertiesService
-				.getProperty( Constants.URL_IDENTITYSTORE_ENDPOINT ) + Constants.IDENTITY_PATH );
+        WebResource webResource = client.resource( AppPropertiesService.getProperty( 
+                    Constants.URL_IDENTITYSTORE_ENDPOINT ) + Constants.IDENTITY_PATH );
 
-		FormDataMultiPart formParams = new FormDataMultiPart();
+        FormDataMultiPart formParams = new FormDataMultiPart(  );
 
-		try
-		{
-			formParams.bodyPart( _mapper.writeValueAsString( identityChange ), MediaType.APPLICATION_JSON_TYPE );
-		}
-		catch( JsonProcessingException e )
-		{
-			try
-			{
-				formParams.close();
-			}
-			catch( IOException e1 )
-			{
-				throw new AppException( Constants.ERROR_MESSAGE + e.getMessage() );
-			}
+        try
+        {
+            formParams.bodyPart( _mapper.writeValueAsString( identityChange ), MediaType.APPLICATION_JSON_TYPE );
+        }
+        catch ( JsonProcessingException e )
+        {
+            try
+            {
+                formParams.close(  );
+            }
+            catch ( IOException e1 )
+            {
+                throw new AppException( Constants.ERROR_MESSAGE + e.getMessage(  ) );
+            }
 
-			throw new AppException( Constants.ERROR_MESSAGE + e.getMessage() );
-		}
+            throw new AppException( Constants.ERROR_MESSAGE + e.getMessage(  ) );
+        }
 
-		ClientResponse response = webResource.type( MediaType.MULTIPART_FORM_DATA ).post( ClientResponse.class, formParams );
+        ClientResponse response = webResource.type( MediaType.MULTIPART_FORM_DATA )
+                                             .post( ClientResponse.class, formParams );
 
-		if( response.getStatus() != Status.OK.getStatusCode() )
-		{
-			throw new AppException( Constants.ERROR_MESSAGE + response.getStatus() );
-		}
+        if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
+        {
+            throw new AppException( Constants.ERROR_MESSAGE + response.getStatus(  ) );
+        }
 
-		ResponseDto responseDto = null;
+        ResponseDto responseDto = null;
 
-		if( response.hasEntity() && response.getType().toString().equals( MediaType.APPLICATION_JSON ) )
-		{
-			try
-			{
-				responseDto = _mapper.readValue( response.getEntity( String.class ), ResponseDto.class );
-			}
-			catch( IOException e )
-			{
-				throw new AppException( Constants.ERROR_MESSAGE + e.getMessage() );
-			}
-		}
+        if ( response.hasEntity(  ) && response.getType(  ).toString(  ).equals( MediaType.APPLICATION_JSON ) )
+        {
+            try
+            {
+                responseDto = _mapper.readValue( response.getEntity( String.class ), ResponseDto.class );
+            }
+            catch ( IOException e )
+            {
+                throw new AppException( Constants.ERROR_MESSAGE + e.getMessage(  ) );
+            }
+        }
 
-		return responseDto;
-	}
+        return responseDto;
+    }
 }

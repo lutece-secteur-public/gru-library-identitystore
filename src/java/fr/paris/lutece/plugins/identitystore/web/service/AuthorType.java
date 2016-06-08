@@ -33,35 +33,37 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.service;
 
+
 /**
  *
  * Author type
  *
  */
 public enum AuthorType
-{
-	TYPE_APPLICATION(0), TYPE_USER_OWNER(1), TYPE_USER_ADMINISTRATOR(2);
+{TYPE_APPLICATION( 0 ),
+    TYPE_USER_OWNER( 1 ),
+    TYPE_USER_ADMINISTRATOR( 2 );
 
-	private int _nAuthorType;
+    private int _nAuthorType;
 
-	/**
-	 * private constructor
-	 * 
-	 * @param nAuthorType
-	 *          application type to set
-	 */
-	AuthorType(int nAuthorType)
-	{
-		_nAuthorType = nAuthorType;
-	}
+    /**
+     * private constructor
+     *
+     * @param nAuthorType
+     *          application type to set
+     */
+    AuthorType( int nAuthorType )
+    {
+        _nAuthorType = nAuthorType;
+    }
 
-	/**
-	 * return author type value
-	 * 
-	 * @return author type value
-	 */
-	public int getTypeValue()
-	{
-		return _nAuthorType;
-	}
+    /**
+     * return author type value
+     *
+     * @return author type value
+     */
+    public int getTypeValue(  )
+    {
+        return _nAuthorType;
+    }
 }

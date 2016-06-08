@@ -33,33 +33,32 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.rs.service;
 
+
 /**
  * This class provides constants for REST services
  *
  */
 public final class Constants
 {
-    
-	public static final String IDENTITY_PATH = "identity/";
-	public static final String PARAM_ID_CONNECTION = "connection_id";
-	public static final String PARAM_ID_CUSTOMER = "customer_id";
-	public static final String PARAM_CLIENT_CODE = "client_code";
+    public static final String IDENTITY_PATH = "identity/";
+    public static final String PARAM_ID_CONNECTION = "connection_id";
+    public static final String PARAM_ID_CUSTOMER = "customer_id";
+    public static final String PARAM_CLIENT_CODE = "client_code";
     public static final String PARAM_FILE = "file";
     public static final String PARAM_ATTRIBUTE_KEY = "attribute_key";
-	public static final String PLUGIN_PATH = "identitystore/";
-	public static final String URL_IDENTITYSTORE_ENDPOINT = "library.identitystore.urlIdentityStoreEndpoint";
+    public static final String PLUGIN_PATH = "identitystore/";
+    public static final String URL_IDENTITYSTORE_ENDPOINT = "library.identitystore.urlIdentityStoreEndpoint";
     public static final String ERROR_FIELD_MISSING = "FIELD_MISSING";
     public static final String ERROR_FIELD_PERMISSION = "FIELD_PERMISION_ERROR";
     public static final String RESPONSE_OK = "OK";
 
-	
-	// HTTP ERROR MESSAGE
-	public static final String ERROR_MESSAGE = "Failed : HTTP error code : ";
+    // HTTP ERROR MESSAGE
+    public static final String ERROR_MESSAGE = "Failed : HTTP error code : ";
 
-	/**
-	 * Default constructor
-	 */
-	private Constants()
-	{
-	}
+    /**
+     * Default constructor
+     */
+    private Constants(  )
+    {
+    }
 }

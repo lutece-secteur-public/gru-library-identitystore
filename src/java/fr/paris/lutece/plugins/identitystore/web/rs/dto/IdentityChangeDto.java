@@ -37,52 +37,55 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
+
 /**
  * IdentityChangeDto
  *
  */
-@JsonRootName(value = DtoFormatConstants.KEY_IDENTITY_CHANGE)
-@JsonPropertyOrder({ DtoFormatConstants.KEY_IDENTITY_CHANGE_IDENTITY, DtoFormatConstants.KEY_IDENTITY_CHANGE_AUTHOR })
+@JsonRootName( value = DtoFormatConstants.KEY_IDENTITY_CHANGE )
+@JsonPropertyOrder( {DtoFormatConstants.KEY_IDENTITY_CHANGE_IDENTITY,
+    DtoFormatConstants.KEY_IDENTITY_CHANGE_AUTHOR
+} )
 public class IdentityChangeDto
 {
-	private IdentityDto _identity;
-	private AuthorDto _author;
+    private IdentityDto _identity;
+    private AuthorDto _author;
 
-	/**
-	 * @return the _identity
-	 */
-	@JsonProperty(value = DtoFormatConstants.KEY_IDENTITY_CHANGE_IDENTITY)
-	public IdentityDto getIdentity()
-	{
-		return _identity;
-	}
+    /**
+     * @return the _identity
+     */
+    @JsonProperty( value = DtoFormatConstants.KEY_IDENTITY_CHANGE_IDENTITY )
+    public IdentityDto getIdentity(  )
+    {
+        return _identity;
+    }
 
-	/**
-	 * @param identity
-	 *          the _identity to set
-	 */
-	@JsonProperty(value = DtoFormatConstants.KEY_IDENTITY_CHANGE_IDENTITY)
-	public void setIdentity( IdentityDto identity )
-	{
-		this._identity = identity;
-	}
+    /**
+     * @param identity
+     *          the _identity to set
+     */
+    @JsonProperty( value = DtoFormatConstants.KEY_IDENTITY_CHANGE_IDENTITY )
+    public void setIdentity( IdentityDto identity )
+    {
+        this._identity = identity;
+    }
 
-	/**
-	 * @return the _author
-	 */
-	@JsonProperty(value = DtoFormatConstants.KEY_IDENTITY_CHANGE_AUTHOR)
-	public AuthorDto getAuthor()
-	{
-		return _author;
-	}
+    /**
+     * @return the _author
+     */
+    @JsonProperty( value = DtoFormatConstants.KEY_IDENTITY_CHANGE_AUTHOR )
+    public AuthorDto getAuthor(  )
+    {
+        return _author;
+    }
 
-	/**
-	 * @param author
-	 *          the _author to set
-	 */
-	@JsonProperty(value = DtoFormatConstants.KEY_IDENTITY_CHANGE_AUTHOR)
-	public void setAuthor( AuthorDto author )
-	{
-		this._author = author;
-	}
+    /**
+     * @param author
+     *          the _author to set
+     */
+    @JsonProperty( value = DtoFormatConstants.KEY_IDENTITY_CHANGE_AUTHOR )
+    public void setAuthor( AuthorDto author )
+    {
+        this._author = author;
+    }
 }
