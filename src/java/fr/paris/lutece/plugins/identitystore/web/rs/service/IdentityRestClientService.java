@@ -37,7 +37,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
@@ -52,12 +51,13 @@ import fr.paris.lutece.plugins.identitystore.web.service.IdentityNotFoundExcepti
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-
 import net.sf.json.util.JSONUtils;
 
 import java.io.IOException;
 
 import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -82,19 +82,20 @@ public final class IdentityRestClientService implements IIdentityProvider
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode )
+    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode, String strHashCode )
         throws IdentityNotFoundException, AppException
     {
         AppLogService.debug( "Get identity attributes of " + strIdConnection );
 
+        checkInputParameters(  strIdConnection, strCustomerId, strClientCode, strHashCode );
         Client client = Client.create(  );
         WebResource webResource = client.resource( AppPropertiesService.getProperty( 
                     Constants.URL_IDENTITYSTORE_ENDPOINT ) + Constants.IDENTITY_PATH )
-                                        .queryParam( Constants.PARAM_ID_CONNECTION, strIdConnection )
-                                        .queryParam( Constants.PARAM_ID_CUSTOMER, strCustomerId )
+                                        .queryParam( Constants.PARAM_ID_CONNECTION, strIdConnection != null ? strIdConnection : StringUtils.EMPTY )
+                                        .queryParam( Constants.PARAM_ID_CUSTOMER, strCustomerId != null ? strIdConnection : StringUtils.EMPTY )
                                         .queryParam( Constants.PARAM_CLIENT_CODE, strClientCode );
-
-        ClientResponse response = webResource.accept( MediaType.APPLICATION_JSON ).get( ClientResponse.class );
+ 
+        ClientResponse response = webResource.header( Constants.PARAM_CLIENT_APP_HASH, strHashCode ).accept( MediaType.APPLICATION_JSON ).get( ClientResponse.class );
 
         if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
         {
@@ -132,18 +133,42 @@ public final class IdentityRestClientService implements IIdentityProvider
     }
 
     /**
+     * check that parameters are correct, otherwise throws an AppException
+     * @param strIdConnection connection id
+     * @param strCustomerId customer id
+     * @param strClientCode client code
+     * @param strHashCode hash code
+     * @throws AppException when input parameters are not valid
+     */
+    private void checkInputParameters(  String strIdConnection, String strCustomerId, String strClientCode, String strHashCode ) throws AppException
+    {
+        if ( StringUtils.isEmpty( strIdConnection ) &&  StringUtils.isEmpty( strCustomerId ) )
+        {
+            throw new AppException( "missing parameters : connection Id or customer Id must be provided" );
+        }
+        if ( StringUtils.isEmpty( strClientCode )  )
+        {
+            throw new AppException( "missing parameters : client Application Code is mandatory" );
+        }
+        if ( StringUtils.isEmpty( strHashCode )  )
+        {
+            throw new AppException( "missing parameters : client Application Hashis mandatory" );
+        }
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @Override
-    public ResponseDto updateIdentity( IdentityChangeDto identityChange )
+    public ResponseDto updateIdentity( IdentityChangeDto identityChange, String strHashCode )
     {
         AppLogService.debug( "Update identity attributes" );
-
+        checkInputParameters( identityChange, strHashCode );
         Client client = Client.create(  );
 
         WebResource webResource = client.resource( AppPropertiesService.getProperty( 
                     Constants.URL_IDENTITYSTORE_ENDPOINT ) + Constants.IDENTITY_PATH );
-
+       
         FormDataMultiPart formParams = new FormDataMultiPart(  );
 
         try
@@ -164,7 +189,7 @@ public final class IdentityRestClientService implements IIdentityProvider
             throw new AppException( Constants.ERROR_MESSAGE + e.getMessage(  ) );
         }
 
-        ClientResponse response = webResource.type( MediaType.MULTIPART_FORM_DATA )
+        ClientResponse response = webResource.header( Constants.PARAM_CLIENT_APP_HASH, strHashCode ).type( MediaType.MULTIPART_FORM_DATA )
                                              .post( ClientResponse.class, formParams );
 
         if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
@@ -187,5 +212,20 @@ public final class IdentityRestClientService implements IIdentityProvider
         }
 
         return responseDto;
+    }
+    
+    /**
+     * check params
+     * @param identityChange identity change, ensure that author and identity are filled
+     * @param strHashCode hashcode
+     * @throws  AppException when input parameters are not valid
+     */
+    private void checkInputParameters( IdentityChangeDto identityChange, String strHashCode ) throws AppException 
+    {
+        if ( identityChange == null || identityChange.getAuthor( ) == null || identityChange.getIdentity( ) == null )
+        {
+            throw new AppException( "missing parameters : provided identityChange object is invalid, check author and identity are filled" );
+        }
+        checkInputParameters( identityChange.getIdentity( ).getConnectionId( ), identityChange.getIdentity( ).getCustomerId( ), identityChange.getAuthor( ).getApplicationCode( ), strHashCode );
     }
 }

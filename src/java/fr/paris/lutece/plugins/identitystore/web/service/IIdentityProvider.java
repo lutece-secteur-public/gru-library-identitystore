@@ -54,6 +54,7 @@ public interface IIdentityProvider
      *          customer Id (can be null if strconnection Id is provided)
      * @param strApplicationCode
      *          application code of calling application
+     * @param strHash client application hash code
      * @return identity if found
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
@@ -61,7 +62,7 @@ public interface IIdentityProvider
      *           if inconsitent parmeters provided, or errors occurs...
      *
      */
-    IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode )
+    IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode, String strHash )
         throws IdentityNotFoundException, AppException;
 
     /**
@@ -69,12 +70,15 @@ public interface IIdentityProvider
      *
      * @param identityChange
      *          change to apply to identity
+     * @param strHash client application hash code  
      * @return response with updated fields
+     * 
      * @throws AppException
      *           if error occured while updating identity
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
      */
-    ResponseDto updateIdentity( IdentityChangeDto identityChange )
+    ResponseDto updateIdentity( IdentityChangeDto identityChange, String strHash )
         throws IdentityNotFoundException, AppException;
+    
 }

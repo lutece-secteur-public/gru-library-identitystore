@@ -92,6 +92,7 @@ public class IdentityService
      *          customer Id (can be null if strconnection Id is provided)
      * @param strApplicationCode
      *          application code of calling application
+     * @param strHash client application hash code
      * @return identity if found
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
@@ -99,10 +100,10 @@ public class IdentityService
      *           if inconsitent parmeters provided, or errors occurs...
      *
      */
-    public IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode )
+    public IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode, String strHash )
         throws IdentityNotFoundException, AppException
     {
-        return _identityProvider.getIdentity( strConnectionId, strCustomerId, strApplicationCode );
+        return _identityProvider.getIdentity( strConnectionId, strCustomerId, strApplicationCode, strHash );
     }
 
     /**
@@ -110,15 +111,16 @@ public class IdentityService
      *
      * @param identityChange
      *          change to apply to identity
+     * @param strHash client application hash code
      * @return response with updated fields
      * @throws AppException
      *           if error occured while updating identity
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
      */
-    public ResponseDto updateIdentity( IdentityChangeDto identityChange )
+    public ResponseDto updateIdentity( IdentityChangeDto identityChange, String strHash )
         throws IdentityNotFoundException, AppException
     {
-        return _identityProvider.updateIdentity( identityChange );
+        return _identityProvider.updateIdentity( identityChange, strHash );
     }
 }

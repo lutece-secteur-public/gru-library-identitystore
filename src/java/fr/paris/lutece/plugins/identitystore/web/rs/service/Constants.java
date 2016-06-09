@@ -46,6 +46,8 @@ public final class Constants
     public static final String PARAM_CLIENT_CODE = "client_code";
     public static final String PARAM_FILE = "file";
     public static final String PARAM_ATTRIBUTE_KEY = "attribute_key";
+    public static final String PARAM_CLIENT_APP_HASH = "client_hashcode";
+    
     public static final String PLUGIN_PATH = "identitystore/";
     public static final String URL_IDENTITYSTORE_ENDPOINT = "library.identitystore.urlIdentityStoreEndpoint";
     public static final String ERROR_FIELD_MISSING = "FIELD_MISSING";

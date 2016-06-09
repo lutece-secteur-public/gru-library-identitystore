@@ -37,7 +37,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
@@ -52,7 +51,6 @@ import fr.paris.lutece.plugins.identitystore.web.service.IdentityNotFoundExcepti
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-
 import net.sf.json.util.JSONUtils;
 
 import java.io.IOException;
@@ -73,7 +71,6 @@ public final class IdentityApiManagerRestClientService implements IIdentityProvi
     private IdentityApiManagerRestClientService(  )
     {
         _mapper = new ObjectMapper(  );
-        _mapper.enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
         _mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
         _mapper.enable( SerializationFeature.INDENT_OUTPUT );
         _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
@@ -83,109 +80,21 @@ public final class IdentityApiManagerRestClientService implements IIdentityProvi
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode )
+    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode, String strHashCode )
         throws IdentityNotFoundException, AppException
     {
-        AppLogService.debug( "Get identity attributes of " + strIdConnection );
-
-        Client client = Client.create(  );
-        WebResource webResource = client.resource( AppPropertiesService.getProperty( 
-                    Constants.URL_IDENTITYSTORE_ENDPOINT ) + Constants.IDENTITY_PATH )
-                                        .queryParam( Constants.PARAM_ID_CONNECTION, strIdConnection )
-                                        .queryParam( Constants.PARAM_CLIENT_CODE, strClientCode );
-
-        ClientResponse response = webResource.accept( MediaType.APPLICATION_JSON ).get( ClientResponse.class );
-
-        if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
-        {
-            if ( response.getStatus(  ) == Status.NOT_FOUND.getStatusCode(  ) )
-            {
-                throw new IdentityNotFoundException( "no identity found for connectionId=" + strIdConnection +
-                    " customerId=" + strCustomerId + " clientAppCode=" + strClientCode );
-            }
-            else
-            {
-                throw new AppException( Constants.ERROR_MESSAGE + response.getStatus(  ) );
-            }
-        }
-
-        IdentityDto identityDto = null;
-        String strJsonResponse = response.getEntity( String.class );
-
-        if ( JSONUtils.mayBeJSON( strJsonResponse ) )
-        {
-            try
-            {
-                identityDto = _mapper.readValue( strJsonResponse, IdentityDto.class );
-            }
-            catch ( IOException e )
-            {
-                throw new AppException( Constants.ERROR_MESSAGE + e.getMessage(  ) );
-            }
-        }
-        else
-        {
-            throw new AppException( Constants.ERROR_MESSAGE + " not json response " + strJsonResponse );
-        }
-
-        return identityDto;
+        //TODO
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ResponseDto updateIdentity( IdentityChangeDto identityChange )
+    public ResponseDto updateIdentity( IdentityChangeDto identityChange, String strHashCode )
     {
-        AppLogService.debug( "Update identity attributes" );
+        //TODO
+        return null;
 
-        Client client = Client.create(  );
-
-        WebResource webResource = client.resource( AppPropertiesService.getProperty( 
-                    Constants.URL_IDENTITYSTORE_ENDPOINT ) + Constants.IDENTITY_PATH );
-
-        FormDataMultiPart formParams = new FormDataMultiPart(  );
-
-        try
-        {
-            formParams.bodyPart( _mapper.writeValueAsString( identityChange ), MediaType.APPLICATION_JSON_TYPE );
-        }
-        catch ( JsonProcessingException e )
-        {
-            try
-            {
-                formParams.close(  );
-            }
-            catch ( IOException e1 )
-            {
-                throw new AppException( Constants.ERROR_MESSAGE + e.getMessage(  ) );
-            }
-
-            throw new AppException( Constants.ERROR_MESSAGE + e.getMessage(  ) );
-        }
-
-        ClientResponse response = webResource.type( MediaType.MULTIPART_FORM_DATA )
-                                             .post( ClientResponse.class, formParams );
-
-        if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
-        {
-            throw new AppException( Constants.ERROR_MESSAGE + response.getStatus(  ) );
-        }
-
-        ResponseDto responseDto = null;
-
-        if ( response.hasEntity(  ) && response.getType(  ).toString(  ).equals( MediaType.APPLICATION_JSON ) )
-        {
-            try
-            {
-                responseDto = _mapper.readValue( response.getEntity( String.class ), ResponseDto.class );
-            }
-            catch ( IOException e )
-            {
-                throw new AppException( Constants.ERROR_MESSAGE + e.getMessage(  ) );
-            }
-        }
-
-        return responseDto;
     }
 }
