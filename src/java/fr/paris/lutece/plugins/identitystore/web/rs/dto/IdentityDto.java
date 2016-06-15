@@ -56,7 +56,7 @@ public class IdentityDto implements Serializable
     private static final long serialVersionUID = 1L;
     private Map<String, AttributeDto> _mapAttributes;
     private String _strConnectionId;
-    private String _strCustomerId;
+    private int _nCustomerId;
 
     /**
      * @return the _mapAttributes
@@ -100,18 +100,18 @@ public class IdentityDto implements Serializable
      * @return the _customerId
      */
     @JsonProperty( DtoFormatConstants.KEY_CUSTOMER_ID )
-    public String getCustomerId(  )
+    public int getCustomerId(  )
     {
-        return _strCustomerId;
+        return _nCustomerId;
     }
 
     /**
-     * @param strCustomerId
-     *          the strCustomerId to set
+     * @param nCustomerId
+     *          the nCustomerId to set
      */
     @JsonProperty( DtoFormatConstants.KEY_CUSTOMER_ID )
-    public void setCustomerId( String strCustomerId )
+    public void setCustomerId( int nCustomerId )
     {
-        this._strCustomerId = strCustomerId;
+        this._nCustomerId = nCustomerId;
     }
 }

@@ -33,68 +33,90 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.rs.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.api.client.WebResource.Builder;
 
-import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
-import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.web.service.IIdentityProvider;
-import fr.paris.lutece.plugins.identitystore.web.service.IdentityNotFoundException;
-import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 import net.sf.json.util.JSONUtils;
 
-import java.io.IOException;
+import org.apache.commons.lang.StringUtils;
 
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 
 /**
  * IdentityRestClientService
  */
-public final class IdentityApiManagerRestClientService implements IIdentityProvider
+public final class IdentityApiManagerRestClientService extends AbstractIdentityRestClientService
+    implements IIdentityProvider
 {
-    private ObjectMapper _mapper = new ObjectMapper(  );
-
     /**
-     * private constructor initialize mapper
+     *
+     * @param strKeyPropertiesCredentials hash code
+     * @return token
      */
-    private IdentityApiManagerRestClientService(  )
+    private String getToken( String strKeyPropertiesCredentials )
     {
-        _mapper = new ObjectMapper(  );
-        _mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
-        _mapper.enable( SerializationFeature.INDENT_OUTPUT );
-        _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
+        String strToken = null;
+        AppLogService.info( 
+            "\n*************************************************************** TOKEN REQUEST **********************************************************************\n" );
+        AppLogService.info( "\n PROPERTIES CREDENTIALS   : " + strKeyPropertiesCredentials + "\n" );
+        AppLogService.info( "\n TOKEN URL " + Constants.URL_TOKEN + "  : " +
+            AppPropertiesService.getProperty( Constants.URL_TOKEN ) + "\n" );
+
+        Client client = Client.create(  );
+
+        WebResource webResource = client.resource( AppPropertiesService.getProperty( Constants.URL_TOKEN ) );
+
+        javax.ws.rs.core.MultivaluedMap<String, String> params = new com.sun.jersey.core.util.MultivaluedMapImpl(  );
+        params.add( Constants.PARAMS_GRANT_TYPE, Constants.PARAMS_GRANT_TYPE_VALUE );
+
+        ClientResponse response = webResource.type( Constants.CONTENT_FORMAT_TOKEN )
+                                             .header( HttpHeaders.AUTHORIZATION,
+                Constants.TYPE_AUTHENTIFICATION + " " +
+                AppPropertiesService.getProperty( strKeyPropertiesCredentials ) ).accept( MediaType.APPLICATION_JSON )
+                                             .post( ClientResponse.class, params );
+
+        String output = response.getEntity( String.class );
+
+        JSONObject strResponseApiManagerJsonObject = null;
+
+        if ( JSONUtils.mayBeJSON( output ) )
+        {
+            strResponseApiManagerJsonObject = (JSONObject) JSONSerializer.toJSON( output );
+
+            if ( ( strResponseApiManagerJsonObject != null ) &&
+                    strResponseApiManagerJsonObject.has( Constants.PARAMS_ACCES_TOKEN ) )
+            {
+                AppLogService.info( "\n TOKEN JSON RESPONSE \n\n\n\n" + strResponseApiManagerJsonObject.toString( 2 ) +
+                    "\n" );
+                strToken = (String) strResponseApiManagerJsonObject.get( Constants.PARAMS_ACCES_TOKEN );
+                AppLogService.info( "\n TOKEN \n\n\n\n" + strToken + "\n" );
+            }
+        }
+
+        AppLogService.info( 
+            "\n*************************************************************** END TOKEN REQUEST **********************************************************************\n" );
+
+        return strToken;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode, String strHashCode )
-        throws IdentityNotFoundException, AppException
+    protected void addAuthentication( Builder builder, String strAuthenticationKey )
     {
-        //TODO
-        return null;
-    }
+        String strToken = getToken( strAuthenticationKey );
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ResponseDto updateIdentity( IdentityChangeDto identityChange, String strHashCode )
-    {
-        //TODO
-        return null;
-
+        if ( StringUtils.isNotBlank( strToken ) )
+        {
+            builder.header( HttpHeaders.AUTHORIZATION, Constants.TYPE_AUTHENTIFICATION + " " + strToken );
+        }
     }
 }

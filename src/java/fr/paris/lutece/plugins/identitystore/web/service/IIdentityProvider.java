@@ -38,6 +38,11 @@ import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.ResponseDto;
 import fr.paris.lutece.portal.service.util.AppException;
 
+import java.io.File;
+import java.io.InputStream;
+
+import java.util.List;
+
 
 /**
  * IIdentityService
@@ -50,11 +55,11 @@ public interface IIdentityProvider
      *
      * @param strConnectionId
      *          connection Id (can be null if strCustomerId is provided)
-     * @param strCustomerId
+     * @param nCustomerId
      *          customer Id (can be null if strconnection Id is provided)
      * @param strApplicationCode
      *          application code of calling application
-     * @param strHash client application hash code
+     * @param strAuthenticationKey client application hash code
      * @return identity if found
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
@@ -62,23 +67,56 @@ public interface IIdentityProvider
      *           if inconsitent parmeters provided, or errors occurs...
      *
      */
-    IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode, String strHash )
-        throws IdentityNotFoundException, AppException;
+    IdentityDto getIdentity( String strConnectionId, int nCustomerId, String strApplicationCode,
+        String strAuthenticationKey ) throws IdentityNotFoundException, AppException;
 
     /**
      * apply changes to an identity
      *
      * @param identityChange
      *          change to apply to identity
-     * @param strHash client application hash code  
+     * @param strAuthenticationKey client application hash code
+     * @param listFiles file list to upload
      * @return response with updated fields
-     * 
+     *
      * @throws AppException
      *           if error occured while updating identity
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
      */
-    ResponseDto updateIdentity( IdentityChangeDto identityChange, String strHash )
+    ResponseDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey, List<File> listFiles )
         throws IdentityNotFoundException, AppException;
-    
+
+    /**
+     * create identity
+     *
+     * @param identityChange
+     *          change to apply to identity
+     * @param strAuthenticationKey client application hash code
+     * @return response with updated fields
+     *
+     * @throws AppException
+     *           if error occured while updating identity
+     */
+    ResponseDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
+        throws AppException;
+
+    /**
+     *
+     * @param strConnectionId
+     *          connection Id (can be null if strCustomerId is provided)
+     * @param nCustomerId
+     *          customer Id (can be null if strconnection Id is provided)
+     * @param strAttributeKey attribute Key (must match a an attribute of type file)
+     * @param strClientAppCode
+     *          application code of calling application
+     * @param strAuthenticationKey client application hash code
+     * @return inputstream of attribute file
+     * @throws AppException
+     *           if error occured while retrieving file attribute
+     * @throws IdentityNotFoundException
+     *           if no identity found for input parameters
+     */
+    InputStream downloadFileAttribute( String strConnectionId, int nCustomerId, String strAttributeKey,
+        String strClientAppCode, String strAuthenticationKey );
 }

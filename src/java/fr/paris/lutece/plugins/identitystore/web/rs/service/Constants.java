@@ -46,13 +46,40 @@ public final class Constants
     public static final String PARAM_CLIENT_CODE = "client_code";
     public static final String PARAM_FILE = "file";
     public static final String PARAM_ATTRIBUTE_KEY = "attribute_key";
-    public static final String PARAM_CLIENT_APP_HASH = "client_hashcode";
-    
+    public static final String PARAM_CLIENT_CONTROL_KEY = "client_control_key";
     public static final String PLUGIN_PATH = "identitystore/";
     public static final String URL_IDENTITYSTORE_ENDPOINT = "library.identitystore.urlIdentityStoreEndpoint";
     public static final String ERROR_FIELD_MISSING = "FIELD_MISSING";
     public static final String ERROR_FIELD_PERMISSION = "FIELD_PERMISION_ERROR";
     public static final String RESPONSE_OK = "OK";
+
+    /* API MANAGER CONNEXION CONSTANTS */
+
+    /** The Constant URL_NOTIFICATION_ENDPOINT. */
+    //URL
+    public static final String URL_NOTIFICATION_ENDPOINT = "library-identitystore.urlNotificationEndpoint";
+
+    /** The Constant URL_TOKEN. */
+    public static final String URL_TOKEN = "library-identitystore.urlApiManager";
+
+    /** The Constant TYPE_AUTHENTIFICATION. */
+    public static final String TYPE_AUTHENTIFICATION = "Bearer";
+
+    /** The Constant PARAMS_ACCES_TOKEN. */
+    public static final String PARAMS_ACCES_TOKEN = "access_token";
+
+    /** The Constant PARAMS_GRANT_TYPE. */
+    public static final String PARAMS_GRANT_TYPE = "grant_type";
+
+    /** The Constant PARAMS_GRANT_TYPE_VALUE. */
+    public static final String PARAMS_GRANT_TYPE_VALUE = "client_credentials";
+
+    /** The Constant CONTENT_FORMAT. */
+    //CONTENT FORMAT
+    public static final String CONTENT_FORMAT = "application/json; charset=utf-8";
+
+    /** The Constant CONTENT_FORMAT_TOKEN. */
+    public static final String CONTENT_FORMAT_TOKEN = "application/x-www-form-urlencoded";
 
     // HTTP ERROR MESSAGE
     public static final String ERROR_MESSAGE = "Failed : HTTP error code : ";

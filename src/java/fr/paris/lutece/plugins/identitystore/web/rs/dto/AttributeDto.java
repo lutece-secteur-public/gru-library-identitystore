@@ -68,9 +68,6 @@ public class AttributeDto implements Serializable
     private String _strValue;
     private String _strType;
     private boolean _bCertified;
-    private boolean _bWritable;
-    private boolean _bReadable;
-    private boolean _bCertifiable;
     private Date _dateLastUpdateDate;
     private CertificateDto _certificate;
 
@@ -129,90 +126,6 @@ public class AttributeDto implements Serializable
     public void setType( String strType )
     {
         this._strType = strType;
-    }
-
-    /**
-     * @return the _bWritable
-     */
-    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE )
-    public boolean isWritable(  )
-    {
-        return _bWritable;
-    }
-
-    /**
-     * @return the _bWritable
-     */
-    @JsonIgnore
-    public boolean getWritable(  )
-    {
-        return _bWritable;
-    }
-
-    /**
-     * @param bWritable
-     *          the bWritable to set
-     */
-    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE )
-    public void setWritable( boolean bWritable )
-    {
-        this._bWritable = bWritable;
-    }
-
-    /**
-     * @return the _bReadable
-     */
-    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_READABLE )
-    public boolean isReadable(  )
-    {
-        return _bReadable;
-    }
-
-    /**
-     * @return the _bReadable
-     */
-    @JsonIgnore
-    public boolean getReadable(  )
-    {
-        return _bReadable;
-    }
-
-    /**
-     * @param bReadable
-     *          the bReadable to set
-     */
-    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_READABLE )
-    public void setReadable( boolean bReadable )
-    {
-        this._bReadable = bReadable;
-    }
-
-    /**
-     * @return the _bCertifiable
-     */
-    @JsonIgnore
-    public boolean getCertfiable(  )
-    {
-        return _bCertifiable;
-    }
-
-    /**
-     * @param bCertfiable
-     *          the bCertfiable to set
-     */
-    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIABLE )
-    public void setCertifiable( boolean bCertfiable )
-    {
-        this._bCertifiable = bCertfiable;
-    }
-
-    /**
-     * @return the _bCertifiable
-     */
-    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIABLE )
-    public boolean isCertifiable(  )
-    {
-        return _bCertifiable;
     }
 
     /**
