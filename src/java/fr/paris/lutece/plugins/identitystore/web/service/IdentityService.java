@@ -35,10 +35,11 @@ package fr.paris.lutece.plugins.identitystore.web.service;
 
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.web.rs.dto.ResponseDto;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -52,6 +53,7 @@ import java.util.List;
 public class IdentityService
 {
     private static final String BEAN_IDENTITYSERVICE_PROVIDER = "library-identitystore.identityStoreServiceClient";
+    private static final int NO_CUSTOMER_ID = 0;
 
     /** The _singleton. */
     private static IdentityService _singleton;
@@ -88,6 +90,48 @@ public class IdentityService
     }
 
     /**
+     * get identity matching connectionId for provided application code
+     *
+     * @param strConnectionId
+     *          connection Id
+     * @param strApplicationCode
+     *          application code of calling application
+     * @param strHash client application hash code
+     * @return identity if found
+     * @throws IdentityNotFoundException
+     *           if no identity found for input parameters
+     * @throws AppException
+     *           if inconsitent parmeters provided, or errors occurs...
+     *
+     */
+    public IdentityDto getIdentity( String strConnectionId, String strApplicationCode, String strHash )
+        throws IdentityNotFoundException, AppException
+    {
+        return getIdentity( strConnectionId, NO_CUSTOMER_ID, strApplicationCode, strHash );
+    }
+
+    /**
+     * get identity matching customerId for provided application code
+     *
+     * @param nCustomerId
+     *          customer Id
+     * @param strApplicationCode
+     *          application code of calling application
+     * @param strHash client application hash code
+     * @return identity if found
+     * @throws IdentityNotFoundException
+     *           if no identity found for input parameters
+     * @throws AppException
+     *           if inconsitent parmeters provided, or errors occurs...
+     *
+     */
+    public IdentityDto getIdentity( int nCustomerId, String strApplicationCode, String strHash )
+        throws IdentityNotFoundException, AppException
+    {
+        return getIdentity( StringUtils.EMPTY, nCustomerId, strApplicationCode, strHash );
+    }
+
+    /**
      * get identity matching connectionId and customerId for provided application
      * code
      *
@@ -118,13 +162,13 @@ public class IdentityService
      *          change to apply to identity
      * @param strAuthenticationKey client authentication key
      * @param listFiles file list to upload
-     * @return response with updated fields
+     * @return the updated identity
      * @throws AppException
      *           if error occured while updating identity
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
      */
-    public ResponseDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey,
+    public IdentityDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey,
         List<File> listFiles ) throws IdentityNotFoundException, AppException
     {
         return _identityProvider.updateIdentity( identityChange, strAuthenticationKey, listFiles );
@@ -136,12 +180,12 @@ public class IdentityService
      * @param identityChange
      *          change to apply to identity
      * @param strAuthenticationKey client application hash code
-     * @return response with updated fields
+     * @return the created identity
      *
      * @throws AppException
      *           if error occured while updating identity
      */
-    public ResponseDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
+    public IdentityDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
         throws AppException
     {
         return _identityProvider.createIdentity( identityChange, strAuthenticationKey );

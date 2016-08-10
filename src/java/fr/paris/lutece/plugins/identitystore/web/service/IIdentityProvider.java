@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.identitystore.web.service;
 
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.web.rs.dto.ResponseDto;
 import fr.paris.lutece.portal.service.util.AppException;
 
 import java.io.File;
@@ -77,14 +76,14 @@ public interface IIdentityProvider
      *          change to apply to identity
      * @param strAuthenticationKey client application hash code
      * @param listFiles file list to upload
-     * @return response with updated fields
+     * @return the updated identity
      *
      * @throws AppException
      *           if error occured while updating identity
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
      */
-    ResponseDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey, List<File> listFiles )
+    IdentityDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey, List<File> listFiles )
         throws IdentityNotFoundException, AppException;
 
     /**
@@ -93,12 +92,12 @@ public interface IIdentityProvider
      * @param identityChange
      *          change to apply to identity
      * @param strAuthenticationKey client application hash code
-     * @return response with updated fields
+     * @return the created identity
      *
      * @throws AppException
      *           if error occured while updating identity
      */
-    ResponseDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
+    IdentityDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
         throws AppException;
 
     /**

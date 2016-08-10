@@ -47,7 +47,6 @@ import com.sun.jersey.multipart.file.FileDataBodyPart;
 
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.web.service.IIdentityProvider;
 import fr.paris.lutece.plugins.identitystore.web.service.IdentityNotFoundException;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -98,7 +97,7 @@ abstract class AbstractIdentityRestClientService implements IIdentityProvider
     {
         AppLogService.debug( "Get identity attributes of " + strIdConnection );
 
-        checkInputParameters( strIdConnection, nCustomerId, strClientCode, strAuthenticationKey );
+        checkFetchParameters( strIdConnection, nCustomerId, strClientCode, strAuthenticationKey );
 
         Client client = Client.create(  );
         WebResource webResource = client.resource( AppPropertiesService.getProperty( 
@@ -150,62 +149,14 @@ abstract class AbstractIdentityRestClientService implements IIdentityProvider
     }
 
     /**
-     * check that parameters are correct, otherwise throws an AppException
-     * @param strIdConnection connection id
-     * @param nCustomerId customer id
-     * @param strClientCode client code
-     * @param strAuthenticationKey hash code
-     * @throws AppException when input parameters are not valid
-     */
-    private void checkInputParameters( String strIdConnection, int nCustomerId, String strClientCode,
-        String strAuthenticationKey ) throws AppException
-    {
-        if ( StringUtils.isEmpty( strIdConnection ) && ( nCustomerId == 0 ) )
-        {
-            throw new AppException( "missing parameters : connection Id or customer Id must be provided" );
-        }
-
-        if ( StringUtils.isEmpty( strClientCode ) )
-        {
-            throw new AppException( "missing parameters : client Application Code is mandatory" );
-        }
-
-        if ( StringUtils.isEmpty( strAuthenticationKey ) )
-        {
-            throw new AppException( "missing parameters : client Application strAuthenticationKey is mandatory" );
-        }
-    }
-
-    /**
-     * check that parameters are correct, otherwise throws an AppException
-     * @param strIdConnection connection id
-     * @param nCustomerId customer id
-     * @param strAttributeKey attribute Key
-     * @param strClientCode client code
-     * @param strAuthenticationKey hash code
-     * @throws AppException when input parameters are not valid
-     */
-    private void checkInputParameters( String strIdConnection, int nCustomerId, String strAttributeKey,
-        String strClientCode, String strAuthenticationKey )
-        throws AppException
-    {
-        if ( StringUtils.isEmpty( strAttributeKey ) )
-        {
-            throw new AppException( "missing parameters : attribute key must be provided" );
-        }
-
-        checkInputParameters( strIdConnection, nCustomerId, strClientCode, strAuthenticationKey );
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public ResponseDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey,
+    public IdentityDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey,
         List<File> listFiles )
     {
         AppLogService.debug( "Update identity attributes" );
-        checkInputParameters( identityChange, strAuthenticationKey );
+        checkUpdateParameters( identityChange, strAuthenticationKey );
 
         Client client = Client.create(  );
 
@@ -262,13 +213,13 @@ abstract class AbstractIdentityRestClientService implements IIdentityProvider
             }
         }
 
-        ResponseDto responseDto = null;
+        IdentityDto identityDto = null;
 
         if ( response.hasEntity(  ) && response.getType(  ).toString(  ).equals( MediaType.APPLICATION_JSON ) )
         {
             try
             {
-                responseDto = _mapper.readValue( response.getEntity( String.class ), ResponseDto.class );
+                identityDto = _mapper.readValue( response.getEntity( String.class ), IdentityDto.class );
             }
             catch ( IOException e )
             {
@@ -276,28 +227,7 @@ abstract class AbstractIdentityRestClientService implements IIdentityProvider
             }
         }
 
-        return responseDto;
-    }
-
-    /**
-     * check params
-     * @param identityChange identity change, ensure that author and identity are filled
-     * @param strAuthenticationKey hashcode
-     * @throws  AppException when input parameters are not valid
-     */
-    private void checkInputParameters( IdentityChangeDto identityChange, String strAuthenticationKey )
-        throws AppException
-    {
-        if ( ( identityChange == null ) || ( identityChange.getAuthor(  ) == null ) ||
-                ( identityChange.getIdentity(  ) == null ) )
-        {
-            throw new AppException( 
-                "missing parameters : provided identityChange object is invalid, check author and identity are filled" );
-        }
-
-        checkInputParameters( identityChange.getIdentity(  ).getConnectionId(  ),
-            identityChange.getIdentity(  ).getCustomerId(  ), identityChange.getAuthor(  ).getApplicationCode(  ),
-            strAuthenticationKey );
+        return identityDto;
     }
 
     /**
@@ -307,7 +237,8 @@ abstract class AbstractIdentityRestClientService implements IIdentityProvider
     public InputStream downloadFileAttribute( String strIdConnection, int nCustomerId, String strAttributeKey,
         String strClientAppCode, String strAuthenticationKey )
     {
-        checkInputParameters( strIdConnection, nCustomerId, strAttributeKey, strClientAppCode, strAuthenticationKey );
+        checkDownloadFileAttributeParams( strIdConnection, nCustomerId, strAttributeKey, strClientAppCode,
+            strAuthenticationKey );
 
         Client client = Client.create(  );
         WebResource webResource = client.resource( AppPropertiesService.getProperty( 
@@ -336,10 +267,10 @@ abstract class AbstractIdentityRestClientService implements IIdentityProvider
     /**
      * {@inheritDoc}
      */
-    public ResponseDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
+    public IdentityDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
     {
         AppLogService.debug( "Create identity" );
-        checkInputParameters( identityChange, strAuthenticationKey );
+        checkCreateParameters( identityChange, strAuthenticationKey );
 
         Client client = Client.create(  );
 
@@ -377,13 +308,13 @@ abstract class AbstractIdentityRestClientService implements IIdentityProvider
             throw new AppException( Constants.ERROR_MESSAGE + response.getStatus(  ) );
         }
 
-        ResponseDto responseDto = null;
+        IdentityDto identityDto = null;
 
         if ( response.hasEntity(  ) && response.getType(  ).toString(  ).equals( MediaType.APPLICATION_JSON ) )
         {
             try
             {
-                responseDto = _mapper.readValue( response.getEntity( String.class ), ResponseDto.class );
+                identityDto = _mapper.readValue( response.getEntity( String.class ), IdentityDto.class );
             }
             catch ( IOException e )
             {
@@ -391,6 +322,123 @@ abstract class AbstractIdentityRestClientService implements IIdentityProvider
             }
         }
 
-        return responseDto;
+        return identityDto;
+    }
+
+    /**
+     * check input parameters to get an identity
+     * @param strIdConnection connection id
+     * @param nCustomerId customer id
+     * @param strClientCode client code
+     * @param strAuthenticationKey hash code
+     * @throws AppException if the parameters are not valid
+     */
+    private void checkFetchParameters( String strIdConnection, int nCustomerId, String strClientCode,
+        String strAuthenticationKey ) throws AppException
+    {
+        checkIdentity( strIdConnection, nCustomerId );
+        checkClientApplication( strClientCode, strAuthenticationKey );
+    }
+
+    /**
+     * check input parameters to create an identity
+     * @param identityChange identity change, ensure that author and identity are filled
+     * @param strAuthenticationKey hashcode
+     * @throws  AppException if the parameters are not valid
+     */
+    private void checkCreateParameters( IdentityChangeDto identityChange, String strAuthenticationKey )
+        throws AppException
+    {
+        checkIdentityChange( identityChange );
+        checkClientApplication( identityChange.getAuthor(  ).getApplicationCode(  ), strAuthenticationKey );
+    }
+
+    /**
+     * check input parameters to update an identity
+     * @param identityChange identity change, ensure that author and identity are filled
+     * @param strAuthenticationKey hashcode
+     * @throws  AppException if the parameters are not valid
+     */
+    private void checkUpdateParameters( IdentityChangeDto identityChange, String strAuthenticationKey )
+        throws AppException
+    {
+        checkIdentityChange( identityChange );
+        checkIdentity( identityChange.getIdentity(  ).getConnectionId(  ),
+            identityChange.getIdentity(  ).getCustomerId(  ) );
+        checkClientApplication( identityChange.getAuthor(  ).getApplicationCode(  ), strAuthenticationKey );
+    }
+
+    /**
+     * check that parameters are valid, otherwise throws an AppException
+     * @param strIdConnection connection id
+     * @param nCustomerId customer id
+     * @param strAttributeKey attribute Key
+     * @param strClientCode client code
+     * @param strAuthenticationKey hash code
+     * @throws AppException if the parameters are not valid
+     */
+    private void checkDownloadFileAttributeParams( String strIdConnection, int nCustomerId, String strAttributeKey,
+        String strClientCode, String strAuthenticationKey )
+        throws AppException
+    {
+        if ( StringUtils.isEmpty( strAttributeKey ) )
+        {
+            throw new AppException( "missing parameters : attribute key must be provided" );
+        }
+
+        checkIdentity( strIdConnection, nCustomerId );
+        checkClientApplication( strClientCode, strAuthenticationKey );
+    }
+
+    /**
+     * check whether the parameters related to the identity are valid or not
+     * @param strIdConnection the connection id
+     * @param nCustomerId the customer id
+     * @throws AppException if the parameters are not valid
+     */
+    private void checkIdentity( String strIdConnection, int nCustomerId )
+        throws AppException
+    {
+        if ( StringUtils.isEmpty( strIdConnection ) && ( nCustomerId == 0 ) )
+        {
+            throw new AppException( "missing parameters : connection Id or customer Id must be provided" );
+        }
+    }
+
+    /**
+     * check whether the parameters related to the application are valid or not
+     * @param strClientCode the client code
+     * @param strAuthenticationKey the authentication key
+     * @throws AppException if the parameters are not valid
+     */
+    private void checkClientApplication( String strClientCode, String strAuthenticationKey )
+        throws AppException
+    {
+        if ( StringUtils.isEmpty( strClientCode ) )
+        {
+            throw new AppException( "missing parameters : client Application Code is mandatory" );
+        }
+
+        // FIXME : Uncomment this part when application code will be OK
+        //        if ( StringUtils.isEmpty( strAuthenticationKey ) )
+        //        {
+        //            throw new AppException( "missing parameters : client Application strAuthenticationKey is mandatory" );
+        //        }
+    }
+
+    /**
+     * check whether the parameters related to the identity change are valid or not
+     * @param identityChange the identity change
+     * @throws AppException if the parameters are not valid
+     */
+    private void checkIdentityChange( IdentityChangeDto identityChange )
+        throws AppException
+    {
+        if ( ( identityChange == null ) || ( identityChange.getAuthor(  ) == null ) ||
+                ( identityChange.getIdentity(  ) == null ) )
+        {
+            throw new AppException( 
+                "missing parameters : provided identityChange object is invalid, check author and identity are filled" );
+        }
     }
 }
