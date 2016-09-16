@@ -33,16 +33,18 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.rs.service;
 
-import java.io.InputStream;
-import java.util.Map;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
-
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
 import fr.paris.lutece.portal.service.util.AppException;
+
+import org.apache.commons.fileupload.FileItem;
+
+import org.apache.log4j.Logger;
+
+import java.io.InputStream;
+
+import java.util.Map;
 
 
 /**
@@ -50,62 +52,57 @@ import fr.paris.lutece.portal.service.util.AppException;
  */
 public class MockIdentityTransportRest extends AbstractIdentityTransportRest
 {
-	private static Logger _logger = Logger.getLogger( MockIdentityTransportRest.class );
-	
-	
-	
+    private static Logger _logger = Logger.getLogger( MockIdentityTransportRest.class );
+
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, int nCustomerId, String strClientCode, String strAuthenticationKey )
-            throws IdentityNotFoundException, AppException
+    public IdentityDto getIdentity( String strIdConnection, int nCustomerId, String strClientCode,
+        String strAuthenticationKey ) throws IdentityNotFoundException, AppException
     {
-	    _logger.debug( "MockIdentityTransportRest.getIdentity return null and is ok" );
-	    return null;
+        _logger.debug( "MockIdentityTransportRest.getIdentity return null and is ok" );
+
+        return null;
     }
 
-
-
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey, Map<String, FileItem> mapFileItem )
-            throws IdentityNotFoundException, AppException
+    public IdentityDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey,
+        Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException
     {
-    	_logger.debug( "MockIdentityTransportRest.updateIdentity return null and is ok" );
-	    return null;
+        _logger.debug( "MockIdentityTransportRest.updateIdentity return null and is ok" );
+
+        return null;
     }
 
-
-
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public InputStream downloadFileAttribute( String strIdConnection, int nCustomerId, String strAttributeKey, String strClientAppCode,
-            String strAuthenticationKey )
+    public InputStream downloadFileAttribute( String strIdConnection, int nCustomerId, String strAttributeKey,
+        String strClientAppCode, String strAuthenticationKey )
     {
-    	_logger.debug( "MockIdentityTransportRest.downloadFileAttribute return null and is ok" );
-	    return null;
+        _logger.debug( "MockIdentityTransportRest.downloadFileAttribute return null and is ok" );
+
+        return null;
     }
 
-
-
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public IdentityDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey ) throws IdentityNotFoundException, AppException
+    public IdentityDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
+        throws IdentityNotFoundException, AppException
     {
-    	_logger.debug( "MockIdentityTransportRest. return null and is ok" );
-	    return null;
+        _logger.debug( "MockIdentityTransportRest. return null and is ok" );
+
+        return null;
     }
 
-
-
-	/**
+    /**
      * {@inheritDoc}
      */
     @Override

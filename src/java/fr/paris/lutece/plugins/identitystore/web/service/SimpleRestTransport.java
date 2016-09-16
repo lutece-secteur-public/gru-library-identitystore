@@ -33,16 +33,8 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
-
-import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
@@ -54,6 +46,17 @@ import com.sun.jersey.multipart.file.FileDataBodyPart;
 
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.plugins.identitystore.web.rs.service.Constants;
+
+import org.apache.commons.fileupload.FileItem;
+
+import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
+
+import java.util.Map;
+
+import javax.ws.rs.core.MediaType;
 
 
 /**
@@ -203,7 +206,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
 
             if ( response.getStatus(  ) == Status.NOT_FOUND.getStatusCode(  ) )
             {
-            	throw new IdentityNotFoundException(  );
+                throw new IdentityNotFoundException(  );
             }
             else if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
             {
@@ -229,6 +232,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
         {
             handleException( e );
         }
+
         return oResponse;
     }
 
@@ -270,20 +274,19 @@ public class SimpleRestTransport implements IHttpTransportProvider
             {
                 FileItem fileItem = mapFiles.get( strKey );
                 File file = new File( fileItem.getName(  ) );
-                
+
                 //TODO test it 
                 FileDataBodyPart filePart = new FileDataBodyPart( strKey, file );
                 formParams.field( strKey, fileItem.getName(  ) );
                 formParams.bodyPart( filePart );
-
             }
         }
 
         ClientResponse response = builder.post( ClientResponse.class, formParams );
 
-        if ( response.getStatus(  ) == Status.NOT_FOUND.getStatusCode(  )  )
+        if ( response.getStatus(  ) == Status.NOT_FOUND.getStatusCode(  ) )
         {
-        	throw new IdentityNotFoundException(  );
+            throw new IdentityNotFoundException(  );
         }
         else if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
         {
@@ -296,7 +299,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
         }
         catch ( UniformInterfaceException e )
         {
-        	handleException( e );
+            handleException( e );
         }
         catch ( ClientHandlerException e )
         {

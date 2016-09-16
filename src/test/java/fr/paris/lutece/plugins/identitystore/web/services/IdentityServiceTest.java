@@ -33,21 +33,6 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.services;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.log4j.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -61,6 +46,27 @@ import fr.paris.lutece.plugins.identitystore.web.rs.service.MockIdentityTranspor
 import fr.paris.lutece.plugins.identitystore.web.service.IdentityService;
 import fr.paris.lutece.util.httpaccess.HttpAccessService;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+
+import org.apache.log4j.Logger;
+
+import org.junit.Test;
+
+import org.junit.runner.RunWith;
+
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.io.File;
+import java.io.IOException;
+
+import java.nio.charset.Charset;
+
+import java.util.HashMap;
+
+import javax.annotation.Resource;
+
 
 /**
  * test of NotificationService
@@ -72,8 +78,7 @@ import fr.paris.lutece.util.httpaccess.HttpAccessService;
  )
 public class IdentityServiceTest
 {
-	private static Logger _logger = Logger.getLogger( IdentityServiceTest.class );
-	
+    private static Logger _logger = Logger.getLogger( IdentityServiceTest.class );
     @Resource( name = "testIdentityService.api.simpleRest" )
     private IdentityService _identityServiceApiSimpleRest;
     @Resource( name = "testIdentityService.api.httpAccess" )
@@ -84,7 +89,6 @@ public class IdentityServiceTest
     private IdentityService _identityServiceRestHttpAccess;
     @Resource( name = "testIdentityServiceMock" )
     private IdentityService _identityServiceMock;
-    
     private IdentityDto _identity;
 
     /**
@@ -99,10 +103,8 @@ public class IdentityServiceTest
         ObjectMapper mapper = new ObjectMapper(  );
         mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
         mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
-        
-        _identity = mapper.readValue( getClass(  ).getResourceAsStream( "/identity.json" ),
-                IdentityDto.class );
 
+        _identity = mapper.readValue( getClass(  ).getResourceAsStream( "/identity.json" ), IdentityDto.class );
 
         //Init HttpAccess singleton through NPE exception due of lack of properties access
         try
@@ -171,10 +173,10 @@ public class IdentityServiceTest
 
         //default mockTransport.httpTransport set with simpleRest
         IdentityService identityServiceNoSpring = new IdentityService( mockTransport );
-        
+
         callServiceMethod( identityServiceNoSpring, "identityServiceNoSpring" );
     }
-    
+
     /**
      * full test of service methods
      * @param identityServiceTesting the service to test
@@ -182,41 +184,44 @@ public class IdentityServiceTest
      */
     private void callServiceMethod( IdentityService identityServiceTesting, String messagePrefix )
     {
-    	AuthorDto author = new AuthorDto(  );
-    	author.setApplicationCode( "MyDashboard" );
-    	author.setApplicationName( "My dashboard" );
-    	author.setEmail( "admin-mydashboard@test.com" );
-    	author.setType( 1 );
-    	author.setUserName( "admin-mydashboard" );
-    	IdentityChangeDto identChange = new IdentityChangeDto(  );
-    	identChange.setAuthor( author );
-    	identChange.setIdentity( _identity );
-    	
-    	//test getIdentity
-    	identityServiceTesting.getIdentity( 1560, "MyDashboard", "rzerzereE32R5§4ER" );
-    	identityServiceTesting.getIdentity( "connecID", "MyDashboard", "rzerzereE32R5§4ER" );
-    	
-    	//test updateIdentity
-    	FileItem fileItem = new DiskFileItem( "myFile", "text/plain", false, "test.txt", 1024, new File( getClass(  ).getResource( "/" ).getFile(  ) ) );
-    	try
-        {
-	        fileItem.getOutputStream(  ).write( ( "Hello" ).getBytes( Charset.forName( "UTF-8" ) ) );
-        }
-    	catch ( IOException e )
-        {
-	        // TODO Auto-generated catch block
-    		_logger.error( messagePrefix+" - error while writing to file item", e );
-        }
-    	HashMap<String, FileItem> mapFileItems = new HashMap<String, FileItem>(  );
-    	mapFileItems.put( "myFile", fileItem );
-    	identityServiceTesting.updateIdentity( identChange, "qsdfgh65432$", mapFileItems );
-    	
-    	//test createIdentity
-    	identityServiceTesting.createIdentity( identChange, "qsdfgh65432$" );
-    	
-    	//test downloadFileAttribute
-    	//TODO
-    	//identityServiceTesting.downloadFileAttribute( "connecID", 1560, "attr_key", "MyDashboard", "qsdfgh65432$" );
+        AuthorDto author = new AuthorDto(  );
+        author.setApplicationCode( "MyDashboard" );
+        author.setApplicationName( "My dashboard" );
+        author.setEmail( "admin-mydashboard@test.com" );
+        author.setType( 1 );
+        author.setUserName( "admin-mydashboard" );
 
+        IdentityChangeDto identChange = new IdentityChangeDto(  );
+        identChange.setAuthor( author );
+        identChange.setIdentity( _identity );
+
+        //test getIdentity
+        identityServiceTesting.getIdentity( 1560, "MyDashboard", "rzerzereE32R5§4ER" );
+        identityServiceTesting.getIdentity( "connecID", "MyDashboard", "rzerzereE32R5§4ER" );
+
+        //test updateIdentity
+        FileItem fileItem = new DiskFileItem( "myFile", "text/plain", false, "test.txt", 1024,
+                new File( getClass(  ).getResource( "/" ).getFile(  ) ) );
+
+        try
+        {
+            fileItem.getOutputStream(  ).write( ( "Hello" ).getBytes( Charset.forName( "UTF-8" ) ) );
+        }
+        catch ( IOException e )
+        {
+            // TODO Auto-generated catch block
+            _logger.error( messagePrefix + " - error while writing to file item", e );
+        }
+
+        HashMap<String, FileItem> mapFileItems = new HashMap<String, FileItem>(  );
+        mapFileItems.put( "myFile", fileItem );
+        identityServiceTesting.updateIdentity( identChange, "qsdfgh65432$", mapFileItems );
+
+        //test createIdentity
+        identityServiceTesting.createIdentity( identChange, "qsdfgh65432$" );
+
+        //test downloadFileAttribute
+        //TODO
+        //identityServiceTesting.downloadFileAttribute( "connecID", 1560, "attr_key", "MyDashboard", "qsdfgh65432$" );
     }
 }

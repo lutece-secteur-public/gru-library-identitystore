@@ -33,17 +33,6 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.service;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.log4j.Logger;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,6 +42,21 @@ import fr.paris.lutece.plugins.identitystore.web.rs.service.Constants;
 import fr.paris.lutece.util.httpaccess.HttpAccess;
 import fr.paris.lutece.util.httpaccess.HttpAccessException;
 import fr.paris.lutece.util.httpaccess.HttpAccessStatus;
+
+import org.apache.commons.fileupload.FileItem;
+
+import org.apache.http.client.utils.URIBuilder;
+
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+
+import java.net.URISyntaxException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -163,14 +167,14 @@ public class HttpAccessTransport implements IHttpTransportProvider
         }
         catch ( HttpAccessException e )
         {
-        	if( HttpAccessStatus.NOT_FOUND.equals( e.getResponseCode(  ) ) )
-        	{
-        		throw new IdentityNotFoundException(  );
-        	}
-        	else
-        	{
-        		handleException( e );
-        	}
+            if ( HttpAccessStatus.NOT_FOUND.equals( e.getResponseCode(  ) ) )
+            {
+                throw new IdentityNotFoundException(  );
+            }
+            else
+            {
+                handleException( e );
+            }
         }
 
         return oResponse;
@@ -192,7 +196,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
             {
                 for ( String strParamKey : mapParams.keySet(  ) )
                 {
-                	//HttpAccess allow to post for a given param a list of value
+                    //HttpAccess allow to post for a given param a list of value
                     List<String> listParam = new ArrayList<String>(  );
                     listParam.add( mapParams.get( strParamKey ) );
                     params.put( strParamKey, listParam );
@@ -221,14 +225,14 @@ public class HttpAccessTransport implements IHttpTransportProvider
         }
         catch ( HttpAccessException e )
         {
-        	if( HttpAccessStatus.NOT_FOUND.equals( e.getResponseCode(  ) ) )
-        	{
-        		throw new IdentityNotFoundException(  );
-        	}
-        	else
-        	{
-        		handleException( e );
-        	}
+            if ( HttpAccessStatus.NOT_FOUND.equals( e.getResponseCode(  ) ) )
+            {
+                throw new IdentityNotFoundException(  );
+            }
+            else
+            {
+                handleException( e );
+            }
         }
 
         return oResponse;

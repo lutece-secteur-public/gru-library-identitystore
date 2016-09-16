@@ -48,14 +48,17 @@ import fr.paris.lutece.portal.service.util.AppException;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.log4j.Logger;
 
 import java.io.InputStream;
+
 import java.util.HashMap;
 import java.util.Map;
 
+
 /**
- * 
+ *
  */
 abstract class AbstractIdentityTransportRest implements IIdentityTransportProvider
 {
@@ -162,8 +165,8 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
             throw new IdentityStoreException( strError, e );
         }
 
-        IdentityDto identityDto = _httpTransport.doPostMultiPart( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH + Constants.UPDATE_IDENTITY_PATH,
-                mapParams, mapHeadersRequest, mapFileItem, IdentityDto.class, _mapper );
+        IdentityDto identityDto = _httpTransport.doPostMultiPart( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH +
+                Constants.UPDATE_IDENTITY_PATH, mapParams, mapHeadersRequest, mapFileItem, IdentityDto.class, _mapper );
 
         return identityDto;
     }
@@ -243,8 +246,8 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
             throw new IdentityStoreException( strError, e );
         }
 
-        IdentityDto identityDto = _httpTransport.doPostMultiPart( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH + Constants.CREATE_IDENTITY_PATH ,
-                mapParams, mapHeadersRequest, null, IdentityDto.class, _mapper );
+        IdentityDto identityDto = _httpTransport.doPostMultiPart( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH +
+                Constants.CREATE_IDENTITY_PATH, mapParams, mapHeadersRequest, null, IdentityDto.class, _mapper );
 
         return identityDto;
     }
