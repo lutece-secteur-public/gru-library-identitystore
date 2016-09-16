@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Library library-identitystore</title>
+    </properties>
+    <body>
+        <section name="Plugin library-identitystore">
+            <subsection name="Introduction">
+                <p>Cette librairie permet de dialoguer avec les services REST identityStore.</p>
+            </subsection>
+            <subsection name="Configuration">
+                <p>
+                 La configuration <b>obligatoire</b> est à définir dans votre application.
+                </p>
+                <p>
+                    Le service principal est de type "fr.paris.lutece.plugins.identitystore.web.service.IdentityService" qui met à disposition les points d'entrée vers identityStore.
+                    Il nécessite une implémentation de "fr.paris.lutece.plugins.identitystore.web.service.IIdentityTransportProvider" qui défini le transfert vers le service REST.
+                    La librairie met à disposition deux implementation de cette interface :
+                    <ul>
+                        <li>fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportApiManagerRest, qui utilise l'ApiManager WSO2</li>
+                        <li>fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest, qui effectue la requête sans gestion de token</li>
+                    </ul>
+                </p>
+                <p>
+                    Ces deux implémentations nécessitent la définition de l'URL d'accès au service identityStore sous la propriété <b>identityStoreEndPoint</b>.
+                    De plus l'utilisation de l'ApiManager nécessite la définition de l'URL de gestion du token sous la propriété <b>apiManagerEndPoint</b>.
+                </p>
+                <p>                
+                    Enfin, ces deux implémentations sont définies par défaut pour effectuer leur requête vi le composant HttpAccess de library-httpaccess.
+                    Si ce n'est pas nécessaire il faut surcharger la définition de la propriété <b>httpTransport</b> par un objet implémentant l'interface "fr.paris.lutece.plugins.identitystore.web.service.IHttpTransportProvider". 
+                </p>
+            </subsection>
+            <subsection name="Exemples de configuration spring">
+                <p>
+                    <b>Utilisation ApiManager via HttpAccess</b>
+                    <pre>
+&lt;bean id="apiTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportApiManagerRest"&gt;
+    &lt;property name="identityStoreEndPoint"&gt;
+        &lt;value&gt;http://mydomain.com:8080/rest/identitystore&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property name="apiManagerEndPoint"&gt;
+        &lt;value&gt;http://mydomain.com:8080/rest/token&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+&lt;bean id="identitystoreService.api.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService"&gt;
+    &lt;constructor-arg ref="apiTransport.httpAccess"/&gt;
+&lt;/bean&gt;
+                    </pre>
+                </p>
+                <p>
+                    <b>Utilisation sans ApiManager via requête simple</b>
+                    <pre>
+&lt;bean id="simpleRestTransport" class="fr.paris.lutece.plugins.identitystore.web.service.SimpleRestTransport" /&gt;
+&lt;bean id="restTransport.simpleRest" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest"&gt;
+    &lt;property name="notificationEndPoint"&gt;
+        &lt;value&gt;http://mydomain.com:8080/rest/identitystore&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property name="httpTransport"&gt;
+        &lt;ref bean="simpleRestTransport"/&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+&lt;bean id="identitystoreService.rest.simpleRest" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService"&gt;
+    &lt;constructor-arg ref="restTransport.simpleRest"/&gt;
+&lt;/bean&gt;
+                    </pre>
+                </p>
+            </subsection>
+        </section>
+    </body>
+</document>
+

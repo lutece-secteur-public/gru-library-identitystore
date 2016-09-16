@@ -39,7 +39,6 @@ import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
 import fr.paris.lutece.portal.service.util.AppException;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.InputStream;
 
@@ -47,84 +46,10 @@ import java.util.Map;
 
 
 /**
- * IdentityService
+ *  Interface for providing identity transport
  */
-public class IdentityService
+public interface IIdentityTransportProvider
 {
-    private static final int NO_CUSTOMER_ID = 0;
-
-    /** transport provider */
-    private IIdentityTransportProvider _transportProvider;
-
-    /**
-     * Simple Constructor
-     */
-    public IdentityService(  )
-    {
-        super(  );
-    }
-
-    /**
-     * Constructor with IIdentityTransportProvider in parameters
-     * @param transportProvider IIdentityTransportProvider
-     */
-    public IdentityService( IIdentityTransportProvider transportProvider )
-    {
-        super(  );
-        this._transportProvider = transportProvider;
-    }
-
-    /**
-     * setter of transportProvider parameter
-     * @param transportProvider IIdentityTransportProvider
-     */
-    public void setTransportProvider( IIdentityTransportProvider transportProvider )
-    {
-        this._transportProvider = transportProvider;
-    }
-
-    /**
-     * get identity matching connectionId for provided application code
-     *
-     * @param strConnectionId
-     *          connection Id
-     * @param strApplicationCode
-     *          application code of calling application
-     * @param strHash client application hash code
-     * @return identity if found
-     * @throws IdentityNotFoundException
-     *           if no identity found for input parameters
-     * @throws AppException
-     *           if inconsitent parmeters provided, or errors occurs...
-     *
-     */
-    public IdentityDto getIdentity( String strConnectionId, String strApplicationCode, String strHash )
-        throws IdentityNotFoundException, AppException
-    {
-        return getIdentity( strConnectionId, NO_CUSTOMER_ID, strApplicationCode, strHash );
-    }
-
-    /**
-     * get identity matching customerId for provided application code
-     *
-     * @param nCustomerId
-     *          customer Id
-     * @param strApplicationCode
-     *          application code of calling application
-     * @param strHash client application hash code
-     * @return identity if found
-     * @throws IdentityNotFoundException
-     *           if no identity found for input parameters
-     * @throws AppException
-     *           if inconsitent parmeters provided, or errors occurs...
-     *
-     */
-    public IdentityDto getIdentity( int nCustomerId, String strApplicationCode, String strHash )
-        throws IdentityNotFoundException, AppException
-    {
-        return getIdentity( StringUtils.EMPTY, nCustomerId, strApplicationCode, strHash );
-    }
-
     /**
      * get identity matching connectionId and customerId for provided application
      * code
@@ -143,11 +68,8 @@ public class IdentityService
      *           if inconsitent parmeters provided, or errors occurs...
      *
      */
-    public IdentityDto getIdentity( String strConnectionId, int nCustomerId, String strApplicationCode, String strHash )
-        throws IdentityNotFoundException, AppException
-    {
-        return _transportProvider.getIdentity( strConnectionId, nCustomerId, strApplicationCode, strHash );
-    }
+    IdentityDto getIdentity( String strConnectionId, int nCustomerId, String strApplicationCode, String strHash )
+        throws IdentityNotFoundException, AppException;
 
     /**
      * apply changes to an identity
@@ -155,18 +77,15 @@ public class IdentityService
      * @param identityChange
      *          change to apply to identity
      * @param strAuthenticationKey client authentication key
-     * @param mapFiles fileitem map to upload
+     * @param mapFileItem  file map to upload
      * @return the updated identity
      * @throws AppException
      *           if error occured while updating identity
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
      */
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey,
-        Map<String, FileItem> mapFiles ) throws IdentityNotFoundException, AppException
-    {
-        return _transportProvider.updateIdentity( identityChange, strAuthenticationKey, mapFiles );
-    }
+    IdentityDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey,
+        Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException;
 
     /**
      * create identity
@@ -179,11 +98,8 @@ public class IdentityService
      * @throws AppException
      *           if error occured while updating identity
      */
-    public IdentityDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
-        throws AppException
-    {
-        return _transportProvider.createIdentity( identityChange, strAuthenticationKey );
-    }
+    IdentityDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
+        throws AppException;
 
     /**
      *
@@ -201,10 +117,6 @@ public class IdentityService
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
      */
-    public InputStream downloadFileAttribute( String strConnectionId, int nCustomerId, String strAttributeKey,
-        String strClientAppCode, String strAuthenticationKey )
-    {
-        return _transportProvider.downloadFileAttribute( strConnectionId, nCustomerId, strAttributeKey,
-            strClientAppCode, strAuthenticationKey );
-    }
+    InputStream downloadFileAttribute( String strConnectionId, int nCustomerId, String strAttributeKey,
+        String strClientAppCode, String strAuthenticationKey );
 }

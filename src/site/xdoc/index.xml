@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Library library-identitystore</title>
+    </properties>
+    <body>
+        <section name="Plugin library-identitystore">
+            <subsection name="Introduction">
+                <p>This library provided a service for dialog with identitystore REST services.</p>
+            </subsection>
+            <subsection name="Configuration">
+                <p>
+                    <b>Mandatory</b> configuration has to be defined in your application.
+                </p>
+                <p>
+                Main service type is "fr.paris.lutece.plugins.identitystore.web.service.IdentityService" which give methods for calling identityStore.
+                It required an implementation of "fr.paris.lutece.plugins.identitystore.web.service.IIdentityTransportProvider" for defining REST service call.
+                Two implementation of this interface are given in the library :
+                <ul>
+                    <li>fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportApiManagerRest, which use ApiManager WSO2</li>
+                    <li>fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest, which use simple request without token management</li>
+                </ul>
+                </p>
+                <p>
+                These two implementations require URL definition of the identityStore service end point in property <b>identityStoreEndPoint</b>.
+                Moreover ApiManager requires URL definition of the token service end point in property <b>apiManagerEndPoint</b>.                
+                </p>
+                <p>
+                Finally, These two implementations are defined to make request with HttpAccess component of library-httpaccess.
+                If it's not needed, the property <b>httpTransport</b> has to be overwritten by an implementation of "fr.paris.lutece.plugins.identitystore.web.service.IHttpTransportProvider" interface. 
+                </p>
+            </subsection>
+            <subsection name="Examples of Spring configuration">
+                <p>
+                    <b>Use ApiManager through HttpAccess</b>
+                    <pre>
+&lt;bean id="apiTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportApiManagerRest"&gt;
+    &lt;property name="identityStoreEndPoint"&gt;
+        &lt;value&gt;http://mydomain.com:8080/rest/identitystore&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property name="apiManagerEndPoint"&gt;
+        &lt;value&gt;http://mydomain.com:8080/rest/token&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+&lt;bean id="identitystoreService.api.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService"&gt;
+    &lt;constructor-arg ref="apiTransport.httpAccess"/&gt;
+&lt;/bean&gt;
+                    </pre>
+                </p>
+                <p>
+                    <b>Use without ApiManager through simple request</b>
+                    <pre>
+&lt;bean id="simpleRestTransport" class="fr.paris.lutece.plugins.identitystore.web.service.SimpleRestTransport" /&gt;
+&lt;bean id="restTransport.simpleRest" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest"&gt;
+    &lt;property name="notificationEndPoint"&gt;
+        &lt;value&gt;http://mydomain.com:8080/rest/identitystore&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property name="httpTransport"&gt;
+        &lt;ref bean="simpleRestTransport"/&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+&lt;bean id="identitystoreService.rest.simpleRest" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService"&gt;
+    &lt;constructor-arg ref="restTransport.simpleRest"/&gt;
+&lt;/bean&gt;
+                    </pre>
+                </p>
+            </subsection>
+        </section>
+    </body>
+</document>
+

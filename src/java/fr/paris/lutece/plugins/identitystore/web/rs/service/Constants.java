@@ -41,6 +41,9 @@ package fr.paris.lutece.plugins.identitystore.web.rs.service;
 public final class Constants
 {
     public static final String IDENTITY_PATH = "identity/";
+    public static final String DOWNLOAD_FILE_PATH = "file/";
+    public static final String UPDATE_IDENTITY_PATH = "update/";
+    public static final String CREATE_IDENTITY_PATH = "create/";
     public static final String PARAM_ID_CONNECTION = "connection_id";
     public static final String PARAM_ID_CUSTOMER = "customer_id";
     public static final String PARAM_CLIENT_CODE = "client_code";
@@ -48,19 +51,10 @@ public final class Constants
     public static final String PARAM_ATTRIBUTE_KEY = "attribute_key";
     public static final String PARAM_CLIENT_CONTROL_KEY = "client_control_key";
     public static final String PLUGIN_PATH = "identitystore/";
-    public static final String URL_IDENTITYSTORE_ENDPOINT = "library.identitystore.urlIdentityStoreEndpoint";
+    public static final String RESPONSE_OK = "OK";
+    public static final String PARAM_IDENTITY_CHANGE = "identityChange";
     public static final String ERROR_FIELD_MISSING = "FIELD_MISSING";
     public static final String ERROR_FIELD_PERMISSION = "FIELD_PERMISION_ERROR";
-    public static final String RESPONSE_OK = "OK";
-
-    /* API MANAGER CONNEXION CONSTANTS */
-
-    /** The Constant URL_NOTIFICATION_ENDPOINT. */
-    //URL
-    public static final String URL_NOTIFICATION_ENDPOINT = "library-identitystore.urlNotificationEndpoint";
-
-    /** The Constant URL_TOKEN. */
-    public static final String URL_TOKEN = "library-identitystore.urlApiManager";
 
     /** The Constant TYPE_AUTHENTIFICATION. */
     public static final String TYPE_AUTHENTIFICATION = "Bearer";
@@ -75,8 +69,11 @@ public final class Constants
     public static final String PARAMS_GRANT_TYPE_VALUE = "client_credentials";
 
     /** The Constant CONTENT_FORMAT. */
-    //CONTENT FORMAT
-    public static final String CONTENT_FORMAT = "application/json; charset=utf-8";
+    public static final String CONTENT_FORMAT_CHARSET = "application/json; charset=utf-8";
+    public static final String CONTENT_FORMAT = "application/json";
+    public static final String CONTENT_FORMAT_MULTIPART = "multipart/form-data";
+    public static final String PROPERTY_HEADER_CONTENT_TYPE = "Content-Type";
+    public static final String PROPERTY_HEADER_ACCEPT_TYPE = "Accept";
 
     /** The Constant CONTENT_FORMAT_TOKEN. */
     public static final String CONTENT_FORMAT_TOKEN = "application/x-www-form-urlencoded";

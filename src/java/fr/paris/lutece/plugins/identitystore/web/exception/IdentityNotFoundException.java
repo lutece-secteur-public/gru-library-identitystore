@@ -31,21 +31,49 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.web.rs.service;
+package fr.paris.lutece.plugins.identitystore.web.exception;
 
-import com.sun.jersey.api.client.WebResource.Builder;
-
-import fr.paris.lutece.plugins.identitystore.web.service.IIdentityProvider;
+import fr.paris.lutece.portal.service.util.AppException;
 
 
 /**
- * IdentityRestClientService
+ *
+ * Exception thrown when no identity is found during a query
+ *
  */
-public final class IdentityRestClientService extends AbstractIdentityRestClientService implements IIdentityProvider
+public class IdentityNotFoundException extends AppException
 {
-    @Override
-    protected void addAuthentication( Builder builder, String strAuthenticationKey )
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Constructor 1
+     *
+     * @param strMessage
+     *          The error message
+     */
+    public IdentityNotFoundException( String strMessage )
     {
-        //no authentication for simple rest client       
+        super( strMessage );
+    }
+
+    /**
+     * Constructor 2
+     *
+     * @param strMessage
+     *          The error message
+     * @param e
+     *          The initial exception
+     */
+    public IdentityNotFoundException( String strMessage, Exception e )
+    {
+        super( strMessage, e );
+    }
+
+    /**
+     * Constructor 3
+     */
+    public IdentityNotFoundException(  )
+    {
+        super(  );
     }
 }

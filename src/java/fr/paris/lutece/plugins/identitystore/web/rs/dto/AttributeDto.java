@@ -54,7 +54,7 @@ import java.util.Date;
     DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED,
     DtoFormatConstants.KEY_ATTRIBUTE_READABLE,
     DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE,
-    DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIABLE,
+    DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED,
     DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE,
     DtoFormatConstants.KEY_ATTRIBUTE_CERTIFICATE,
 } )
