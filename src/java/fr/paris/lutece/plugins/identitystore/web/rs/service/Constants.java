@@ -55,6 +55,7 @@ public final class Constants
     public static final String PARAM_IDENTITY_CHANGE = "identityChange";
     public static final String ERROR_FIELD_MISSING = "FIELD_MISSING";
     public static final String ERROR_FIELD_PERMISSION = "FIELD_PERMISION_ERROR";
+    public static final String PARAMETER_NAME = "name";
 
     /** The Constant TYPE_AUTHENTIFICATION. */
     public static final String TYPE_AUTHENTIFICATION = "Bearer";
@@ -80,6 +81,7 @@ public final class Constants
 
     // HTTP ERROR MESSAGE
     public static final String ERROR_MESSAGE = "Failed : HTTP error code : ";
+    public static final int NO_CUSTOMER_ID = 0;
 
     /**
      * Default constructor

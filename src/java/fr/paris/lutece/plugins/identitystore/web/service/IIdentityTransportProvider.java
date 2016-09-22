@@ -88,7 +88,12 @@ public interface IIdentityTransportProvider
         Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException;
 
     /**
-     * create identity
+     * Creates an identity <b>only if the identity does not already exist</b>.<br/>
+     * The identity is created from the provided attributes.
+     * <br/><br/>
+     * The order to test if the identity exists:
+     * <ul><li>by using the provided customer id if present</li>
+     * <li>by using the provided connection id if present</li></ul>
      *
      * @param identityChange
      *          change to apply to identity
@@ -96,7 +101,7 @@ public interface IIdentityTransportProvider
      * @return the created identity
      *
      * @throws AppException
-     *           if error occured while updating identity
+     *           if error occurred while updating identity
      */
     IdentityDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
         throws AppException;

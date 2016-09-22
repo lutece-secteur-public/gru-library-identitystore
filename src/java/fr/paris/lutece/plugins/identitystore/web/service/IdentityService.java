@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.identitystore.web.service;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
+import fr.paris.lutece.plugins.identitystore.web.rs.service.Constants;
 import fr.paris.lutece.portal.service.util.AppException;
 
 import org.apache.commons.fileupload.FileItem;
@@ -51,8 +52,6 @@ import java.util.Map;
  */
 public class IdentityService
 {
-    private static final int NO_CUSTOMER_ID = 0;
-
     /** transport provider */
     private IIdentityTransportProvider _transportProvider;
 
@@ -101,7 +100,7 @@ public class IdentityService
     public IdentityDto getIdentity( String strConnectionId, String strApplicationCode, String strHash )
         throws IdentityNotFoundException, AppException
     {
-        return getIdentity( strConnectionId, NO_CUSTOMER_ID, strApplicationCode, strHash );
+        return getIdentity( strConnectionId, Constants.NO_CUSTOMER_ID, strApplicationCode, strHash );
     }
 
     /**
@@ -169,7 +168,12 @@ public class IdentityService
     }
 
     /**
-     * create identity
+     * Creates an identity <b>only if the identity does not already exist</b>.<br/>
+     * The identity is created from the provided attributes.
+     * <br/><br/>
+     * The order to test if the identity exists:
+     * <ul><li>by using the provided customer id if present</li>
+     * <li>by using the provided connection id if present</li></ul>
      *
      * @param identityChange
      *          change to apply to identity
