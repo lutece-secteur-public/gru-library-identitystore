@@ -58,8 +58,8 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, int nCustomerId, String strClientCode,
-        String strAuthenticationKey ) throws IdentityNotFoundException, AppException
+    public IdentityDto getIdentity( String strIdConnection, int nCustomerId, String strClientCode )
+        throws IdentityNotFoundException, AppException
     {
         _logger.debug( "MockIdentityTransportRest.getIdentity return null and is ok" );
 
@@ -70,8 +70,8 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey,
-        Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException
+    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem )
+        throws IdentityNotFoundException, AppException
     {
         _logger.debug( "MockIdentityTransportRest.updateIdentity return null and is ok" );
 
@@ -83,7 +83,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      */
     @Override
     public InputStream downloadFileAttribute( String strIdConnection, int nCustomerId, String strAttributeKey,
-        String strClientAppCode, String strAuthenticationKey )
+        String strClientAppCode )
     {
         _logger.debug( "MockIdentityTransportRest.downloadFileAttribute return null and is ok" );
 
@@ -94,7 +94,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
+    public IdentityDto createIdentity( IdentityChangeDto identityChange )
         throws IdentityNotFoundException, AppException
     {
         _logger.debug( "MockIdentityTransportRest. return null and is ok" );
@@ -106,7 +106,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    protected void addAuthentication( Map<String, String> mapHeadersRequest, String strAuthenticationKey )
+    protected void addAuthentication( Map<String, String> mapHeadersRequest )
     {
         //no authentication for mock   
     }

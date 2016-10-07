@@ -46,6 +46,9 @@ import org.apache.log4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
 
 /**
  * IdentityRestClientService
@@ -54,19 +57,19 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
     implements IIdentityTransportProvider
 {
     /** The Constant PARAMS_ACCES_TOKEN. */
-    public static final String PARAMS_ACCES_TOKEN = "access_token";
-    public static final String AUTHORIZATION = "Authorization";
-    public static final String TYPE_AUTHENTIFICATION = "Bearer";
+    private static final String PARAMS_ACCES_TOKEN = "access_token";
+    private static final String TYPE_AUTHENTIFICATION = "Bearer";
 
     /** The Constant PARAMS_GRANT_TYPE. */
-    public static final String PARAMS_GRANT_TYPE = "grant_type";
+    private static final String PARAMS_GRANT_TYPE = "grant_type";
 
     /** The Constant PARAMS_GRANT_TYPE_VALUE. */
-    public static final String PARAMS_GRANT_TYPE_VALUE = "client_credentials";
+    private static final String PARAMS_GRANT_TYPE_VALUE = "client_credentials";
     private static Logger _logger = Logger.getLogger( IdentityTransportApiManagerRest.class );
 
     /** URL for REST service apiManager */
     private String _strApiManagerEndPoint;
+    private String _strApiManagerCredentials;
 
     /**
          * Simple Constructor
@@ -87,14 +90,21 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
     }
 
     /**
-     * Gets the security token according to the given credentials
-     *
-     * @param strAuthenticationKey the key of properties credentials to use
+     * Sets the API Manager credentials
+     * @param strApiManagerCredentials the API Manager credentials
+     */
+    public void setApiManagerCredentials( String strApiManagerCredentials )
+    {
+        this._strApiManagerCredentials = strApiManagerCredentials;
+    }
+
+    /**
+     * Gets the security token from API Manager
      * @return the token
      */
-    private String getToken( String strAuthenticationKey )
+    private String getToken(  )
     {
-        String strToken = "";
+        String strToken = StringUtils.EMPTY;
 
         _logger.debug( "LibraryIdentityStore - IdentityTransportApiManagerRest.getToken with URL_TOKEN property [" +
             _strApiManagerEndPoint + "]" );
@@ -104,7 +114,9 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
 
         mapParams.put( PARAMS_GRANT_TYPE, PARAMS_GRANT_TYPE_VALUE );
 
-        mapHeadersRequest.put( AUTHORIZATION, TYPE_AUTHENTIFICATION + " " + strAuthenticationKey );
+        mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
+        mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED );
+        mapHeadersRequest.put( HttpHeaders.AUTHORIZATION, TYPE_AUTHENTIFICATION + " " + _strApiManagerCredentials );
 
         String strOutput = getHttpTransport(  ).doPost( _strApiManagerEndPoint, mapParams, mapHeadersRequest );
 
@@ -133,13 +145,13 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
      * {@inheritDoc}
      */
     @Override
-    protected void addAuthentication( Map<String, String> mapHeadersRequest, String strAuthenticationKey )
+    protected void addAuthentication( Map<String, String> mapHeadersRequest )
     {
-        String strToken = getToken( strAuthenticationKey );
+        String strToken = getToken(  );
 
         if ( StringUtils.isNotBlank( strToken ) )
         {
-            mapHeadersRequest.put( AUTHORIZATION, TYPE_AUTHENTIFICATION + " " + strToken );
+            mapHeadersRequest.put( HttpHeaders.AUTHORIZATION, TYPE_AUTHENTIFICATION + " " + strToken );
         }
     }
 }

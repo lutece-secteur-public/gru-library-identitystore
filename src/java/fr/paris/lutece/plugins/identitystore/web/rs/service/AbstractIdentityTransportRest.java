@@ -107,23 +107,22 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
     /**
     * add specific authentication to request
     * @param mapHeadersRequest map of headers to add
-    * @param strAuthenticationKey authentication key
     */
-    protected abstract void addAuthentication( Map<String, String> mapHeadersRequest, String strAuthenticationKey );
+    protected abstract void addAuthentication( Map<String, String> mapHeadersRequest );
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, int nCustomerId, String strClientCode,
-        String strAuthenticationKey ) throws IdentityNotFoundException, AppException
+    public IdentityDto getIdentity( String strIdConnection, int nCustomerId, String strClientCode )
+        throws IdentityNotFoundException, AppException
     {
         _logger.debug( "Get identity attributes of " + strIdConnection );
 
-        checkFetchParameters( strIdConnection, nCustomerId, strClientCode, strAuthenticationKey );
+        checkFetchParameters( strIdConnection, nCustomerId, strClientCode );
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>(  );
-        addAuthentication( mapHeadersRequest, strAuthenticationKey );
+        addAuthentication( mapHeadersRequest );
 
         Map<String, String> mapParams = new HashMap<String, String>(  );
         mapParams.put( Constants.PARAM_ID_CONNECTION, strIdConnection );
@@ -140,14 +139,14 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey,
-        Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException
+    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem )
+        throws IdentityNotFoundException, AppException
     {
         _logger.debug( "Update identity attributes" );
-        checkUpdateParameters( identityChange, strAuthenticationKey );
+        checkUpdateParameters( identityChange );
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>(  );
-        addAuthentication( mapHeadersRequest, strAuthenticationKey );
+        addAuthentication( mapHeadersRequest );
 
         Map<String, String> mapParams = new HashMap<String, String>(  );
 
@@ -176,10 +175,9 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      */
     @Override
     public InputStream downloadFileAttribute( String strIdConnection, int nCustomerId, String strAttributeKey,
-        String strClientAppCode, String strAuthenticationKey )
+        String strClientAppCode )
     {
-        checkDownloadFileAttributeParams( strIdConnection, nCustomerId, strAttributeKey, strClientAppCode,
-            strAuthenticationKey );
+        checkDownloadFileAttributeParams( strIdConnection, nCustomerId, strAttributeKey, strClientAppCode );
 
         //            
         //            Map<String, String> mapHeadersRequest = new HashMap<String, String>(  );
@@ -221,14 +219,14 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
+    public IdentityDto createIdentity( IdentityChangeDto identityChange )
         throws IdentityNotFoundException, AppException
     {
         _logger.debug( "Create identity" );
-        checkCreateParameters( identityChange, strAuthenticationKey );
+        checkCreateParameters( identityChange );
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>(  );
-        addAuthentication( mapHeadersRequest, strAuthenticationKey );
+        addAuthentication( mapHeadersRequest );
 
         Map<String, String> mapParams = new HashMap<String, String>(  );
 
@@ -257,42 +255,39 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * @param strIdConnection connection id
      * @param nCustomerId customer id
      * @param strClientCode client code
-     * @param strAuthenticationKey hash code
      * @throws AppException if the parameters are not valid
      */
-    private void checkFetchParameters( String strIdConnection, int nCustomerId, String strClientCode,
-        String strAuthenticationKey ) throws AppException
+    private void checkFetchParameters( String strIdConnection, int nCustomerId, String strClientCode )
+        throws AppException
     {
         checkIdentity( strIdConnection, nCustomerId );
-        checkClientApplication( strClientCode, strAuthenticationKey );
+        checkClientApplication( strClientCode );
     }
 
     /**
      * check input parameters to create an identity
      * @param identityChange identity change, ensure that author and identity are filled
-     * @param strAuthenticationKey hashcode
      * @throws  AppException if the parameters are not valid
      */
-    private void checkCreateParameters( IdentityChangeDto identityChange, String strAuthenticationKey )
+    private void checkCreateParameters( IdentityChangeDto identityChange )
         throws AppException
     {
         checkIdentityChange( identityChange );
-        checkClientApplication( identityChange.getAuthor(  ).getApplicationCode(  ), strAuthenticationKey );
+        checkClientApplication( identityChange.getAuthor(  ).getApplicationCode(  ) );
     }
 
     /**
      * check input parameters to update an identity
      * @param identityChange identity change, ensure that author and identity are filled
-     * @param strAuthenticationKey hashcode
      * @throws  AppException if the parameters are not valid
      */
-    private void checkUpdateParameters( IdentityChangeDto identityChange, String strAuthenticationKey )
+    private void checkUpdateParameters( IdentityChangeDto identityChange )
         throws AppException
     {
         checkIdentityChange( identityChange );
         checkIdentity( identityChange.getIdentity(  ).getConnectionId(  ),
             identityChange.getIdentity(  ).getCustomerId(  ) );
-        checkClientApplication( identityChange.getAuthor(  ).getApplicationCode(  ), strAuthenticationKey );
+        checkClientApplication( identityChange.getAuthor(  ).getApplicationCode(  ) );
     }
 
     /**
@@ -301,12 +296,10 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * @param nCustomerId customer id
      * @param strAttributeKey attribute Key
      * @param strClientCode client code
-     * @param strAuthenticationKey hash code
      * @throws AppException if the parameters are not valid
      */
     private void checkDownloadFileAttributeParams( String strIdConnection, int nCustomerId, String strAttributeKey,
-        String strClientCode, String strAuthenticationKey )
-        throws AppException
+        String strClientCode ) throws AppException
     {
         if ( StringUtils.isEmpty( strAttributeKey ) )
         {
@@ -314,7 +307,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         }
 
         checkIdentity( strIdConnection, nCustomerId );
-        checkClientApplication( strClientCode, strAuthenticationKey );
+        checkClientApplication( strClientCode );
     }
 
     /**
@@ -335,22 +328,15 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
     /**
      * check whether the parameters related to the application are valid or not
      * @param strClientCode the client code
-     * @param strAuthenticationKey the authentication key
      * @throws AppException if the parameters are not valid
      */
-    private void checkClientApplication( String strClientCode, String strAuthenticationKey )
+    private void checkClientApplication( String strClientCode )
         throws AppException
     {
         if ( StringUtils.isEmpty( strClientCode ) )
         {
             throw new AppException( "missing parameters : client Application Code is mandatory" );
         }
-
-        // FIXME : Uncomment this part when application code will be OK
-        //        if ( StringUtils.isEmpty( strAuthenticationKey ) )
-        //        {
-        //            throw new AppException( "missing parameters : client Application strAuthenticationKey is mandatory" );
-        //        }
     }
 
     /**

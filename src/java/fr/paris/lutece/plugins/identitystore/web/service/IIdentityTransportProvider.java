@@ -60,7 +60,6 @@ public interface IIdentityTransportProvider
      *          customer Id (can be null if strconnection Id is provided)
      * @param strApplicationCode
      *          application code of calling application
-     * @param strHash client application hash code
      * @return identity if found
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
@@ -68,7 +67,7 @@ public interface IIdentityTransportProvider
      *           if inconsitent parmeters provided, or errors occurs...
      *
      */
-    IdentityDto getIdentity( String strConnectionId, int nCustomerId, String strApplicationCode, String strHash )
+    IdentityDto getIdentity( String strConnectionId, int nCustomerId, String strApplicationCode )
         throws IdentityNotFoundException, AppException;
 
     /**
@@ -76,7 +75,6 @@ public interface IIdentityTransportProvider
      *
      * @param identityChange
      *          change to apply to identity
-     * @param strAuthenticationKey client authentication key
      * @param mapFileItem  file map to upload
      * @return the updated identity
      * @throws AppException
@@ -84,8 +82,8 @@ public interface IIdentityTransportProvider
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
      */
-    IdentityDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey,
-        Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException;
+    IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem )
+        throws IdentityNotFoundException, AppException;
 
     /**
      * Creates an identity <b>only if the identity does not already exist</b>.<br/>
@@ -97,13 +95,12 @@ public interface IIdentityTransportProvider
      *
      * @param identityChange
      *          change to apply to identity
-     * @param strAuthenticationKey client application hash code
      * @return the created identity
      *
      * @throws AppException
      *           if error occurred while updating identity
      */
-    IdentityDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
+    IdentityDto createIdentity( IdentityChangeDto identityChange )
         throws AppException;
 
     /**
@@ -115,7 +112,6 @@ public interface IIdentityTransportProvider
      * @param strAttributeKey attribute Key (must match a an attribute of type file)
      * @param strClientAppCode
      *          application code of calling application
-     * @param strAuthenticationKey client application hash code
      * @return inputstream of attribute file
      * @throws AppException
      *           if error occured while retrieving file attribute
@@ -123,5 +119,5 @@ public interface IIdentityTransportProvider
      *           if no identity found for input parameters
      */
     InputStream downloadFileAttribute( String strConnectionId, int nCustomerId, String strAttributeKey,
-        String strClientAppCode, String strAuthenticationKey );
+        String strClientAppCode );
 }
