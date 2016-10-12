@@ -40,8 +40,6 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 
 import java.io.Serializable;
 
-import java.util.Date;
-
 
 /**
  * Attribute Dto
@@ -68,7 +66,6 @@ public class AttributeDto implements Serializable
     private String _strValue;
     private String _strType;
     private boolean _bCertified;
-    private Date _dateLastUpdateDate;
     private CertificateDto _certificate;
 
     /**
@@ -173,24 +170,5 @@ public class AttributeDto implements Serializable
     public void setCertificate( CertificateDto certificate )
     {
         this._certificate = certificate;
-    }
-
-    /**
-     * @return the _dateLastUpdateDate
-     */
-    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE )
-    public Date getLastUpdateDate(  )
-    {
-        return _dateLastUpdateDate;
-    }
-
-    /**
-     * @param dateLastUpdateDate
-     *          the _dateLastUpdateDate to set
-     */
-    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE )
-    public void setLastUpdateDate( Date dateLastUpdateDate )
-    {
-        this._dateLastUpdateDate = dateLastUpdateDate;
     }
 }
