@@ -40,17 +40,17 @@ package fr.paris.lutece.plugins.identitystore.web.rs.service;
  */
 public final class Constants
 {
-    public static final String IDENTITY_PATH = "identity/";
-    public static final String DOWNLOAD_FILE_PATH = "file/";
-    public static final String UPDATE_IDENTITY_PATH = "update/";
-    public static final String CREATE_IDENTITY_PATH = "create/";
+    public static final String IDENTITY_PATH = "/identity";
+    public static final String DOWNLOAD_FILE_PATH = "/file";
+    public static final String UPDATE_IDENTITY_PATH = "/update";
+    public static final String CREATE_IDENTITY_PATH = "/create";
     public static final String PARAM_ID_CONNECTION = "connection_id";
     public static final String PARAM_ID_CUSTOMER = "customer_id";
     public static final String PARAM_CLIENT_CODE = "client_code";
     public static final String PARAM_FILE = "file";
     public static final String PARAM_ATTRIBUTE_KEY = "attribute_key";
     public static final String PARAM_CLIENT_CONTROL_KEY = "client_control_key";
-    public static final String PLUGIN_PATH = "identitystore/";
+    public static final String PLUGIN_PATH = "identitystore";
     public static final String RESPONSE_OK = "OK";
     public static final String PARAM_IDENTITY_CHANGE = "identityChange";
     public static final String ERROR_FIELD_MISSING = "FIELD_MISSING";
