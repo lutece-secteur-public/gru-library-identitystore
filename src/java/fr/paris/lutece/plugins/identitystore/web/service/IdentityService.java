@@ -89,7 +89,6 @@ public class IdentityService
      *          connection Id
      * @param strApplicationCode
      *          application code of calling application
-     * @param strHash client application hash code
      * @return identity if found
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
@@ -97,10 +96,10 @@ public class IdentityService
      *           if inconsitent parmeters provided, or errors occurs...
      *
      */
-    public IdentityDto getIdentity( String strConnectionId, String strApplicationCode, String strHash )
+    public IdentityDto getIdentity( String strConnectionId, String strApplicationCode )
         throws IdentityNotFoundException, AppException
     {
-        return getIdentity( strConnectionId, Constants.NO_CUSTOMER_ID, strApplicationCode, strHash );
+        return getIdentity( strConnectionId, Constants.NO_CUSTOMER_ID, strApplicationCode );
     }
 
     /**
@@ -110,7 +109,6 @@ public class IdentityService
      *          customer Id
      * @param strApplicationCode
      *          application code of calling application
-     * @param strHash client application hash code
      * @return identity if found
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
@@ -118,10 +116,10 @@ public class IdentityService
      *           if inconsitent parmeters provided, or errors occurs...
      *
      */
-    public IdentityDto getIdentity( int nCustomerId, String strApplicationCode, String strHash )
+    public IdentityDto getIdentity( int nCustomerId, String strApplicationCode )
         throws IdentityNotFoundException, AppException
     {
-        return getIdentity( StringUtils.EMPTY, nCustomerId, strApplicationCode, strHash );
+        return getIdentity( StringUtils.EMPTY, nCustomerId, strApplicationCode );
     }
 
     /**
@@ -134,7 +132,6 @@ public class IdentityService
      *          customer Id (can be null if strconnection Id is provided)
      * @param strApplicationCode
      *          application code of calling application
-     * @param strHash client application hash code
      * @return identity if found
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
@@ -142,10 +139,10 @@ public class IdentityService
      *           if inconsitent parmeters provided, or errors occurs...
      *
      */
-    public IdentityDto getIdentity( String strConnectionId, int nCustomerId, String strApplicationCode, String strHash )
+    public IdentityDto getIdentity( String strConnectionId, int nCustomerId, String strApplicationCode )
         throws IdentityNotFoundException, AppException
     {
-        return _transportProvider.getIdentity( strConnectionId, nCustomerId, strApplicationCode, strHash );
+        return _transportProvider.getIdentity( strConnectionId, nCustomerId, strApplicationCode );
     }
 
     /**
@@ -153,7 +150,6 @@ public class IdentityService
      *
      * @param identityChange
      *          change to apply to identity
-     * @param strAuthenticationKey client authentication key
      * @param mapFiles fileitem map to upload
      * @return the updated identity
      * @throws AppException
@@ -161,10 +157,10 @@ public class IdentityService
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
      */
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, String strAuthenticationKey,
-        Map<String, FileItem> mapFiles ) throws IdentityNotFoundException, AppException
+    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFiles )
+        throws IdentityNotFoundException, AppException
     {
-        return _transportProvider.updateIdentity( identityChange, strAuthenticationKey, mapFiles );
+        return _transportProvider.updateIdentity( identityChange, mapFiles );
     }
 
     /**
@@ -177,16 +173,15 @@ public class IdentityService
      *
      * @param identityChange
      *          change to apply to identity
-     * @param strAuthenticationKey client application hash code
      * @return the created identity
      *
      * @throws AppException
      *           if error occured while updating identity
      */
-    public IdentityDto createIdentity( IdentityChangeDto identityChange, String strAuthenticationKey )
+    public IdentityDto createIdentity( IdentityChangeDto identityChange )
         throws AppException
     {
-        return _transportProvider.createIdentity( identityChange, strAuthenticationKey );
+        return _transportProvider.createIdentity( identityChange );
     }
 
     /**
@@ -198,7 +193,6 @@ public class IdentityService
      * @param strAttributeKey attribute Key (must match a an attribute of type file)
      * @param strClientAppCode
      *          application code of calling application
-     * @param strAuthenticationKey client application hash code
      * @return inputstream of attribute file
      * @throws AppException
      *           if error occured while retrieving file attribute
@@ -206,9 +200,8 @@ public class IdentityService
      *           if no identity found for input parameters
      */
     public InputStream downloadFileAttribute( String strConnectionId, int nCustomerId, String strAttributeKey,
-        String strClientAppCode, String strAuthenticationKey )
+        String strClientAppCode )
     {
-        return _transportProvider.downloadFileAttribute( strConnectionId, nCustomerId, strAttributeKey,
-            strClientAppCode, strAuthenticationKey );
+        return _transportProvider.downloadFileAttribute( strConnectionId, nCustomerId, strAttributeKey, strClientAppCode );
     }
 }

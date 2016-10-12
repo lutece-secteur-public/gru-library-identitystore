@@ -45,6 +45,7 @@ import fr.paris.lutece.util.httpaccess.HttpAccessException;
 import fr.paris.lutece.util.httpaccess.HttpAccessStatus;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.http.client.utils.URIBuilder;
 
@@ -58,6 +59,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 
 
 /**
@@ -75,10 +79,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
     {
         HttpAccess clientHttp = new HttpAccess(  );
         Map<String, String> mapHeadersResponse = new HashMap<String, String>(  );
-        mapHeadersRequest.put( Constants.PROPERTY_HEADER_ACCEPT_TYPE, Constants.CONTENT_FORMAT );
-        mapHeadersRequest.put( Constants.PROPERTY_HEADER_CONTENT_TYPE, Constants.CONTENT_FORMAT_TOKEN );
 
-        String strOutput = "";
+        String strOutput = StringUtils.EMPTY;
 
         try
         {
@@ -101,8 +103,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
     {
         HttpAccess clientHttp = new HttpAccess(  );
         Map<String, String> mapHeadersResponse = new HashMap<String, String>(  );
-        mapHeadersRequest.put( Constants.PROPERTY_HEADER_ACCEPT_TYPE, Constants.CONTENT_FORMAT );
-        mapHeadersRequest.put( Constants.PROPERTY_HEADER_CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
+        mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
+        mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
 
         T oResponse = null;
 

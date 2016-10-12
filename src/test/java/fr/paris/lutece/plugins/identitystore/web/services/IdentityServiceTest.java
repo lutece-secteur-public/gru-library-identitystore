@@ -196,8 +196,8 @@ public class IdentityServiceTest
         identChange.setIdentity( _identity );
 
         //test getIdentity
-        identityServiceTesting.getIdentity( 1560, "MyDashboard", "rzerzereE32R5§4ER" );
-        identityServiceTesting.getIdentity( "connecID", "MyDashboard", "rzerzereE32R5§4ER" );
+        identityServiceTesting.getIdentity( 1560, "MyDashboard" );
+        identityServiceTesting.getIdentity( "connecID", "MyDashboard" );
 
         //test updateIdentity
         FileItem fileItem = new DiskFileItem( "myFile", "text/plain", false, "test.txt", 1024,
@@ -215,10 +215,10 @@ public class IdentityServiceTest
 
         HashMap<String, FileItem> mapFileItems = new HashMap<String, FileItem>(  );
         mapFileItems.put( "myFile", fileItem );
-        identityServiceTesting.updateIdentity( identChange, "qsdfgh65432$", mapFileItems );
+        identityServiceTesting.updateIdentity( identChange, mapFileItems );
 
         //test createIdentity
-        identityServiceTesting.createIdentity( identChange, "qsdfgh65432$" );
+        identityServiceTesting.createIdentity( identChange );
 
         //test downloadFileAttribute
         //TODO

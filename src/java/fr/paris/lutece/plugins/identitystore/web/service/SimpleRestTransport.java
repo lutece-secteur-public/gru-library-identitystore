@@ -84,8 +84,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
             }
         }
 
-        WebResource.Builder builder = webResource.type( Constants.CONTENT_FORMAT_TOKEN )
-                                                 .accept( MediaType.APPLICATION_JSON_TYPE );
+        WebResource.Builder builder = webResource.getRequestBuilder(  );
 
         if ( mapHeadersRequest != null )
         {
@@ -129,7 +128,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
             }
         }
 
-        WebResource.Builder builder = webResource.type( Constants.CONTENT_FORMAT ).accept( MediaType.APPLICATION_JSON );
+        WebResource.Builder builder = webResource.type( MediaType.APPLICATION_JSON ).accept( MediaType.APPLICATION_JSON );
 
         if ( mapHeadersRequest != null )
         {
@@ -191,7 +190,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
             }
         }
 
-        WebResource.Builder builder = webResource.type( Constants.CONTENT_FORMAT ).accept( MediaType.APPLICATION_JSON );
+        WebResource.Builder builder = webResource.accept( MediaType.APPLICATION_JSON );
 
         if ( mapHeadersRequest != null )
         {

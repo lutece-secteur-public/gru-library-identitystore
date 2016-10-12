@@ -68,7 +68,7 @@ public final class IdentityTransportRest extends AbstractIdentityTransportRest i
      * {@inheritDoc}
      */
     @Override
-    protected void addAuthentication( Map<String, String> mapHeadersRequest, String strAuthenticationKey )
+    protected void addAuthentication( Map<String, String> mapHeadersRequest )
     {
         //no authentication for simple rest client
     }

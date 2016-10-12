@@ -57,27 +57,8 @@ public final class Constants
     public static final String ERROR_FIELD_PERMISSION = "FIELD_PERMISION_ERROR";
     public static final String PARAMETER_NAME = "name";
 
-    /** The Constant TYPE_AUTHENTIFICATION. */
-    public static final String TYPE_AUTHENTIFICATION = "Bearer";
-
-    /** The Constant PARAMS_ACCES_TOKEN. */
-    public static final String PARAMS_ACCES_TOKEN = "access_token";
-
-    /** The Constant PARAMS_GRANT_TYPE. */
-    public static final String PARAMS_GRANT_TYPE = "grant_type";
-
-    /** The Constant PARAMS_GRANT_TYPE_VALUE. */
-    public static final String PARAMS_GRANT_TYPE_VALUE = "client_credentials";
-
     /** The Constant CONTENT_FORMAT. */
     public static final String CONTENT_FORMAT_CHARSET = "application/json; charset=utf-8";
-    public static final String CONTENT_FORMAT = "application/json";
-    public static final String CONTENT_FORMAT_MULTIPART = "multipart/form-data";
-    public static final String PROPERTY_HEADER_CONTENT_TYPE = "Content-Type";
-    public static final String PROPERTY_HEADER_ACCEPT_TYPE = "Accept";
-
-    /** The Constant CONTENT_FORMAT_TOKEN. */
-    public static final String CONTENT_FORMAT_TOKEN = "application/x-www-form-urlencoded";
 
     // HTTP ERROR MESSAGE
     public static final String ERROR_MESSAGE = "Failed : HTTP error code : ";
