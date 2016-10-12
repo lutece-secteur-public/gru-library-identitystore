@@ -62,7 +62,6 @@ public final class DtoFormatConstants
     public static final String KEY_ATTRIBUTE_READABLE = "writable";
     public static final String KEY_ATTRIBUTE_CERTIFIED = "certified";
     public static final String KEY_ATTRIBUTE_CERTIFICATE = "certificate";
-    public static final String KEY_ATTRIBUTE_LASTUPDATE = "last_update";
     public static final String KEY_IDENTITY_CHANGE = "identity_change";
     public static final String KEY_IDENTITY_CHANGE_IDENTITY = "identity";
     public static final String KEY_IDENTITY_CHANGE_AUTHOR = "author";
