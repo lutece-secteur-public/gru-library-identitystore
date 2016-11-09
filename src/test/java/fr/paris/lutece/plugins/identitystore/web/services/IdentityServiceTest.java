@@ -196,8 +196,8 @@ public class IdentityServiceTest
         identChange.setIdentity( _identity );
 
         //test getIdentity
-        identityServiceTesting.getIdentity( 1560, "MyDashboard" );
-        identityServiceTesting.getIdentity( "connecID", "MyDashboard" );
+        identityServiceTesting.getIdentityByCustomerId( "1560", "MyDashboard" );
+        identityServiceTesting.getIdentityByConnectionId( "connecID", "MyDashboard" );
 
         //test updateIdentity
         FileItem fileItem = new DiskFileItem( "myFile", "text/plain", false, "test.txt", 1024,

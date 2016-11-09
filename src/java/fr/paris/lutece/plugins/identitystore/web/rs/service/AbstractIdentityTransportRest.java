@@ -114,19 +114,19 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, int nCustomerId, String strClientCode )
+    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode )
         throws IdentityNotFoundException, AppException
     {
         _logger.debug( "Get identity attributes of " + strIdConnection );
 
-        checkFetchParameters( strIdConnection, nCustomerId, strClientCode );
+        checkFetchParameters( strIdConnection, strCustomerId, strClientCode );
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>(  );
         addAuthentication( mapHeadersRequest );
 
         Map<String, String> mapParams = new HashMap<String, String>(  );
         mapParams.put( Constants.PARAM_ID_CONNECTION, strIdConnection );
-        mapParams.put( Constants.PARAM_ID_CUSTOMER, String.valueOf( nCustomerId ) );
+        mapParams.put( Constants.PARAM_ID_CUSTOMER, strCustomerId );
         mapParams.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
         IdentityDto identityDto = _httpTransport.doGet( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH, mapParams,
@@ -174,10 +174,10 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * {@inheritDoc}
      */
     @Override
-    public InputStream downloadFileAttribute( String strIdConnection, int nCustomerId, String strAttributeKey,
+    public InputStream downloadFileAttribute( String strIdConnection, String strCustomerId, String strAttributeKey,
         String strClientAppCode )
     {
-        checkDownloadFileAttributeParams( strIdConnection, nCustomerId, strAttributeKey, strClientAppCode );
+        checkDownloadFileAttributeParams( strIdConnection, strCustomerId, strAttributeKey, strClientAppCode );
 
         //            
         //            Map<String, String> mapHeadersRequest = new HashMap<String, String>(  );
@@ -185,7 +185,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         //
         //            Map<String, String> mapParams = new HashMap<String, String>(  );
         //            mapParams.put( Constants.PARAM_ID_CONNECTION, strIdConnection );
-        //            mapParams.put( Constants.PARAM_ID_CUSTOMER, String.valueOf( nCustomerId ) );
+        //            mapParams.put( Constants.PARAM_ID_CUSTOMER, strCustomerId );
         //            mapParams.put( Constants.PARAM_ATTRIBUTE_KEY, strAttributeKey );
         //            mapParams.put( Constants.PARAM_CLIENT_CODE, strClientAppCode );
         //
@@ -197,7 +197,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         //                        Constants.URL_IDENTITYSTORE_ENDPOINT ) + Constants.IDENTITY_PATH )
         //                                            .queryParam( Constants.PARAM_ID_CONNECTION,
         //                    ( strIdConnection != null ) ? strIdConnection : StringUtils.EMPTY )
-        //                                            .queryParam( Constants.PARAM_ID_CUSTOMER, String.valueOf( nCustomerId ) )
+        //                                            .queryParam( Constants.PARAM_ID_CUSTOMER, strCustomerId )
         //                                            .queryParam( Constants.PARAM_CLIENT_CODE, strClientAppCode );
         //    
         //            WebResource.Builder builder = webResource.header( Constants.PARAM_CLIENT_CONTROL_KEY, strAuthenticationKey )
@@ -253,14 +253,14 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
     /**
      * check input parameters to get an identity
      * @param strIdConnection connection id
-     * @param nCustomerId customer id
+     * @param strCustomerId customer id
      * @param strClientCode client code
      * @throws AppException if the parameters are not valid
      */
-    private void checkFetchParameters( String strIdConnection, int nCustomerId, String strClientCode )
+    private void checkFetchParameters( String strIdConnection, String strCustomerId, String strClientCode )
         throws AppException
     {
-        checkIdentity( strIdConnection, nCustomerId );
+        checkIdentity( strIdConnection, strCustomerId );
         checkClientApplication( strClientCode );
     }
 
@@ -293,33 +293,34 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
     /**
      * check that parameters are valid, otherwise throws an AppException
      * @param strIdConnection connection id
-     * @param nCustomerId customer id
+     * @param strCustomerId customer id
      * @param strAttributeKey attribute Key
      * @param strClientCode client code
      * @throws AppException if the parameters are not valid
      */
-    private void checkDownloadFileAttributeParams( String strIdConnection, int nCustomerId, String strAttributeKey,
-        String strClientCode ) throws AppException
+    private void checkDownloadFileAttributeParams( String strIdConnection, String strCustomerId,
+        String strAttributeKey, String strClientCode )
+        throws AppException
     {
         if ( StringUtils.isEmpty( strAttributeKey ) )
         {
             throw new AppException( "missing parameters : attribute key must be provided" );
         }
 
-        checkIdentity( strIdConnection, nCustomerId );
+        checkIdentity( strIdConnection, strCustomerId );
         checkClientApplication( strClientCode );
     }
 
     /**
      * check whether the parameters related to the identity are valid or not
      * @param strIdConnection the connection id
-     * @param nCustomerId the customer id
+     * @param strCustomerId the customer id
      * @throws AppException if the parameters are not valid
      */
-    private void checkIdentity( String strIdConnection, int nCustomerId )
+    private void checkIdentity( String strIdConnection, String strCustomerId )
         throws AppException
     {
-        if ( StringUtils.isEmpty( strIdConnection ) && ( nCustomerId == 0 ) )
+        if ( StringUtils.isEmpty( strIdConnection ) && Constants.NO_CUSTOMER_ID.equals( strCustomerId ) )
         {
             throw new AppException( "missing parameters : connection Id or customer Id must be provided" );
         }

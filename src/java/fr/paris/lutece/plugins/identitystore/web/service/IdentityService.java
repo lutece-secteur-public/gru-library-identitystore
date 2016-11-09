@@ -96,7 +96,7 @@ public class IdentityService
      *           if inconsitent parmeters provided, or errors occurs...
      *
      */
-    public IdentityDto getIdentity( String strConnectionId, String strApplicationCode )
+    public IdentityDto getIdentityByConnectionId( String strConnectionId, String strApplicationCode )
         throws IdentityNotFoundException, AppException
     {
         return getIdentity( strConnectionId, Constants.NO_CUSTOMER_ID, strApplicationCode );
@@ -105,7 +105,7 @@ public class IdentityService
     /**
      * get identity matching customerId for provided application code
      *
-     * @param nCustomerId
+     * @param strCustomerId
      *          customer Id
      * @param strApplicationCode
      *          application code of calling application
@@ -116,10 +116,10 @@ public class IdentityService
      *           if inconsitent parmeters provided, or errors occurs...
      *
      */
-    public IdentityDto getIdentity( int nCustomerId, String strApplicationCode )
+    public IdentityDto getIdentityByCustomerId( String strCustomerId, String strApplicationCode )
         throws IdentityNotFoundException, AppException
     {
-        return getIdentity( StringUtils.EMPTY, nCustomerId, strApplicationCode );
+        return getIdentity( StringUtils.EMPTY, strCustomerId, strApplicationCode );
     }
 
     /**
@@ -128,8 +128,8 @@ public class IdentityService
      *
      * @param strConnectionId
      *          connection Id (can be null if strCustomerId is provided)
-     * @param nCustomerId
-     *          customer Id (can be null if strconnection Id is provided)
+     * @param strCustomerId
+     *          customer Id (can be null if strConnectionId is provided)
      * @param strApplicationCode
      *          application code of calling application
      * @return identity if found
@@ -139,10 +139,10 @@ public class IdentityService
      *           if inconsitent parmeters provided, or errors occurs...
      *
      */
-    public IdentityDto getIdentity( String strConnectionId, int nCustomerId, String strApplicationCode )
+    public IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode )
         throws IdentityNotFoundException, AppException
     {
-        return _transportProvider.getIdentity( strConnectionId, nCustomerId, strApplicationCode );
+        return _transportProvider.getIdentity( strConnectionId, strCustomerId, strApplicationCode );
     }
 
     /**
@@ -188,8 +188,8 @@ public class IdentityService
      *
      * @param strConnectionId
      *          connection Id (can be null if strCustomerId is provided)
-     * @param nCustomerId
-     *          customer Id (can be null if strconnection Id is provided)
+     * @param strCustomerId
+     *          customer Id (can be null if strConnectionId is provided)
      * @param strAttributeKey attribute Key (must match a an attribute of type file)
      * @param strClientAppCode
      *          application code of calling application
@@ -199,9 +199,10 @@ public class IdentityService
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
      */
-    public InputStream downloadFileAttribute( String strConnectionId, int nCustomerId, String strAttributeKey,
+    public InputStream downloadFileAttribute( String strConnectionId, String strCustomerId, String strAttributeKey,
         String strClientAppCode )
     {
-        return _transportProvider.downloadFileAttribute( strConnectionId, nCustomerId, strAttributeKey, strClientAppCode );
+        return _transportProvider.downloadFileAttribute( strConnectionId, strCustomerId, strAttributeKey,
+            strClientAppCode );
     }
 }

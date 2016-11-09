@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.rs.service;
 
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * This class provides constants for REST services
@@ -62,7 +64,7 @@ public final class Constants
 
     // HTTP ERROR MESSAGE
     public static final String ERROR_MESSAGE = "Failed : HTTP error code : ";
-    public static final int NO_CUSTOMER_ID = 0;
+    public static final String NO_CUSTOMER_ID = StringUtils.EMPTY;
 
     /**
      * Default constructor

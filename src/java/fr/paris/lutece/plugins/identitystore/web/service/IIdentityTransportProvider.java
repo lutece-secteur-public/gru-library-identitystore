@@ -56,8 +56,8 @@ public interface IIdentityTransportProvider
      *
      * @param strConnectionId
      *          connection Id (can be null if strCustomerId is provided)
-     * @param nCustomerId
-     *          customer Id (can be null if strconnection Id is provided)
+     * @param strCustomerId
+     *          customer Id (can be null if strConnectionId is provided)
      * @param strApplicationCode
      *          application code of calling application
      * @return identity if found
@@ -67,7 +67,7 @@ public interface IIdentityTransportProvider
      *           if inconsitent parmeters provided, or errors occurs...
      *
      */
-    IdentityDto getIdentity( String strConnectionId, int nCustomerId, String strApplicationCode )
+    IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode )
         throws IdentityNotFoundException, AppException;
 
     /**
@@ -107,8 +107,8 @@ public interface IIdentityTransportProvider
      *
      * @param strConnectionId
      *          connection Id (can be null if strCustomerId is provided)
-     * @param nCustomerId
-     *          customer Id (can be null if strconnection Id is provided)
+     * @param strCustomerId
+     *          customer Id (can be null if strConnectionId is provided)
      * @param strAttributeKey attribute Key (must match a an attribute of type file)
      * @param strClientAppCode
      *          application code of calling application
@@ -118,6 +118,6 @@ public interface IIdentityTransportProvider
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
      */
-    InputStream downloadFileAttribute( String strConnectionId, int nCustomerId, String strAttributeKey,
+    InputStream downloadFileAttribute( String strConnectionId, String strCustomerId, String strAttributeKey,
         String strClientAppCode );
 }
