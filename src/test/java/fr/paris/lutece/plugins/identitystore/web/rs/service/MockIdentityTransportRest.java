@@ -58,7 +58,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, String strConnectionId, String strClientCode )
+    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode )
         throws IdentityNotFoundException, AppException
     {
         _logger.debug( "MockIdentityTransportRest.getIdentity return null and is ok" );
@@ -82,7 +82,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    public InputStream downloadFileAttribute( String strIdConnection, String strConnectionId, String strAttributeKey,
+    public InputStream downloadFileAttribute( String strIdConnection, String strCustomerId, String strAttributeKey,
         String strClientAppCode )
     {
         _logger.debug( "MockIdentityTransportRest.downloadFileAttribute return null and is ok" );
