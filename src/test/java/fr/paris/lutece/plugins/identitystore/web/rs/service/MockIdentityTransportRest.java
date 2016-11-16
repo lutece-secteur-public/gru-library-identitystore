@@ -111,7 +111,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
     {
         //no authentication for mock   
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -119,7 +119,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
     public ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode )
     {
         _logger.debug( "MockIdentityTransportRest.deleteIdentity return null and is ok" );
-        
+
         return null;
     }
 }

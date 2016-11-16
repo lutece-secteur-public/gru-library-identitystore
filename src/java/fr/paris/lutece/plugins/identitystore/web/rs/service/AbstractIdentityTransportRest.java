@@ -250,18 +250,18 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
         return identityDto;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public ResponseDto deleteIdentity( String strIdConnection, String strClientCode )
-            throws IdentityNotFoundException, AppException
+        throws IdentityNotFoundException, AppException
     {
         _logger.debug( "Delete identity with connection id " + strIdConnection );
 
         checkDeleteParameters( strClientCode );
-        
+
         Map<String, String> mapHeadersRequest = new HashMap<String, String>(  );
         addAuthentication( mapHeadersRequest );
 
@@ -269,9 +269,9 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         mapParams.put( Constants.PARAM_ID_CONNECTION, strIdConnection );
         mapParams.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
-        ResponseDto responseDto = _httpTransport.doDelete( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH, mapParams,
-                mapHeadersRequest, ResponseDto.class, _mapper );
-        
+        ResponseDto responseDto = _httpTransport.doDelete( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH,
+                mapParams, mapHeadersRequest, ResponseDto.class, _mapper );
+
         return responseDto;
     }
 
@@ -314,7 +314,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
             identityChange.getIdentity(  ).getCustomerId(  ) );
         checkClientApplication( identityChange.getAuthor(  ).getApplicationCode(  ) );
     }
-    
+
     /**
      * check input parameters to delete an identity
      * @param strClientCode client code

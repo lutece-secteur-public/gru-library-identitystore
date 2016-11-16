@@ -285,7 +285,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
 
         return oResponse;
     }
-    
+
     /**
      * {@inheritDoc}
      */

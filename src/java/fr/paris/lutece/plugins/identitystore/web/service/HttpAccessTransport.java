@@ -182,7 +182,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
         return oResponse;
     }
-    
+
     @Override
     public <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
         Class<T> responseJsonClass, ObjectMapper mapper )
@@ -225,7 +225,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
         String strError = "LibraryIdentityStore - Error HttpAccessTransport :";
         _logger.error( strError + e.getMessage(  ), e );
 
-        if ( e instanceof HttpAccessException && HttpAccessStatus.NOT_FOUND.equals( ( (HttpAccessException) e ).getResponseCode(  ) ) )
+        if ( e instanceof HttpAccessException &&
+                HttpAccessStatus.NOT_FOUND.equals( ( (HttpAccessException) e ).getResponseCode(  ) ) )
         {
             throw new IdentityNotFoundException( strError, e );
         }

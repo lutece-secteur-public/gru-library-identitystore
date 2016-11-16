@@ -223,7 +223,6 @@ public class IdentityServiceTest
         //test downloadFileAttribute
         //TODO
         //identityServiceTesting.downloadFileAttribute( "connecID", 1560, "attr_key", "MyDashboard", "qsdfgh65432$" );
-        
         identityServiceTesting.deleteIdentity( _identity.getConnectionId(  ), author.getApplicationCode(  ) );
     }
 }

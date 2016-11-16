@@ -103,7 +103,7 @@ public interface IIdentityTransportProvider
      */
     IdentityDto createIdentity( IdentityChangeDto identityChange )
         throws AppException;
-    
+
     /**
      * Deletes an identity from the specified connectionId
      * @param strConnectionId the connection id
@@ -113,7 +113,7 @@ public interface IIdentityTransportProvider
      * @throws AppException if inconsistent parameters provided, or errors occurs...
      */
     ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode )
-            throws IdentityNotFoundException, AppException;
+        throws IdentityNotFoundException, AppException;
 
     /**
      *
