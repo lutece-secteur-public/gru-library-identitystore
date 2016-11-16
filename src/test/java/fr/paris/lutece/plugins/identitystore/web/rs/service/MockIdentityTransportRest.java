@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.identitystore.web.rs.service;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
+import fr.paris.lutece.plugins.identitystore.web.rs.dto.ResponseDto;
 import fr.paris.lutece.portal.service.util.AppException;
 
 import org.apache.commons.fileupload.FileItem;
@@ -97,7 +98,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
     public IdentityDto createIdentity( IdentityChangeDto identityChange )
         throws IdentityNotFoundException, AppException
     {
-        _logger.debug( "MockIdentityTransportRest. return null and is ok" );
+        _logger.debug( "MockIdentityTransportRest.createIdentity return null and is ok" );
 
         return null;
     }
@@ -109,5 +110,16 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
     protected void addAuthentication( Map<String, String> mapHeadersRequest )
     {
         //no authentication for mock   
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode )
+    {
+        _logger.debug( "MockIdentityTransportRest.deleteIdentity return null and is ok" );
+        
+        return null;
     }
 }

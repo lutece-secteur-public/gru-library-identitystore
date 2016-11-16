@@ -240,6 +240,48 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
         return oResponse;
     }
+    
+    @Override
+    public <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
+        Class<T> responseJsonClass, ObjectMapper mapper )
+    {
+        HttpAccess clientHttp = new HttpAccess(  );
+        T oResponse = null;
+
+        try
+        {
+            URIBuilder uriBuilder = new URIBuilder( strEndPointUrl );
+
+            if ( ( mapParams != null ) && !mapParams.isEmpty(  ) )
+            {
+                for ( String strParamKey : mapParams.keySet(  ) )
+                {
+                    uriBuilder.addParameter( strParamKey, mapParams.get( strParamKey ) );
+                }
+            }
+
+            String strResponseJSON = clientHttp.doDelete( uriBuilder.toString(  ), null, null, mapHeadersRequest, null );
+
+            oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
+        }
+        catch ( HttpAccessException e )
+        {
+            if ( HttpAccessStatus.NOT_FOUND.equals( e.getResponseCode(  ) ) )
+            {
+                throw new IdentityNotFoundException(  );
+            }
+            else
+            {
+                handleException( e );
+            }
+        }
+        catch ( Exception e )
+        {
+            handleException( e );
+        }
+
+        return oResponse;
+    }
 
     /**
      * add error log and throw IdentityStoreException

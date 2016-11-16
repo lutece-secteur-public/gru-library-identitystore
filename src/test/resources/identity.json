@@ -1,13 +1,12 @@
 {"identity":{
 	"connection_id":"123456",
-	"customer_id":9876,
+	"customer_id":"9876",
 	"attributes":{
 		"attr_a":{
 			"key":"a",
 			"value":"val_a",
 			"type":"val_type",
 			"certified":"true",
-			"last_update":"2015-05-05",
 			"certificate":{
 				"certifier_code":"c_code",
 				"certifier_name":"c_name",

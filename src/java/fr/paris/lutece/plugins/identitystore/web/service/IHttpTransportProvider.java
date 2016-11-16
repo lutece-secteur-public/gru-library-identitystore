@@ -94,4 +94,17 @@ public interface IHttpTransportProvider
      */
     <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
         Map<String, FileItem> mapFiles, Class<T> responseJsonClass, ObjectMapper mapper );
+    
+    /**
+     * make a Delete request on given url with parameters
+     * @param strEndPointUrl url
+     * @param mapParams param to add to url
+     * @param mapHeadersRequest request header
+     * @param responseJsonClass the class
+     * @param <T> of the response
+     * @param mapper mapper for JSON serialize / deserialize
+     * @return <T> response
+     */
+    <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
+        Class<T> responseJsonClass, ObjectMapper mapper );
 }

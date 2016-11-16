@@ -183,6 +183,16 @@ public class IdentityService
     {
         return _transportProvider.createIdentity( identityChange );
     }
+    
+    /**
+     * Deletes an identity from the specified connectionId
+     * @param strConnectionId the connection id
+     * @param strApplicationCode the application code
+     */
+    public void deleteIdentity( String strConnectionId, String strApplicationCode )
+    {
+        _transportProvider.deleteIdentity( strConnectionId, strApplicationCode );
+    }
 
     /**
      *

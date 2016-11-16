@@ -42,6 +42,7 @@ import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundExcep
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
+import fr.paris.lutece.plugins.identitystore.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -249,6 +250,30 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
         return identityDto;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseDto deleteIdentity( String strIdConnection, String strClientCode )
+            throws IdentityNotFoundException, AppException
+    {
+        _logger.debug( "Delete identity with connection id " + strIdConnection );
+
+        checkDeleteParameters( strClientCode );
+        
+        Map<String, String> mapHeadersRequest = new HashMap<String, String>(  );
+        addAuthentication( mapHeadersRequest );
+
+        Map<String, String> mapParams = new HashMap<String, String>(  );
+        mapParams.put( Constants.PARAM_ID_CONNECTION, strIdConnection );
+        mapParams.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+
+        ResponseDto responseDto = _httpTransport.doDelete( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH, mapParams,
+                mapHeadersRequest, ResponseDto.class, _mapper );
+        
+        return responseDto;
+    }
 
     /**
      * check input parameters to get an identity
@@ -288,6 +313,17 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         checkIdentity( identityChange.getIdentity(  ).getConnectionId(  ),
             identityChange.getIdentity(  ).getCustomerId(  ) );
         checkClientApplication( identityChange.getAuthor(  ).getApplicationCode(  ) );
+    }
+    
+    /**
+     * check input parameters to delete an identity
+     * @param strClientCode client code
+     * @throws AppException if the parameters are not valid
+     */
+    private void checkDeleteParameters( String strClientCode )
+        throws AppException
+    {
+        checkClientApplication( strClientCode );
     }
 
     /**

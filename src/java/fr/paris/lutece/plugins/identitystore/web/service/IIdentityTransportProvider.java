@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.identitystore.web.service;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
+import fr.paris.lutece.plugins.identitystore.web.rs.dto.ResponseDto;
 import fr.paris.lutece.portal.service.util.AppException;
 
 import org.apache.commons.fileupload.FileItem;
@@ -102,6 +103,17 @@ public interface IIdentityTransportProvider
      */
     IdentityDto createIdentity( IdentityChangeDto identityChange )
         throws AppException;
+    
+    /**
+     * Deletes an identity from the specified connectionId
+     * @param strConnectionId the connection id
+     * @param strApplicationCode the application code
+     * @return the {@code ResponseDto} object
+     * @throws IdentityNotFoundException if no identity found for input parameters
+     * @throws AppException if inconsistent parameters provided, or errors occurs...
+     */
+    ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode )
+            throws IdentityNotFoundException, AppException;
 
     /**
      *

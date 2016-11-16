@@ -196,8 +196,8 @@ public class IdentityServiceTest
         identChange.setIdentity( _identity );
 
         //test getIdentity
-        identityServiceTesting.getIdentityByCustomerId( "1560", "MyDashboard" );
-        identityServiceTesting.getIdentityByConnectionId( "connecID", "MyDashboard" );
+        identityServiceTesting.getIdentityByCustomerId( _identity.getCustomerId(  ), author.getApplicationCode(  ) );
+        identityServiceTesting.getIdentityByConnectionId( _identity.getConnectionId(  ), author.getApplicationCode(  ) );
 
         //test updateIdentity
         FileItem fileItem = new DiskFileItem( "myFile", "text/plain", false, "test.txt", 1024,
@@ -223,5 +223,7 @@ public class IdentityServiceTest
         //test downloadFileAttribute
         //TODO
         //identityServiceTesting.downloadFileAttribute( "connecID", 1560, "attr_key", "MyDashboard", "qsdfgh65432$" );
+        
+        identityServiceTesting.deleteIdentity( _identity.getConnectionId(  ), author.getApplicationCode(  ) );
     }
 }

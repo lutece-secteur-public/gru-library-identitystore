@@ -36,10 +36,8 @@ package fr.paris.lutece.plugins.identitystore.web.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.file.FileDataBodyPart;
@@ -53,7 +51,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.util.Map;
 
@@ -155,15 +152,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
                 oResponse = mapper.readValue( response.getEntity( String.class ), responseJsonClass );
             }
         }
-        catch ( UniformInterfaceException e )
-        {
-            handleException( e );
-        }
-        catch ( ClientHandlerException e )
-        {
-            handleException( e );
-        }
-        catch ( IOException e )
+        catch ( Exception e )
         {
             handleException( e );
         }
@@ -220,15 +209,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
                 oResponse = mapper.readValue( response.getEntity( String.class ), responseJsonClass );
             }
         }
-        catch ( UniformInterfaceException e )
-        {
-            handleException( e );
-        }
-        catch ( ClientHandlerException e )
-        {
-            handleException( e );
-        }
-        catch ( IOException e )
+        catch ( Exception e )
         {
             handleException( e );
         }
@@ -297,15 +278,64 @@ public class SimpleRestTransport implements IHttpTransportProvider
         {
             oResponse = mapper.readValue( response.getEntity( String.class ), responseJsonClass );
         }
-        catch ( UniformInterfaceException e )
+        catch ( Exception e )
         {
             handleException( e );
         }
-        catch ( ClientHandlerException e )
+
+        return oResponse;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T doDelete( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
+        Class<T> responseJsonClass, ObjectMapper mapper )
+    {
+        T oResponse = null;
+        Client client = Client.create(  );
+        WebResource webResource = client.resource( strUrl );
+
+        if ( mapParams != null )
         {
-            handleException( e );
+            for ( String strParamKey : mapParams.keySet(  ) )
+            {
+                webResource = webResource.queryParam( strParamKey, mapParams.get( strParamKey ) );
+            }
         }
-        catch ( IOException e )
+
+        WebResource.Builder builder = webResource.accept( MediaType.APPLICATION_JSON );
+
+        if ( mapHeadersRequest != null )
+        {
+            for ( String strHeaderKey : mapHeadersRequest.keySet(  ) )
+            {
+                builder = builder.header( strHeaderKey, mapHeadersRequest.get( strHeaderKey ) );
+            }
+        }
+
+        try
+        {
+            ClientResponse response = builder.delete( ClientResponse.class );
+
+            if ( response.getStatus(  ) == Status.NOT_FOUND.getStatusCode(  ) )
+            {
+                throw new IdentityNotFoundException(  );
+            }
+            else if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
+            {
+                String strError = "LibraryIdentityStore - Error SimpleRestTransport.doDelete, status code return " +
+                    response.getStatus(  );
+                _logger.error( strError );
+                throw new IdentityStoreException( strError );
+            }
+            else
+            {
+                oResponse = mapper.readValue( response.getEntity( String.class ), responseJsonClass );
+            }
+        }
+        catch ( Exception e )
         {
             handleException( e );
         }
