@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.service;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
@@ -50,10 +48,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 
 import org.apache.log4j.Logger;
-
-import java.io.IOException;
-
-import java.net.URISyntaxException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,7 +80,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
         {
             strOutput = clientHttp.doPost( strUrl, mapParams, null, null, mapHeadersRequest, mapHeadersResponse );
         }
-        catch ( HttpAccessException e )
+        catch ( Exception e )
         {
             handleException( e );
         }
@@ -114,11 +108,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
             String strResponseJSON = clientHttp.doPostJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
         }
-        catch ( HttpAccessException e )
-        {
-            handleException( e );
-        }
-        catch ( IOException e )
+        catch ( Exception e )
         {
             handleException( e );
         }
@@ -147,37 +137,11 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
             String strResponseJSON = clientHttp.doGet( uriBuilder.toString(  ), null, null, mapHeadersRequest );
 
-            try
-            {
-                oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
-            }
-            catch ( JsonParseException e )
-            {
-                handleException( e );
-            }
-            catch ( JsonMappingException e )
-            {
-                handleException( e );
-            }
-            catch ( IOException e )
-            {
-                handleException( e );
-            }
+            oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
         }
-        catch ( URISyntaxException e )
+        catch ( Exception e )
         {
             handleException( e );
-        }
-        catch ( HttpAccessException e )
-        {
-            if ( HttpAccessStatus.NOT_FOUND.equals( e.getResponseCode(  ) ) )
-            {
-                throw new IdentityNotFoundException(  );
-            }
-            else
-            {
-                handleException( e );
-            }
         }
 
         return oResponse;
@@ -209,33 +173,11 @@ public class HttpAccessTransport implements IHttpTransportProvider
             String strResponseJSON = clientHttp.doPostMultiPart( strEndPointUrl, params, mapFiles, null, null,
                     mapHeadersRequest );
 
-            try
-            {
-                oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
-            }
-            catch ( JsonParseException e )
-            {
-                handleException( e );
-            }
-            catch ( JsonMappingException e )
-            {
-                handleException( e );
-            }
-            catch ( IOException e )
-            {
-                handleException( e );
-            }
+            oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
         }
-        catch ( HttpAccessException e )
+        catch ( Exception e )
         {
-            if ( HttpAccessStatus.NOT_FOUND.equals( e.getResponseCode(  ) ) )
-            {
-                throw new IdentityNotFoundException(  );
-            }
-            else
-            {
-                handleException( e );
-            }
+            handleException( e );
         }
 
         return oResponse;
@@ -264,17 +206,6 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
         }
-        catch ( HttpAccessException e )
-        {
-            if ( HttpAccessStatus.NOT_FOUND.equals( e.getResponseCode(  ) ) )
-            {
-                throw new IdentityNotFoundException(  );
-            }
-            else
-            {
-                handleException( e );
-            }
-        }
         catch ( Exception e )
         {
             handleException( e );
@@ -284,14 +215,23 @@ public class HttpAccessTransport implements IHttpTransportProvider
     }
 
     /**
-     * add error log and throw IdentityStoreException
+     * add error log and throw correct Exception depending on the specified Exception
      * @param e root exception
-     * @throws IdentityStoreException identityStore exception
+     * @throws IdentityNotFoundException if the specified Exception is an HttpAccessException with HTTP code 404
+     * @throws IdentityStoreException otherwise
      */
-    private void handleException( Exception e ) throws IdentityStoreException
+    private void handleException( Exception e ) throws IdentityNotFoundException, IdentityStoreException
     {
         String strError = "LibraryIdentityStore - Error HttpAccessTransport :";
         _logger.error( strError + e.getMessage(  ), e );
-        throw new IdentityStoreException( strError, e );
+
+        if ( e instanceof HttpAccessException && HttpAccessStatus.NOT_FOUND.equals( ( (HttpAccessException) e ).getResponseCode(  ) ) )
+        {
+            throw new IdentityNotFoundException( strError, e );
+        }
+        else
+        {
+            throw new IdentityStoreException( strError, e );
+        }
     }
 }
