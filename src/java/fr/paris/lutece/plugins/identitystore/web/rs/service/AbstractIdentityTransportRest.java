@@ -124,11 +124,11 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>(  );
         addAuthentication( mapHeadersRequest );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
         Map<String, String> mapParams = new HashMap<String, String>(  );
         mapParams.put( Constants.PARAM_ID_CONNECTION, strIdConnection );
         mapParams.put( Constants.PARAM_ID_CUSTOMER, strCustomerId );
-        mapParams.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
         IdentityDto identityDto = _httpTransport.doGet( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH, mapParams,
                 mapHeadersRequest, IdentityDto.class, _mapper );
@@ -201,8 +201,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         //                                            .queryParam( Constants.PARAM_ID_CUSTOMER, strCustomerId )
         //                                            .queryParam( Constants.PARAM_CLIENT_CODE, strClientAppCode );
         //    
-        //            WebResource.Builder builder = webResource.header( Constants.PARAM_CLIENT_CONTROL_KEY, strAuthenticationKey )
-        //                                                     .accept( MediaType.WILDCARD_TYPE );
+        //            WebResource.Builder builder = webResource.accept( MediaType.WILDCARD_TYPE );
         //          
         //            ClientResponse response = builder.get( ClientResponse.class );
         //    
@@ -264,10 +263,10 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>(  );
         addAuthentication( mapHeadersRequest );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
         Map<String, String> mapParams = new HashMap<String, String>(  );
         mapParams.put( Constants.PARAM_ID_CONNECTION, strIdConnection );
-        mapParams.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
         ResponseDto responseDto = _httpTransport.doDelete( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH,
                 mapParams, mapHeadersRequest, ResponseDto.class, _mapper );
