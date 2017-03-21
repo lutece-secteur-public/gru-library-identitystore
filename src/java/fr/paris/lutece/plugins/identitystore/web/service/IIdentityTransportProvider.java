@@ -132,4 +132,18 @@ public interface IIdentityTransportProvider
      */
     InputStream downloadFileAttribute( String strConnectionId, String strCustomerId, String strAttributeKey,
         String strClientAppCode );
+
+    /**
+     * certify attributes from an identity
+     *
+     * @param identityChange
+     *          change to apply to identity
+     * @param strCertifierCode 
+     *          the certifier code ID 
+     * @throws AppException
+     *           if error occured while updating identity
+     * @throws IdentityNotFoundException
+     *           if no identity found for input parameters
+     */
+    void certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode );
 }

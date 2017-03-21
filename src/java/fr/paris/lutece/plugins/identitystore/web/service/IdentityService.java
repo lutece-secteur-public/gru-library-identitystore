@@ -215,4 +215,22 @@ public class IdentityService
         return _transportProvider.downloadFileAttribute( strConnectionId, strCustomerId, strAttributeKey,
             strClientAppCode );
     }
+    
+    
+    /**
+     * certify attributes from an identity
+     *
+     * @param identityChange
+     *          change to apply to identity
+     * @param strCertifierCode 
+     *          the certifier code ID 
+     * @throws AppException
+     *           if error occured while updating identity
+     * @throws IdentityNotFoundException
+     *           if no identity found for input parameters
+     */
+    public void certifyAttributes( IdentityChangeDto identityChange, String  strCertifierCode )throws IdentityNotFoundException, AppException
+    {
+        _transportProvider.certifyAttributes( identityChange , strCertifierCode );
+    }
 }

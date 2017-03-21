@@ -46,9 +46,11 @@ public final class Constants
     public static final String DOWNLOAD_FILE_PATH = "/file";
     public static final String UPDATE_IDENTITY_PATH = "/update";
     public static final String CREATE_IDENTITY_PATH = "/create";
+    public static final String CERTIFY_ATTRIBUTES_PATH = "/certify";
     public static final String PARAM_ID_CONNECTION = "connection_id";
     public static final String PARAM_ID_CUSTOMER = "customer_id";
     public static final String PARAM_CLIENT_CODE = "client_code";
+    public static final String PARAM_CERTIFIER_CODE = "certifier_code";
     public static final String PARAM_FILE = "file";
     public static final String PARAM_ATTRIBUTE_KEY = "attribute_key";
     public static final String PLUGIN_PATH = "identitystore";
