@@ -277,7 +277,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
     @Override
     public void certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode )
     {
-        _logger.debug( "Update identity attributes" );
+        _logger.debug( "Certify identity attributes" );
         checkUpdateParameters( identityChange );
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>(  );
@@ -291,6 +291,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         {
             strJsonReq = _mapper.writeValueAsString( identityChange );
             mapParams.put( Constants.PARAM_IDENTITY_CHANGE, strJsonReq );
+            mapParams.put( Constants.PARAM_CERTIFIER_CODE, strCertifierCode );
         }
         catch ( JsonProcessingException e )
         {
@@ -299,8 +300,8 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
             throw new IdentityStoreException( strError, e );
         }
 
-        _httpTransport.doPostJSON(_strIdentityStoreEndPoint + Constants.IDENTITY_PATH +
-                Constants.CERTIFY_ATTRIBUTES_PATH, mapParams, mapHeadersRequest, identityChange, IdentityDto.class, _mapper );
+        _httpTransport.doPost( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH +
+                Constants.CERTIFY_ATTRIBUTES_PATH, mapParams, mapHeadersRequest );
         
     }
     
