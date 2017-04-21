@@ -224,13 +224,14 @@ public class IdentityService
      *          change to apply to identity
      * @param strCertifierCode 
      *          the certifier code ID 
+     * @return the created identity
      * @throws AppException
      *           if error occured while updating identity
      * @throws IdentityNotFoundException
      *           if no identity found for input parameters
      */
-    public void certifyAttributes( IdentityChangeDto identityChange, String  strCertifierCode )throws IdentityNotFoundException, AppException
+    public IdentityDto certifyAttributes( IdentityChangeDto identityChange, String  strCertifierCode ) throws IdentityNotFoundException, AppException
     {
-        _transportProvider.certifyAttributes( identityChange , strCertifierCode );
+        return _transportProvider.certifyAttributes( identityChange , strCertifierCode );
     }
 }

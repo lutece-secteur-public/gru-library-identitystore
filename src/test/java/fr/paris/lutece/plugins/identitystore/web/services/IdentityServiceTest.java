@@ -224,5 +224,8 @@ public class IdentityServiceTest
         //TODO
         //identityServiceTesting.downloadFileAttribute( "connecID", 1560, "attr_key", "MyDashboard", "qsdfgh65432$" );
         identityServiceTesting.deleteIdentity( _identity.getConnectionId(  ), author.getApplicationCode(  ) );
+        
+        //test certifyAttributes
+        //TODO, pas de registry ni bean
     }
 }

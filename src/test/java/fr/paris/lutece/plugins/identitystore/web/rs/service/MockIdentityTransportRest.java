@@ -40,11 +40,9 @@ import fr.paris.lutece.plugins.identitystore.web.rs.dto.ResponseDto;
 import fr.paris.lutece.portal.service.util.AppException;
 
 import org.apache.commons.fileupload.FileItem;
-
 import org.apache.log4j.Logger;
 
 import java.io.InputStream;
-
 import java.util.Map;
 
 
@@ -62,7 +60,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
     public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode )
         throws IdentityNotFoundException, AppException
     {
-        _logger.debug( "MockIdentityTransportRest.getIdentity return null and is ok" );
+        _logger.debug( "MockIdentityTransportRest.getIdentity return null and it is ok" );
 
         return null;
     }
@@ -74,7 +72,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
     public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem )
         throws IdentityNotFoundException, AppException
     {
-        _logger.debug( "MockIdentityTransportRest.updateIdentity return null and is ok" );
+        _logger.debug( "MockIdentityTransportRest.updateIdentity return null and it is ok" );
 
         return null;
     }
@@ -86,7 +84,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
     public InputStream downloadFileAttribute( String strIdConnection, String strCustomerId, String strAttributeKey,
         String strClientAppCode )
     {
-        _logger.debug( "MockIdentityTransportRest.downloadFileAttribute return null and is ok" );
+        _logger.debug( "MockIdentityTransportRest.downloadFileAttribute return null and it is ok" );
 
         return null;
     }
@@ -98,12 +96,25 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
     public IdentityDto createIdentity( IdentityChangeDto identityChange )
         throws IdentityNotFoundException, AppException
     {
-        _logger.debug( "MockIdentityTransportRest.createIdentity return null and is ok" );
+        _logger.debug( "MockIdentityTransportRest.createIdentity return null and it is ok" );
+
+        return null;
+    }
+    
+    
+
+    /**
+	 * {@inheritDoc}
+	 */
+    @Override
+    public IdentityDto certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode )
+    {
+        _logger.debug( "MockIdentityTransportRest.certifyAttributes return null and it is ok" );
 
         return null;
     }
 
-    /**
+	/**
      * {@inheritDoc}
      */
     @Override
