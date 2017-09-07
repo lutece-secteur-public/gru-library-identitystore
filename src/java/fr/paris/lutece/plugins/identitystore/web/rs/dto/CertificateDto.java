@@ -40,15 +40,13 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 
 import java.util.Date;
 
-
 /**
  * CertifierDto
  */
 @JsonRootName( DtoFormatConstants.KEY_CERTIFICATE )
-@JsonPropertyOrder( {DtoFormatConstants.KEY_CERTIFICATE_CERTIFIER_CODE,
-    DtoFormatConstants.KEY_CERTIFICATE_CERTIFIER_NAME,
-    DtoFormatConstants.KEY_CERTIFICATE_LEVEL,
-    DtoFormatConstants.KEY_CERTIFICATE_EXPIRATION_DATE
+@JsonPropertyOrder( {
+        DtoFormatConstants.KEY_CERTIFICATE_CERTIFIER_CODE, DtoFormatConstants.KEY_CERTIFICATE_CERTIFIER_NAME, DtoFormatConstants.KEY_CERTIFICATE_LEVEL,
+        DtoFormatConstants.KEY_CERTIFICATE_EXPIRATION_DATE
 } )
 public class CertificateDto
 {
@@ -61,14 +59,14 @@ public class CertificateDto
      * @return the _strCertifierCode
      */
     @JsonProperty( DtoFormatConstants.KEY_CERTIFICATE_CERTIFIER_CODE )
-    public String getCertifierCode(  )
+    public String getCertifierCode( )
     {
         return _strCertifierCode;
     }
 
     /**
      * @param strCertifierCode
-     *          the _strCertifierCode to set
+     *            the _strCertifierCode to set
      */
     @JsonProperty( DtoFormatConstants.KEY_CERTIFICATE_CERTIFIER_CODE )
     public void setCertifierCode( String strCertifierCode )
@@ -80,14 +78,14 @@ public class CertificateDto
      * @return the _strCertifierName
      */
     @JsonProperty( DtoFormatConstants.KEY_CERTIFICATE_CERTIFIER_NAME )
-    public String getCertifierName(  )
+    public String getCertifierName( )
     {
         return _strCertifierName;
     }
 
     /**
      * @param strCertifierName
-     *          the _strCertifierName to set
+     *            the _strCertifierName to set
      */
     @JsonProperty( DtoFormatConstants.KEY_CERTIFICATE_CERTIFIER_NAME )
     public void setCertifierName( String strCertifierName )
@@ -99,14 +97,14 @@ public class CertificateDto
      * @return the _nCertifierLevel
      */
     @JsonProperty( DtoFormatConstants.KEY_CERTIFICATE_LEVEL )
-    public int getCertifierLevel(  )
+    public int getCertifierLevel( )
     {
         return _nCertifierLevel;
     }
 
     /**
      * @param nCertifierLevel
-     *          the _nCertifierLevel to set
+     *            the _nCertifierLevel to set
      */
     @JsonProperty( DtoFormatConstants.KEY_CERTIFICATE_LEVEL )
     public void setCertifierLevel( int nCertifierLevel )
@@ -119,14 +117,14 @@ public class CertificateDto
      */
     @JsonProperty( DtoFormatConstants.KEY_CERTIFICATE_EXPIRATION_DATE )
     @JsonFormat( shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a z" )
-    public Date getCertificateExpirationDate(  )
+    public Date getCertificateExpirationDate( )
     {
         return _dateCertificateExpirationDate;
     }
 
     /**
      * @param dateCertificateExpirationDate
-     *          the _dateCertificateExpirationDate to set
+     *            the _dateCertificateExpirationDate to set
      */
     @JsonProperty( DtoFormatConstants.KEY_CERTIFICATE_EXPIRATION_DATE )
     @JsonFormat( shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a z" )

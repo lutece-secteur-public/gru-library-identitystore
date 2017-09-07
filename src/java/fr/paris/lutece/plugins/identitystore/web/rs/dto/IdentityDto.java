@@ -41,15 +41,13 @@ import java.io.Serializable;
 
 import java.util.Map;
 
-
 /**
  *
  * Identity Dto
  */
 @JsonRootName( value = DtoFormatConstants.KEY_IDENTITY )
-@JsonPropertyOrder( {DtoFormatConstants.KEY_CONNECTION_ID,
-    DtoFormatConstants.KEY_CUSTOMER_ID,
-    DtoFormatConstants.KEY_ATTRIBUTES
+@JsonPropertyOrder( {
+        DtoFormatConstants.KEY_CONNECTION_ID, DtoFormatConstants.KEY_CUSTOMER_ID, DtoFormatConstants.KEY_ATTRIBUTES
 } )
 public class IdentityDto implements Serializable
 {
@@ -62,14 +60,14 @@ public class IdentityDto implements Serializable
      * @return the _mapAttributes
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTES )
-    public Map<String, AttributeDto> getAttributes(  )
+    public Map<String, AttributeDto> getAttributes( )
     {
         return _mapAttributes;
     }
 
     /**
      * @param mapAttributes
-     *          the lstAttributes to set
+     *            the lstAttributes to set
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTES )
     public void setAttributes( Map<String, AttributeDto> mapAttributes )
@@ -81,14 +79,14 @@ public class IdentityDto implements Serializable
      * @return the _connectionId
      */
     @JsonProperty( DtoFormatConstants.KEY_CONNECTION_ID )
-    public String getConnectionId(  )
+    public String getConnectionId( )
     {
         return _strConnectionId;
     }
 
     /**
      * @param connectionId
-     *          the connectionId to set
+     *            the connectionId to set
      */
     @JsonProperty( DtoFormatConstants.KEY_CONNECTION_ID )
     public void setConnectionId( String connectionId )
@@ -100,14 +98,14 @@ public class IdentityDto implements Serializable
      * @return the _customerId
      */
     @JsonProperty( DtoFormatConstants.KEY_CUSTOMER_ID )
-    public String getCustomerId(  )
+    public String getCustomerId( )
     {
         return _strCustomerId;
     }
 
     /**
      * @param strCustomerId
-     *          the strCustomerId to set
+     *            the strCustomerId to set
      */
     @JsonProperty( DtoFormatConstants.KEY_CUSTOMER_ID )
     public void setCustomerId( String strCustomerId )

@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.identitystore.web.rs.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
-
 /**
  *
  * Response Dto
@@ -52,14 +51,14 @@ public class ResponseDto
      * @return the _strStatus
      */
     @JsonProperty( value = DtoFormatConstants.KEY_STATUS )
-    public String getStatus(  )
+    public String getStatus( )
     {
         return _strStatus;
     }
 
     /**
      * @param strStatus
-     *          the _strStatus to set
+     *            the _strStatus to set
      */
     @JsonProperty( value = DtoFormatConstants.KEY_STATUS )
     public void setStatus( String strStatus )
@@ -71,14 +70,14 @@ public class ResponseDto
      * @return the _strMessage
      */
     @JsonProperty( value = DtoFormatConstants.KEY_MESSAGE )
-    public String getMessage(  )
+    public String getMessage( )
     {
         return _strMessage;
     }
 
     /**
      * @param strMessage
-     *          the strMessage to set
+     *            the strMessage to set
      */
     @JsonProperty( value = DtoFormatConstants.KEY_MESSAGE )
     public void setMessage( String strMessage )

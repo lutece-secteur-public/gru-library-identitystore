@@ -39,7 +39,6 @@ import org.apache.commons.fileupload.FileItem;
 
 import java.util.Map;
 
-
 /**
  *
  */
@@ -47,64 +46,96 @@ public interface IHttpTransportProvider
 {
     /**
      * make POST request on given url with params and headers
-     * @param strUrl url to call
-     * @param mapParams params to post
-     * @param mapHeadersRequest headers of the request
+     * 
+     * @param strUrl
+     *            url to call
+     * @param mapParams
+     *            params to post
+     * @param mapHeadersRequest
+     *            headers of the request
      * @return response body as String
      */
     String doPost( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest );
 
     /**
      * make POST request on given url with params and headers of a JSON object to retrieve another JSON
-     * @param strUrl url to call
-     * @param mapParams params to post
-     * @param mapHeadersRequest headers of the request
-     * @param json JSON object to post
-     * @param responseJsonClass the class
-     * @param <T> of the response
-     * @param mapper mapper for JSON serialize / deserialize
+     * 
+     * @param strUrl
+     *            url to call
+     * @param mapParams
+     *            params to post
+     * @param mapHeadersRequest
+     *            headers of the request
+     * @param json
+     *            JSON object to post
+     * @param responseJsonClass
+     *            the class
+     * @param <T>
+     *            of the response
+     * @param mapper
+     *            mapper for JSON serialize / deserialize
      * @return <T> response
      */
-    <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
-        Class<T> responseJsonClass, ObjectMapper mapper );
+    <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
+            ObjectMapper mapper );
 
     /**
      * make a Get request on given url with parameters
-     * @param strEndPointUrl url
-     * @param mapParams param to add to url
-     * @param mapHeadersRequest request header
-     * @param responseJsonClass the class
-     * @param <T> of the response
-     * @param mapper mapper for JSON serialize / deserialize
+     * 
+     * @param strEndPointUrl
+     *            url
+     * @param mapParams
+     *            param to add to url
+     * @param mapHeadersRequest
+     *            request header
+     * @param responseJsonClass
+     *            the class
+     * @param <T>
+     *            of the response
+     * @param mapper
+     *            mapper for JSON serialize / deserialize
      * @return <T> response
      */
-    <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-        Class<T> responseJsonClass, ObjectMapper mapper );
+    <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper );
 
     /**
-     * make a multipart Post request 
-     * @param strEndPointUrl url 
-     * @param mapParams param to add to request
-     * @param mapHeadersRequest request header
-     * @param mapFiles file to add to multipart request
-     * @param responseJsonClass the class
-     * @param <T> of the response
-     * @param mapper mapper for JSON serialize / deserialize
+     * make a multipart Post request
+     * 
+     * @param strEndPointUrl
+     *            url
+     * @param mapParams
+     *            param to add to request
+     * @param mapHeadersRequest
+     *            request header
+     * @param mapFiles
+     *            file to add to multipart request
+     * @param responseJsonClass
+     *            the class
+     * @param <T>
+     *            of the response
+     * @param mapper
+     *            mapper for JSON serialize / deserialize
      * @return <T> response
      */
-    <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-        Map<String, FileItem> mapFiles, Class<T> responseJsonClass, ObjectMapper mapper );
-    
+    <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles,
+            Class<T> responseJsonClass, ObjectMapper mapper );
+
     /**
      * make a Delete request on given url with parameters
-     * @param strEndPointUrl url
-     * @param mapParams param to add to url
-     * @param mapHeadersRequest request header
-     * @param responseJsonClass the class
-     * @param <T> of the response
-     * @param mapper mapper for JSON serialize / deserialize
+     * 
+     * @param strEndPointUrl
+     *            url
+     * @param mapParams
+     *            param to add to url
+     * @param mapHeadersRequest
+     *            request header
+     * @param responseJsonClass
+     *            the class
+     * @param <T>
+     *            of the response
+     * @param mapper
+     *            mapper for JSON serialize / deserialize
      * @return <T> response
      */
-    <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-        Class<T> responseJsonClass, ObjectMapper mapper );
+    <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper );
 }

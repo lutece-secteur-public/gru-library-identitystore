@@ -39,7 +39,6 @@ import fr.paris.lutece.plugins.identitystore.web.service.IIdentityTransportProvi
 
 import java.util.Map;
 
-
 /**
  * IdentityRestClientService
  */
@@ -48,19 +47,21 @@ public final class IdentityTransportRest extends AbstractIdentityTransportRest i
     /**
      * Simple Constructor
      */
-    public IdentityTransportRest(  )
+    public IdentityTransportRest( )
     {
-        super(  );
-        this.setHttpTransport( new HttpAccessTransport(  ) );
+        super( );
+        this.setHttpTransport( new HttpAccessTransport( ) );
     }
 
     /**
-         * Constructor with IHttpTransportProvider parameter
-         * @param httpTransport the provider to use
-         */
+     * Constructor with IHttpTransportProvider parameter
+     * 
+     * @param httpTransport
+     *            the provider to use
+     */
     public IdentityTransportRest( IHttpTransportProvider httpTransport )
     {
-        super(  );
+        super( );
         this.setHttpTransport( httpTransport );
     }
 
@@ -70,6 +71,6 @@ public final class IdentityTransportRest extends AbstractIdentityTransportRest i
     @Override
     protected void addAuthentication( Map<String, String> mapHeadersRequest )
     {
-        //no authentication for simple rest client
+        // no authentication for simple rest client
     }
 }

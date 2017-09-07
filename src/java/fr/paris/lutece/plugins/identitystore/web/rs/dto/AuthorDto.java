@@ -37,16 +37,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
-
 /**
  * AuthorDto
  *
  */
 @JsonRootName( DtoFormatConstants.KEY_AUTHOR )
-@JsonPropertyOrder( {DtoFormatConstants.KEY_AUTHOR_USERNAME,
-    DtoFormatConstants.KEY_AUTHOR_EMAIL,
-    DtoFormatConstants.KEY_AUTHOR_TYPE,
-    DtoFormatConstants.KEY_AUTHOR_APPLICATION_NAME
+@JsonPropertyOrder( {
+        DtoFormatConstants.KEY_AUTHOR_USERNAME, DtoFormatConstants.KEY_AUTHOR_EMAIL, DtoFormatConstants.KEY_AUTHOR_TYPE,
+        DtoFormatConstants.KEY_AUTHOR_APPLICATION_NAME
 } )
 public class AuthorDto
 {
@@ -60,14 +58,14 @@ public class AuthorDto
      * @return the _strUserName
      */
     @JsonProperty( DtoFormatConstants.KEY_AUTHOR_USERNAME )
-    public String getUserName(  )
+    public String getUserName( )
     {
         return _strUserName;
     }
 
     /**
      * @param strUserName
-     *          the _strUserName to set
+     *            the _strUserName to set
      */
     @JsonProperty( DtoFormatConstants.KEY_AUTHOR_USERNAME )
     public void setUserName( String strUserName )
@@ -79,14 +77,14 @@ public class AuthorDto
      * @return the _strEmail
      */
     @JsonProperty( DtoFormatConstants.KEY_AUTHOR_EMAIL )
-    public String getEmail(  )
+    public String getEmail( )
     {
         return _strEmail;
     }
 
     /**
      * @param strEmail
-     *          the _strEmail to set
+     *            the _strEmail to set
      */
     @JsonProperty( DtoFormatConstants.KEY_AUTHOR_EMAIL )
     public void setEmail( String strEmail )
@@ -98,14 +96,14 @@ public class AuthorDto
      * @return the _type
      */
     @JsonProperty( DtoFormatConstants.KEY_AUTHOR_TYPE )
-    public int getType(  )
+    public int getType( )
     {
         return _nType;
     }
 
     /**
      * @param nType
-     *          the _nType to set
+     *            the _nType to set
      */
     @JsonProperty( DtoFormatConstants.KEY_AUTHOR_TYPE )
     public void setType( int nType )
@@ -117,14 +115,14 @@ public class AuthorDto
      * @return the _strApplicationName
      */
     @JsonProperty( DtoFormatConstants.KEY_AUTHOR_APPLICATION_NAME )
-    public String getApplicationName(  )
+    public String getApplicationName( )
     {
         return _strApplicationName;
     }
 
     /**
      * @param strApplicationName
-     *          the _strApplicationName to set
+     *            the _strApplicationName to set
      */
     @JsonProperty( DtoFormatConstants.KEY_AUTHOR_APPLICATION_NAME )
     public void setApplicationName( String strApplicationName )
@@ -136,14 +134,14 @@ public class AuthorDto
      * @return the _strApplicationCode
      */
     @JsonProperty( DtoFormatConstants.KEY_AUTHOR_APPLICATION_CODE )
-    public String getApplicationCode(  )
+    public String getApplicationCode( )
     {
         return _strApplicationCode;
     }
 
     /**
      * @param strApplicationCode
-     *          the _strApplicationName to set
+     *            the _strApplicationName to set
      */
     @JsonProperty( DtoFormatConstants.KEY_AUTHOR_APPLICATION_CODE )
     public void setApplicationCode( String strApplicationCode )
