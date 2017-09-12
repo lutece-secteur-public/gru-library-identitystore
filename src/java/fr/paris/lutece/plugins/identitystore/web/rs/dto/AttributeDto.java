@@ -174,6 +174,7 @@ public class AttributeDto implements Serializable
     {
         return _bWritable;
     }
+
     /**
      * @return the _certificate
      */
