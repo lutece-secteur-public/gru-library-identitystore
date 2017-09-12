@@ -47,7 +47,7 @@ import java.io.Serializable;
 @JsonRootName( value = DtoFormatConstants.KEY_ATTRIBUTES )
 @JsonPropertyOrder( {
         DtoFormatConstants.KEY_ATTRIBUTE_KEY, DtoFormatConstants.KEY_ATTRIBUTE_TYPE, DtoFormatConstants.KEY_ATTRIBUTE_VALUE,
-        DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED, DtoFormatConstants.KEY_ATTRIBUTE_CERTIFICATE
+        DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED, DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE, DtoFormatConstants.KEY_ATTRIBUTE_CERTIFICATE
 } )
 public class AttributeDto implements Serializable
 {
@@ -59,6 +59,7 @@ public class AttributeDto implements Serializable
     private String _strValue;
     private String _strType;
     private boolean _bCertified;
+    private boolean _bWritable;
     private CertificateDto _certificate;
 
     /**
@@ -146,6 +147,33 @@ public class AttributeDto implements Serializable
         return _bCertified;
     }
 
+    /**
+     * @return the _bWritable
+     */
+    @JsonIgnore
+    public boolean getWritable( )
+    {
+        return _bWritable;
+    }
+
+    /**
+     * @param bWritable
+     *            the bWritable to set
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE )
+    public void setWritable( boolean bWritable )
+    {
+        this._bWritable = bWritable;
+    }
+
+    /**
+     * @return the _bWritable
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE )
+    public boolean isWritable( )
+    {
+        return _bWritable;
+    }
     /**
      * @return the _certificate
      */

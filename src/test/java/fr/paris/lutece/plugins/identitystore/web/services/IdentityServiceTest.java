@@ -101,6 +101,7 @@ public class IdentityServiceTest
     {
         ObjectMapper mapper = new ObjectMapper( );
         mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
+        mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
         mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
 
         _identity = mapper.readValue( getClass( ).getResourceAsStream( "/identity.json" ), IdentityDto.class );
