@@ -40,20 +40,14 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 
 import java.io.Serializable;
 
-
 /**
  * Attribute Dto
  *
  */
 @JsonRootName( value = DtoFormatConstants.KEY_ATTRIBUTES )
-@JsonPropertyOrder( {DtoFormatConstants.KEY_ATTRIBUTE_KEY,
-    DtoFormatConstants.KEY_ATTRIBUTE_TYPE,
-    DtoFormatConstants.KEY_ATTRIBUTE_VALUE,
-    DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED,
-    DtoFormatConstants.KEY_ATTRIBUTE_READABLE,
-    DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE,
-    DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED,
-    DtoFormatConstants.KEY_ATTRIBUTE_CERTIFICATE,
+@JsonPropertyOrder( {
+        DtoFormatConstants.KEY_ATTRIBUTE_KEY, DtoFormatConstants.KEY_ATTRIBUTE_TYPE, DtoFormatConstants.KEY_ATTRIBUTE_VALUE,
+        DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED, DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE, DtoFormatConstants.KEY_ATTRIBUTE_CERTIFICATE
 } )
 public class AttributeDto implements Serializable
 {
@@ -65,20 +59,21 @@ public class AttributeDto implements Serializable
     private String _strValue;
     private String _strType;
     private boolean _bCertified;
+    private boolean _bWritable;
     private CertificateDto _certificate;
 
     /**
      * @return the _strName
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_KEY )
-    public String getKey(  )
+    public String getKey( )
     {
         return _strKey;
     }
 
     /**
      * @param strKey
-     *          the strName to set
+     *            the strName to set
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_KEY )
     public void setKey( String strKey )
@@ -90,14 +85,14 @@ public class AttributeDto implements Serializable
      * @return the _strValue
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_VALUE )
-    public String getValue(  )
+    public String getValue( )
     {
         return _strValue;
     }
 
     /**
      * @param strValue
-     *          the strValue to set
+     *            the strValue to set
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_VALUE )
     public void setValue( String strValue )
@@ -109,14 +104,14 @@ public class AttributeDto implements Serializable
      * @return the _strType
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_TYPE )
-    public String getType(  )
+    public String getType( )
     {
         return _strType;
     }
 
     /**
      * @param strType
-     *          the _strType to set
+     *            the _strType to set
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_TYPE )
     public void setType( String strType )
@@ -128,14 +123,14 @@ public class AttributeDto implements Serializable
      * @return the _bCertified
      */
     @JsonIgnore
-    public boolean getCertified(  )
+    public boolean getCertified( )
     {
         return _bCertified;
     }
 
     /**
      * @param bCertified
-     *          the bCertified to set
+     *            the bCertified to set
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED )
     public void setCertified( boolean bCertified )
@@ -147,23 +142,51 @@ public class AttributeDto implements Serializable
      * @return the _bCertified
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED )
-    public boolean isCertified(  )
+    public boolean isCertified( )
     {
         return _bCertified;
+    }
+
+    /**
+     * @return the _bWritable
+     */
+    @JsonIgnore
+    public boolean getWritable( )
+    {
+        return _bWritable;
+    }
+
+    /**
+     * @param bWritable
+     *            the bWritable to set
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE )
+    public void setWritable( boolean bWritable )
+    {
+        this._bWritable = bWritable;
+    }
+
+    /**
+     * @return the _bWritable
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE )
+    public boolean isWritable( )
+    {
+        return _bWritable;
     }
 
     /**
      * @return the _certificate
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_CERTIFICATE )
-    public CertificateDto getCertificate(  )
+    public CertificateDto getCertificate( )
     {
         return _certificate;
     }
 
     /**
      * @param certificate
-     *          the _certificate to set
+     *            the _certificate to set
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_CERTIFICATE )
     public void setCertificate( CertificateDto certificate )

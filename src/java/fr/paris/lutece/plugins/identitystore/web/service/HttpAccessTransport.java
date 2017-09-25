@@ -57,7 +57,6 @@ import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-
 /**
  * IHttpTransportProvider which use library-httpaccess
  */
@@ -71,8 +70,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
     @Override
     public String doPost( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest )
     {
-        HttpAccess clientHttp = new HttpAccess(  );
-        Map<String, String> mapHeadersResponse = new HashMap<String, String>(  );
+        HttpAccess clientHttp = new HttpAccess( );
+        Map<String, String> mapHeadersResponse = new HashMap<String, String>( );
 
         String strOutput = StringUtils.EMPTY;
 
@@ -80,7 +79,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
         {
             strOutput = clientHttp.doPost( strUrl, mapParams, null, null, mapHeadersRequest, mapHeadersResponse );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             handleException( e );
         }
@@ -92,11 +91,11 @@ public class HttpAccessTransport implements IHttpTransportProvider
      * {@inheritDoc}
      */
     @Override
-    public <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-        Object json, Class<T> responseJsonClass, ObjectMapper mapper )
+    public <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
+            ObjectMapper mapper )
     {
-        HttpAccess clientHttp = new HttpAccess(  );
-        Map<String, String> mapHeadersResponse = new HashMap<String, String>(  );
+        HttpAccess clientHttp = new HttpAccess( );
+        Map<String, String> mapHeadersResponse = new HashMap<String, String>( );
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
         mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
 
@@ -108,7 +107,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
             String strResponseJSON = clientHttp.doPostJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             handleException( e );
         }
@@ -117,29 +116,29 @@ public class HttpAccessTransport implements IHttpTransportProvider
     }
 
     @Override
-    public <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-        Class<T> responseJsonClass, ObjectMapper mapper )
+    public <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
+            ObjectMapper mapper )
     {
-        HttpAccess clientHttp = new HttpAccess(  );
+        HttpAccess clientHttp = new HttpAccess( );
         T oResponse = null;
 
         try
         {
             URIBuilder uriBuilder = new URIBuilder( strEndPointUrl );
 
-            if ( ( mapParams != null ) && !mapParams.isEmpty(  ) )
+            if ( ( mapParams != null ) && !mapParams.isEmpty( ) )
             {
-                for ( String strParamKey : mapParams.keySet(  ) )
+                for ( String strParamKey : mapParams.keySet( ) )
                 {
                     uriBuilder.addParameter( strParamKey, mapParams.get( strParamKey ) );
                 }
             }
 
-            String strResponseJSON = clientHttp.doGet( uriBuilder.toString(  ), null, null, mapHeadersRequest );
+            String strResponseJSON = clientHttp.doGet( uriBuilder.toString( ), null, null, mapHeadersRequest );
 
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             handleException( e );
         }
@@ -148,34 +147,32 @@ public class HttpAccessTransport implements IHttpTransportProvider
     }
 
     @Override
-    public <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams,
-        Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles, Class<T> responseJsonClass,
-        ObjectMapper mapper )
+    public <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles,
+            Class<T> responseJsonClass, ObjectMapper mapper )
     {
-        HttpAccess clientHttp = new HttpAccess(  );
+        HttpAccess clientHttp = new HttpAccess( );
         T oResponse = null;
 
         try
         {
-            Map<String, List<String>> params = new HashMap<String, List<String>>(  );
+            Map<String, List<String>> params = new HashMap<String, List<String>>( );
 
             if ( mapParams != null )
             {
-                for ( String strParamKey : mapParams.keySet(  ) )
+                for ( String strParamKey : mapParams.keySet( ) )
                 {
-                    //HttpAccess allow to post for a given param a list of value
-                    List<String> listParam = new ArrayList<String>(  );
+                    // HttpAccess allow to post for a given param a list of value
+                    List<String> listParam = new ArrayList<String>( );
                     listParam.add( mapParams.get( strParamKey ) );
                     params.put( strParamKey, listParam );
                 }
             }
 
-            String strResponseJSON = clientHttp.doPostMultiPart( strEndPointUrl, params, mapFiles, null, null,
-                    mapHeadersRequest );
+            String strResponseJSON = clientHttp.doPostMultiPart( strEndPointUrl, params, mapFiles, null, null, mapHeadersRequest );
 
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             handleException( e );
         }
@@ -184,29 +181,29 @@ public class HttpAccessTransport implements IHttpTransportProvider
     }
 
     @Override
-    public <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-        Class<T> responseJsonClass, ObjectMapper mapper )
+    public <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
+            ObjectMapper mapper )
     {
-        HttpAccess clientHttp = new HttpAccess(  );
+        HttpAccess clientHttp = new HttpAccess( );
         T oResponse = null;
 
         try
         {
             URIBuilder uriBuilder = new URIBuilder( strEndPointUrl );
 
-            if ( ( mapParams != null ) && !mapParams.isEmpty(  ) )
+            if ( ( mapParams != null ) && !mapParams.isEmpty( ) )
             {
-                for ( String strParamKey : mapParams.keySet(  ) )
+                for ( String strParamKey : mapParams.keySet( ) )
                 {
                     uriBuilder.addParameter( strParamKey, mapParams.get( strParamKey ) );
                 }
             }
 
-            String strResponseJSON = clientHttp.doDelete( uriBuilder.toString(  ), null, null, mapHeadersRequest, null );
+            String strResponseJSON = clientHttp.doDelete( uriBuilder.toString( ), null, null, mapHeadersRequest, null );
 
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             handleException( e );
         }
@@ -216,17 +213,20 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
     /**
      * add error log and throw correct Exception depending on the specified Exception
-     * @param e root exception
-     * @throws IdentityNotFoundException if the specified Exception is an HttpAccessException with HTTP code 404
-     * @throws IdentityStoreException otherwise
+     * 
+     * @param e
+     *            root exception
+     * @throws IdentityNotFoundException
+     *             if the specified Exception is an HttpAccessException with HTTP code 404
+     * @throws IdentityStoreException
+     *             otherwise
      */
     private void handleException( Exception e ) throws IdentityNotFoundException, IdentityStoreException
     {
         String strError = "LibraryIdentityStore - Error HttpAccessTransport :";
-        _logger.error( strError + e.getMessage(  ), e );
+        _logger.error( strError + e.getMessage( ), e );
 
-        if ( e instanceof HttpAccessException &&
-                HttpAccessStatus.NOT_FOUND.equals( ( (HttpAccessException) e ).getResponseCode(  ) ) )
+        if ( e instanceof HttpAccessException && HttpAccessStatus.NOT_FOUND.equals( ( (HttpAccessException) e ).getResponseCode( ) ) )
         {
             throw new IdentityNotFoundException( strError, e );
         }

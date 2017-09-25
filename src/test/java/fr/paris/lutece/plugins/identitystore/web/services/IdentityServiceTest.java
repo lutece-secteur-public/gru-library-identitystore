@@ -67,15 +67,13 @@ import java.util.HashMap;
 
 import javax.annotation.Resource;
 
-
 /**
  * test of NotificationService
  */
 @RunWith( SpringJUnit4ClassRunner.class )
-@ContextConfiguration( locations = 
-{
-    "classpath:test-identitystore.xml"}
- )
+@ContextConfiguration( locations = {
+    "classpath:test-identitystore.xml"
+} )
 public class IdentityServiceTest
 {
     private static Logger _logger = Logger.getLogger( IdentityServiceTest.class );
@@ -87,33 +85,35 @@ public class IdentityServiceTest
     private IdentityService _identityServiceRestSimpleRest;
     @Resource( name = "testIdentityService.rest.httpAccess" )
     private IdentityService _identityServiceRestHttpAccess;
-    @Resource( name = "testIdentityServiceMock" )
-    private IdentityService _identityServiceMock;
     private IdentityDto _identity;
 
     /**
      * Constructor, init the notification JSON
      *
-     * @throws JsonParseException exception
-     * @throws JsonMappingException exception
-     * @throws IOException exception
+     * @throws JsonParseException
+     *             exception
+     * @throws JsonMappingException
+     *             exception
+     * @throws IOException
+     *             exception
      */
-    public IdentityServiceTest(  ) throws JsonParseException, JsonMappingException, IOException
+    public IdentityServiceTest( ) throws JsonParseException, JsonMappingException, IOException
     {
-        ObjectMapper mapper = new ObjectMapper(  );
+        ObjectMapper mapper = new ObjectMapper( );
         mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
+        mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
         mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
 
-        _identity = mapper.readValue( getClass(  ).getResourceAsStream( "/identity.json" ), IdentityDto.class );
+        _identity = mapper.readValue( getClass( ).getResourceAsStream( "/identity.json" ), IdentityDto.class );
 
-        //Init HttpAccess singleton through NPE exception due of lack of properties access
+        // Init HttpAccess singleton through NPE exception due of lack of properties access
         try
         {
-            HttpAccessService.getInstance(  );
+            HttpAccessService.getInstance( );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
-            //do nothing
+            // do nothing
         }
     }
 
@@ -121,7 +121,7 @@ public class IdentityServiceTest
      * test IdentityService through ApiManager Transport and HttpAccess Provider
      */
     @Test
-    public void testServiceThroughApiManagerHttpAccess(  )
+    public void testServiceThroughApiManagerHttpAccess( )
     {
         callServiceMethod( _identityServiceApiHttpAccess, "_identityServiceApiHttpAccess" );
     }
@@ -130,7 +130,7 @@ public class IdentityServiceTest
      * test IdentityService through ApiManager Transport and SimpleRest Provider
      */
     @Test
-    public void testServiceThroughApiManagerSimpleRest(  )
+    public void testServiceThroughApiManagerSimpleRest( )
     {
         callServiceMethod( _identityServiceApiSimpleRest, "_identityServiceApiHttpAccess" );
     }
@@ -139,7 +139,7 @@ public class IdentityServiceTest
      * test IdentityService through Rest Transport and HttpAccess Provider
      */
     @Test
-    public void testServiceThroughRestHttpAccess(  )
+    public void testServiceThroughRestHttpAccess( )
     {
         callServiceMethod( _identityServiceRestHttpAccess, "_identityServiceApiHttpAccess" );
     }
@@ -148,30 +148,21 @@ public class IdentityServiceTest
      * test IdentityService through Rest Transport and SimpleRest Provider
      */
     @Test
-    public void testServiceThroughRestSimpleRest(  )
+    public void testServiceThroughRestSimpleRest( )
     {
         callServiceMethod( _identityServiceRestSimpleRest, "_identityServiceApiHttpAccess" );
-    }
-
-    /**
-     * test IdentityService through mock
-     */
-    @Test
-    public void testServiceThroughMock(  )
-    {
-        callServiceMethod( _identityServiceMock, "_identityServiceApiHttpAccess" );
     }
 
     /**
      * test IdentityService through mock and no spring beans
      */
     @Test
-    public void testServiceThroughMockNoSpring(  )
+    public void testServiceThroughMockNoSpring( )
     {
-        MockIdentityTransportRest mockTransport = new MockIdentityTransportRest(  );
+        MockIdentityTransportRest mockTransport = new MockIdentityTransportRest( );
         mockTransport.setIdentityStoreEndPoint( "unused" );
 
-        //default mockTransport.httpTransport set with simpleRest
+        // default mockTransport.httpTransport set with simpleRest
         IdentityService identityServiceNoSpring = new IdentityService( mockTransport );
 
         callServiceMethod( identityServiceNoSpring, "identityServiceNoSpring" );
@@ -179,53 +170,58 @@ public class IdentityServiceTest
 
     /**
      * full test of service methods
-     * @param identityServiceTesting the service to test
-     * @param messagePrefix string put at the beginning of messages
+     * 
+     * @param identityServiceTesting
+     *            the service to test
+     * @param messagePrefix
+     *            string put at the beginning of messages
      */
     private void callServiceMethod( IdentityService identityServiceTesting, String messagePrefix )
     {
-        AuthorDto author = new AuthorDto(  );
+        AuthorDto author = new AuthorDto( );
         author.setApplicationCode( "MyDashboard" );
         author.setApplicationName( "My dashboard" );
         author.setEmail( "admin-mydashboard@test.com" );
         author.setType( 1 );
         author.setUserName( "admin-mydashboard" );
 
-        IdentityChangeDto identChange = new IdentityChangeDto(  );
+        IdentityChangeDto identChange = new IdentityChangeDto( );
         identChange.setAuthor( author );
         identChange.setIdentity( _identity );
 
-        //test getIdentity
-        identityServiceTesting.getIdentityByCustomerId( _identity.getCustomerId(  ), author.getApplicationCode(  ) );
-        identityServiceTesting.getIdentityByConnectionId( _identity.getConnectionId(  ), author.getApplicationCode(  ) );
+        // test getIdentity
+        identityServiceTesting.getIdentityByCustomerId( _identity.getCustomerId( ), author.getApplicationCode( ) );
+        identityServiceTesting.getIdentityByConnectionId( _identity.getConnectionId( ), author.getApplicationCode( ) );
 
-        //test updateIdentity
-        FileItem fileItem = new DiskFileItem( "myFile", "text/plain", false, "test.txt", 1024,
-                new File( getClass(  ).getResource( "/" ).getFile(  ) ) );
+        // test updateIdentity
+        FileItem fileItem = new DiskFileItem( "myFile", "text/plain", false, "test.txt", 1024, new File( getClass( ).getResource( "/" ).getFile( ) ) );
 
         try
         {
-            fileItem.getOutputStream(  ).write( ( "Hello" ).getBytes( Charset.forName( "UTF-8" ) ) );
+            fileItem.getOutputStream( ).write( ( "Hello" ).getBytes( Charset.forName( "UTF-8" ) ) );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             // TODO Auto-generated catch block
             _logger.error( messagePrefix + " - error while writing to file item", e );
         }
 
-        HashMap<String, FileItem> mapFileItems = new HashMap<String, FileItem>(  );
+        HashMap<String, FileItem> mapFileItems = new HashMap<String, FileItem>( );
         mapFileItems.put( "myFile", fileItem );
         identityServiceTesting.updateIdentity( identChange, mapFileItems );
 
-        //test createIdentity
+        // test createIdentity
         identityServiceTesting.createIdentity( identChange );
 
-        //test downloadFileAttribute
-        //TODO
-        //identityServiceTesting.downloadFileAttribute( "connecID", 1560, "attr_key", "MyDashboard", "qsdfgh65432$" );
-        identityServiceTesting.deleteIdentity( _identity.getConnectionId(  ), author.getApplicationCode(  ) );
-        
-        //test certifyAttributes
-        //TODO, pas de registry ni bean
+        // test downloadFileAttribute
+        // TODO
+        // identityServiceTesting.downloadFileAttribute( "connecID", 1560, "attr_key", "MyDashboard", "qsdfgh65432$" );
+        identityServiceTesting.deleteIdentity( _identity.getConnectionId( ), author.getApplicationCode( ) );
+
+        // test certifyAttributes
+        // TODO, pas de registry ni bean
+
+        // test appRight
+        // rien a tester
     }
 }

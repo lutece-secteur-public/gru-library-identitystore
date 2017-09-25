@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.rs.dto;
 
-
 /**
  * This class provides constants for formatting
  *
@@ -46,6 +45,8 @@ public final class DtoFormatConstants
     public static final String KEY_AUTHOR_TYPE = "type";
     public static final String KEY_AUTHOR_APPLICATION_NAME = "application_name";
     public static final String KEY_AUTHOR_APPLICATION_CODE = "application_code";
+    public static final String KEY_APPLICATION_RIGHTS = "application_rights";
+    public static final String KEY_APPLICATION_CODE = "application_code";
     public static final String KEY_CERTIFICATE = "certificate";
     public static final String KEY_CERTIFICATE_CERTIFIER_CODE = "certifier_code";
     public static final String KEY_CERTIFICATE_CERTIFIER_NAME = "certifier_name";
@@ -58,10 +59,12 @@ public final class DtoFormatConstants
     public static final String KEY_ATTRIBUTE_KEY = "key";
     public static final String KEY_ATTRIBUTE_VALUE = "value";
     public static final String KEY_ATTRIBUTE_TYPE = "type";
-    public static final String KEY_ATTRIBUTE_WRITABLE = "readable";
-    public static final String KEY_ATTRIBUTE_READABLE = "writable";
+    public static final String KEY_ATTRIBUTE_WRITABLE = "writable";
+    public static final String KEY_ATTRIBUTE_READABLE = "readable";
+    public static final String KEY_ATTRIBUTE_CERTIFIERS = "certifiers";
     public static final String KEY_ATTRIBUTE_CERTIFIED = "certified";
     public static final String KEY_ATTRIBUTE_CERTIFICATE = "certificate";
+    public static final String KEY_ATTRIBUTE_RIGHTS = "attribut_rights";
     public static final String KEY_IDENTITY_CHANGE = "identity_change";
     public static final String KEY_IDENTITY_CHANGE_IDENTITY = "identity";
     public static final String KEY_IDENTITY_CHANGE_AUTHOR = "author";
@@ -78,7 +81,7 @@ public final class DtoFormatConstants
     /**
      * Private constructor
      */
-    private DtoFormatConstants(  )
+    private DtoFormatConstants( )
     {
     }
 }

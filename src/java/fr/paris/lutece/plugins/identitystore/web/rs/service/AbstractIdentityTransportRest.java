@@ -40,6 +40,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
+import fr.paris.lutece.plugins.identitystore.web.rs.dto.ApplicationRightsDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.ResponseDto;
@@ -69,6 +70,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
     {
         _mapper = new ObjectMapper( );
         _mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
+        _mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
         _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
     }
 
@@ -304,6 +306,28 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
                 mapParams, mapHeadersRequest, null, IdentityDto.class, _mapper );
 
         return identityDto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException
+    {
+        _logger.debug( "Get application rights for " + strClientAppCode );
+
+        checkClientApplication( strClientAppCode );
+
+        Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
+        addAuthentication( mapHeadersRequest );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientAppCode );
+
+        Map<String, String> mapParams = new HashMap<String, String>( );
+
+        ApplicationRightsDto appRightsDto = _httpTransport.doGet( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH + Constants.APPLICATION_RIGHTS_PATH,
+                mapParams, mapHeadersRequest, ApplicationRightsDto.class, _mapper );
+
+        return appRightsDto;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2016, Mairie de Paris
+ * Copyright (c) 2002-2017, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,58 +33,79 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.rs.dto;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
- * IdentityChangeDto
- *
+ * ApplicationRightsDto
  */
-@JsonRootName( value = DtoFormatConstants.KEY_IDENTITY_CHANGE )
+@JsonRootName( value = DtoFormatConstants.KEY_APPLICATION_RIGHTS )
 @JsonPropertyOrder( {
-        DtoFormatConstants.KEY_IDENTITY_CHANGE_IDENTITY, DtoFormatConstants.KEY_IDENTITY_CHANGE_AUTHOR
+        DtoFormatConstants.KEY_APPLICATION_CODE, DtoFormatConstants.KEY_ATTRIBUTE_RIGHTS
 } )
-public class IdentityChangeDto
+public class ApplicationRightsDto implements Serializable
 {
-    private IdentityDto _identity;
-    private AuthorDto _author;
 
     /**
-     * @return the _identity
+	 * 
+	 */
+    private static final long serialVersionUID = 1L;
+    private String _strApplicationCode;
+    private List<AppRightDto> _listAppRights;
+
+    /**
+     * @return the strApplicationCode
      */
-    @JsonProperty( value = DtoFormatConstants.KEY_IDENTITY_CHANGE_IDENTITY )
-    public IdentityDto getIdentity( )
+    @JsonProperty( DtoFormatConstants.KEY_APPLICATION_CODE )
+    public String getApplicationCode( )
     {
-        return _identity;
+        return _strApplicationCode;
     }
 
     /**
-     * @param identity
-     *            the _identity to set
+     * @param strApplicationCode
+     *            the strApplicationCode to set
      */
-    @JsonProperty( value = DtoFormatConstants.KEY_IDENTITY_CHANGE_IDENTITY )
-    public void setIdentity( IdentityDto identity )
+    @JsonProperty( DtoFormatConstants.KEY_APPLICATION_CODE )
+    public void setApplicationCode( String strApplicationCode )
     {
-        this._identity = identity;
+        this._strApplicationCode = strApplicationCode;
     }
 
     /**
-     * @return the _author
+     * @return the listAppRights
      */
-    @JsonProperty( value = DtoFormatConstants.KEY_IDENTITY_CHANGE_AUTHOR )
-    public AuthorDto getAuthor( )
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_RIGHTS )
+    public List<AppRightDto> getAppRights( )
     {
-        return _author;
+        return _listAppRights;
     }
 
     /**
-     * @param author
-     *            the _author to set
+     * @param appRight
+     *            the AppRightDto to add
      */
-    @JsonProperty( value = DtoFormatConstants.KEY_IDENTITY_CHANGE_AUTHOR )
-    public void setAuthor( AuthorDto author )
+    public void addAppRight( AppRightDto appRight )
     {
-        this._author = author;
+        if ( this._listAppRights == null )
+        {
+            this._listAppRights = new ArrayList<>( );
+        }
+        this._listAppRights.add( appRight );
+    }
+
+    /**
+     * @param _listAppRights
+     *            the _listAppRights to set
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_RIGHTS )
+    public void setAppRights( List<AppRightDto> listAppRights )
+    {
+        this._listAppRights = listAppRights;
     }
 }

@@ -8,15 +8,10 @@
 
     <!-- IIdentityTransportProvider declarations -->
     <!-- if not forced AbstractIdentityTransportRest impl, use httpAccessTransport by default -->
-    
-    <bean id="mockTransport" class="fr.paris.lutece.plugins.identitystore.web.rs.service.MockIdentityTransportRest">
-        <property name="IdentityStoreEndPoint">
-            <value>http://127.0.0.1:9092/lutece/rest/identitystore/</value>
-        </property>
-    </bean>
+
     <bean id="apiTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportApiManagerRest">
         <property name="IdentityStoreEndPoint">
-            <value>http://127.0.0.1:9092/lutece/rest/identitystore/</value>
+            <value>http://127.0.0.1:9092/lutece/rest/identitystore</value>
         </property>
         <property name="apiManagerEndPoint">
             <value>http://127.0.0.1:9092/lutece/rest/api/token</value>
@@ -24,7 +19,7 @@
     </bean>
     <bean id="apiTransport.simpleRest" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportApiManagerRest">
         <property name="IdentityStoreEndPoint">
-            <value>http://127.0.0.1:9092/lutece/rest/identitystore/</value>
+            <value>http://127.0.0.1:9092/lutece/rest/identitystore</value>
         </property>
         <property name="apiManagerEndPoint">
             <value>http://127.0.0.1:9092/lutece/rest/api/token</value>
@@ -35,12 +30,12 @@
     </bean>
     <bean id="restTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest">
         <property name="IdentityStoreEndPoint">
-            <value>http://127.0.0.1:9092/lutece/rest/identitystore/</value>
+            <value>http://127.0.0.1:9092/lutece/rest/identitystore</value>
         </property>
     </bean>
     <bean id="restTransport.simpleRest" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest">
         <property name="IdentityStoreEndPoint">
-            <value>http://127.0.0.1:9092/lutece/rest/identitystore/</value>
+            <value>http://127.0.0.1:9092/lutece/rest/identitystore</value>
         </property>
         <property name="httpTransport">
             <ref bean="simpleRestTransport"/>
@@ -48,10 +43,6 @@
     </bean>
     
     <!-- IdentityService impl -->
-       
-    <bean id="testIdentityServiceMock" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService">
-        <constructor-arg ref="mockTransport"/>
-    </bean> 
     
     <bean id="testIdentityService.api.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService">
         <constructor-arg ref="apiTransport.httpAccess"/>

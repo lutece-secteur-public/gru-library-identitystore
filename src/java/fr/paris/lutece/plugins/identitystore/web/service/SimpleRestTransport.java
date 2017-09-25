@@ -56,7 +56,6 @@ import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
-
 /**
  * RestTransport class, direct access to RestService (no use of HttpAccess lib)
  */
@@ -70,22 +69,22 @@ public class SimpleRestTransport implements IHttpTransportProvider
     @Override
     public String doPost( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest )
     {
-        Client client = Client.create(  );
+        Client client = Client.create( );
         WebResource webResource = client.resource( strUrl );
 
         if ( mapParams != null )
         {
-            for ( String strParamKey : mapParams.keySet(  ) )
+            for ( String strParamKey : mapParams.keySet( ) )
             {
                 webResource = webResource.queryParam( strParamKey, mapParams.get( strParamKey ) );
             }
         }
 
-        WebResource.Builder builder = webResource.getRequestBuilder(  );
+        WebResource.Builder builder = webResource.getRequestBuilder( );
 
         if ( mapHeadersRequest != null )
         {
-            for ( String strHeaderKey : mapHeadersRequest.keySet(  ) )
+            for ( String strHeaderKey : mapHeadersRequest.keySet( ) )
             {
                 builder = builder.header( strHeaderKey, mapHeadersRequest.get( strHeaderKey ) );
             }
@@ -93,10 +92,9 @@ public class SimpleRestTransport implements IHttpTransportProvider
 
         ClientResponse response = builder.post( ClientResponse.class );
 
-        if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
+        if ( response.getStatus( ) != Status.OK.getStatusCode( ) )
         {
-            String strError = "LibraryIdentityStore - Error SimpleRestTransport.doPost, status code return " +
-                response.getStatus(  );
+            String strError = "LibraryIdentityStore - Error SimpleRestTransport.doPost, status code return " + response.getStatus( );
             _logger.error( strError );
             throw new IdentityStoreException( strError );
         }
@@ -110,16 +108,16 @@ public class SimpleRestTransport implements IHttpTransportProvider
      * {@inheritDoc}
      */
     @Override
-    public <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-        Object json, Class<T> responseJsonClass, ObjectMapper mapper )
+    public <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
+            ObjectMapper mapper )
     {
         T oResponse = null;
-        Client client = Client.create(  );
+        Client client = Client.create( );
         WebResource webResource = client.resource( strUrl );
 
         if ( mapParams != null )
         {
-            for ( String strParamKey : mapParams.keySet(  ) )
+            for ( String strParamKey : mapParams.keySet( ) )
             {
                 webResource = webResource.queryParam( strParamKey, mapParams.get( strParamKey ) );
             }
@@ -129,7 +127,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
 
         if ( mapHeadersRequest != null )
         {
-            for ( String strHeaderKey : mapHeadersRequest.keySet(  ) )
+            for ( String strHeaderKey : mapHeadersRequest.keySet( ) )
             {
                 builder = builder.header( strHeaderKey, mapHeadersRequest.get( strHeaderKey ) );
             }
@@ -139,11 +137,9 @@ public class SimpleRestTransport implements IHttpTransportProvider
         {
             ClientResponse response = builder.post( ClientResponse.class, mapper.writeValueAsString( json ) );
 
-            if ( ( response.getStatus(  ) != Status.OK.getStatusCode(  ) ) &&
-                    ( response.getStatus(  ) != Status.CREATED.getStatusCode(  ) ) )
+            if ( ( response.getStatus( ) != Status.OK.getStatusCode( ) ) && ( response.getStatus( ) != Status.CREATED.getStatusCode( ) ) )
             {
-                String strError = "LibraryIdentityStore - Error SimpleRestTransport.doPostJSON, status code return " +
-                    response.getStatus(  );
+                String strError = "LibraryIdentityStore - Error SimpleRestTransport.doPostJSON, status code return " + response.getStatus( );
                 _logger.error( strError );
                 throw new IdentityStoreException( strError );
             }
@@ -152,7 +148,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
                 oResponse = mapper.readValue( response.getEntity( String.class ), responseJsonClass );
             }
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             handleException( e );
         }
@@ -164,16 +160,15 @@ public class SimpleRestTransport implements IHttpTransportProvider
      * {@inheritDoc}
      */
     @Override
-    public <T> T doGet( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-        Class<T> responseJsonClass, ObjectMapper mapper )
+    public <T> T doGet( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper )
     {
         T oResponse = null;
-        Client client = Client.create(  );
+        Client client = Client.create( );
         WebResource webResource = client.resource( strUrl );
 
         if ( mapParams != null )
         {
-            for ( String strParamKey : mapParams.keySet(  ) )
+            for ( String strParamKey : mapParams.keySet( ) )
             {
                 webResource = webResource.queryParam( strParamKey, mapParams.get( strParamKey ) );
             }
@@ -183,7 +178,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
 
         if ( mapHeadersRequest != null )
         {
-            for ( String strHeaderKey : mapHeadersRequest.keySet(  ) )
+            for ( String strHeaderKey : mapHeadersRequest.keySet( ) )
             {
                 builder = builder.header( strHeaderKey, mapHeadersRequest.get( strHeaderKey ) );
             }
@@ -193,23 +188,23 @@ public class SimpleRestTransport implements IHttpTransportProvider
         {
             ClientResponse response = builder.get( ClientResponse.class );
 
-            if ( response.getStatus(  ) == Status.NOT_FOUND.getStatusCode(  ) )
+            if ( response.getStatus( ) == Status.NOT_FOUND.getStatusCode( ) )
             {
-                throw new IdentityNotFoundException(  );
-            }
-            else if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
-            {
-                String strError = "LibraryIdentityStore - Error SimpleRestTransport.doGet, status code return " +
-                    response.getStatus(  );
-                _logger.error( strError );
-                throw new IdentityStoreException( strError );
+                throw new IdentityNotFoundException( );
             }
             else
-            {
-                oResponse = mapper.readValue( response.getEntity( String.class ), responseJsonClass );
-            }
+                if ( response.getStatus( ) != Status.OK.getStatusCode( ) )
+                {
+                    String strError = "LibraryIdentityStore - Error SimpleRestTransport.doGet, status code return " + response.getStatus( );
+                    _logger.error( strError );
+                    throw new IdentityStoreException( strError );
+                }
+                else
+                {
+                    oResponse = mapper.readValue( response.getEntity( String.class ), responseJsonClass );
+                }
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             handleException( e );
         }
@@ -221,21 +216,20 @@ public class SimpleRestTransport implements IHttpTransportProvider
      * {@inheritDoc}
      */
     @Override
-    public <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams,
-        Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles, Class<T> responseJsonClass,
-        ObjectMapper mapper )
+    public <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles,
+            Class<T> responseJsonClass, ObjectMapper mapper )
     {
         T oResponse = null;
-        Client client = Client.create(  );
+        Client client = Client.create( );
         WebResource webResource = client.resource( strEndPointUrl );
 
-        FormDataMultiPart formParams = new FormDataMultiPart(  );
+        FormDataMultiPart formParams = new FormDataMultiPart( );
 
         WebResource.Builder builder = webResource.type( MediaType.MULTIPART_FORM_DATA );
 
         if ( mapHeadersRequest != null )
         {
-            for ( String strHeaderKey : mapHeadersRequest.keySet(  ) )
+            for ( String strHeaderKey : mapHeadersRequest.keySet( ) )
             {
                 builder = builder.header( strHeaderKey, mapHeadersRequest.get( strHeaderKey ) );
             }
@@ -243,7 +237,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
 
         if ( mapParams != null )
         {
-            for ( String strParamKey : mapParams.keySet(  ) )
+            for ( String strParamKey : mapParams.keySet( ) )
             {
                 formParams.field( strParamKey, mapParams.get( strParamKey ) );
             }
@@ -251,34 +245,35 @@ public class SimpleRestTransport implements IHttpTransportProvider
 
         if ( mapFiles != null )
         {
-            for ( String strKey : mapFiles.keySet(  ) )
+            for ( String strKey : mapFiles.keySet( ) )
             {
                 FileItem fileItem = mapFiles.get( strKey );
-                File file = new File( fileItem.getName(  ) );
+                File file = new File( fileItem.getName( ) );
 
-                //TODO test it 
+                // TODO test it
                 FileDataBodyPart filePart = new FileDataBodyPart( strKey, file );
-                formParams.field( strKey, fileItem.getName(  ) );
+                formParams.field( strKey, fileItem.getName( ) );
                 formParams.bodyPart( filePart );
             }
         }
 
         ClientResponse response = builder.post( ClientResponse.class, formParams );
 
-        if ( response.getStatus(  ) == Status.NOT_FOUND.getStatusCode(  ) )
+        if ( response.getStatus( ) == Status.NOT_FOUND.getStatusCode( ) )
         {
-            throw new IdentityNotFoundException(  );
+            throw new IdentityNotFoundException( );
         }
-        else if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
-        {
-            throw new IdentityStoreException( Constants.ERROR_MESSAGE + response.getStatus(  ) );
-        }
+        else
+            if ( response.getStatus( ) != Status.OK.getStatusCode( ) )
+            {
+                throw new IdentityStoreException( Constants.ERROR_MESSAGE + response.getStatus( ) );
+            }
 
         try
         {
             oResponse = mapper.readValue( response.getEntity( String.class ), responseJsonClass );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             handleException( e );
         }
@@ -290,16 +285,15 @@ public class SimpleRestTransport implements IHttpTransportProvider
      * {@inheritDoc}
      */
     @Override
-    public <T> T doDelete( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-        Class<T> responseJsonClass, ObjectMapper mapper )
+    public <T> T doDelete( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper )
     {
         T oResponse = null;
-        Client client = Client.create(  );
+        Client client = Client.create( );
         WebResource webResource = client.resource( strUrl );
 
         if ( mapParams != null )
         {
-            for ( String strParamKey : mapParams.keySet(  ) )
+            for ( String strParamKey : mapParams.keySet( ) )
             {
                 webResource = webResource.queryParam( strParamKey, mapParams.get( strParamKey ) );
             }
@@ -309,7 +303,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
 
         if ( mapHeadersRequest != null )
         {
-            for ( String strHeaderKey : mapHeadersRequest.keySet(  ) )
+            for ( String strHeaderKey : mapHeadersRequest.keySet( ) )
             {
                 builder = builder.header( strHeaderKey, mapHeadersRequest.get( strHeaderKey ) );
             }
@@ -319,23 +313,23 @@ public class SimpleRestTransport implements IHttpTransportProvider
         {
             ClientResponse response = builder.delete( ClientResponse.class );
 
-            if ( response.getStatus(  ) == Status.NOT_FOUND.getStatusCode(  ) )
+            if ( response.getStatus( ) == Status.NOT_FOUND.getStatusCode( ) )
             {
-                throw new IdentityNotFoundException(  );
-            }
-            else if ( response.getStatus(  ) != Status.OK.getStatusCode(  ) )
-            {
-                String strError = "LibraryIdentityStore - Error SimpleRestTransport.doDelete, status code return " +
-                    response.getStatus(  );
-                _logger.error( strError );
-                throw new IdentityStoreException( strError );
+                throw new IdentityNotFoundException( );
             }
             else
-            {
-                oResponse = mapper.readValue( response.getEntity( String.class ), responseJsonClass );
-            }
+                if ( response.getStatus( ) != Status.OK.getStatusCode( ) )
+                {
+                    String strError = "LibraryIdentityStore - Error SimpleRestTransport.doDelete, status code return " + response.getStatus( );
+                    _logger.error( strError );
+                    throw new IdentityStoreException( strError );
+                }
+                else
+                {
+                    oResponse = mapper.readValue( response.getEntity( String.class ), responseJsonClass );
+                }
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             handleException( e );
         }
@@ -345,13 +339,16 @@ public class SimpleRestTransport implements IHttpTransportProvider
 
     /**
      * add error log and throw IdentityStoreException
-     * @param e root exception
-     * @throws IdentityStoreException identityStore exception
+     * 
+     * @param e
+     *            root exception
+     * @throws IdentityStoreException
+     *             identityStore exception
      */
     private void handleException( Exception e ) throws IdentityStoreException
     {
         String strError = "LibraryIdentityStore - Error SimpleRestTransport : ";
-        _logger.error( strError + e.getMessage(  ), e );
+        _logger.error( strError + e.getMessage( ), e );
         throw new IdentityStoreException( strError, e );
     }
 }

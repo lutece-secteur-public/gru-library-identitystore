@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.identitystore.web.service;
 
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
+import fr.paris.lutece.plugins.identitystore.web.rs.dto.ApplicationRightsDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.ResponseDto;
@@ -149,4 +150,12 @@ public interface IIdentityTransportProvider
      *             if no identity found for input parameters
      */
     IdentityDto certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode );
+
+    /**
+     * @param strClientAppCode
+     * @return ApplicationRightsDto for the given application
+     * @throws AppException
+     *             if error occured
+     */
+    ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException;
 }
