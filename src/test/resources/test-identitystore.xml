@@ -4,7 +4,6 @@
 
     <!-- IHttpTransportProvider declarations -->
     <bean id="httpAccessTransport" class="fr.paris.lutece.plugins.identitystore.web.service.HttpAccessTransport" />
-    <bean id="simpleRestTransport" class="fr.paris.lutece.plugins.identitystore.web.service.SimpleRestTransport" />
 
     <!-- IIdentityTransportProvider declarations -->
     <!-- if not forced AbstractIdentityTransportRest impl, use httpAccessTransport by default -->
@@ -17,28 +16,9 @@
             <value>http://127.0.0.1:9092/lutece/rest/api/token</value>
         </property>
     </bean>
-    <bean id="apiTransport.simpleRest" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportApiManagerRest">
-        <property name="IdentityStoreEndPoint">
-            <value>http://127.0.0.1:9092/lutece/rest/identitystore</value>
-        </property>
-        <property name="apiManagerEndPoint">
-            <value>http://127.0.0.1:9092/lutece/rest/api/token</value>
-        </property>
-        <property name="httpTransport">
-            <ref bean="simpleRestTransport"/>
-        </property>
-    </bean>
     <bean id="restTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest">
         <property name="IdentityStoreEndPoint">
             <value>http://127.0.0.1:9092/lutece/rest/identitystore</value>
-        </property>
-    </bean>
-    <bean id="restTransport.simpleRest" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest">
-        <property name="IdentityStoreEndPoint">
-            <value>http://127.0.0.1:9092/lutece/rest/identitystore</value>
-        </property>
-        <property name="httpTransport">
-            <ref bean="simpleRestTransport"/>
         </property>
     </bean>
     
@@ -48,15 +28,7 @@
         <constructor-arg ref="apiTransport.httpAccess"/>
     </bean>
     
-    <bean id="testIdentityService.api.simpleRest" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService">
-        <constructor-arg ref="apiTransport.simpleRest"/>
-    </bean>
-    
     <bean id="testIdentityService.rest.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService">
         <constructor-arg ref="restTransport.httpAccess"/>
-    </bean>
-    
-    <bean id="testIdentityService.rest.simpleRest" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService">
-        <constructor-arg ref="restTransport.simpleRest"/>
     </bean>
 </beans>

@@ -77,12 +77,8 @@ import javax.annotation.Resource;
 public class IdentityServiceTest
 {
     private static Logger _logger = Logger.getLogger( IdentityServiceTest.class );
-    @Resource( name = "testIdentityService.api.simpleRest" )
-    private IdentityService _identityServiceApiSimpleRest;
     @Resource( name = "testIdentityService.api.httpAccess" )
     private IdentityService _identityServiceApiHttpAccess;
-    @Resource( name = "testIdentityService.rest.simpleRest" )
-    private IdentityService _identityServiceRestSimpleRest;
     @Resource( name = "testIdentityService.rest.httpAccess" )
     private IdentityService _identityServiceRestHttpAccess;
     private IdentityDto _identity;
@@ -127,30 +123,12 @@ public class IdentityServiceTest
     }
 
     /**
-     * test IdentityService through ApiManager Transport and SimpleRest Provider
-     */
-    @Test
-    public void testServiceThroughApiManagerSimpleRest( )
-    {
-        callServiceMethod( _identityServiceApiSimpleRest, "_identityServiceApiHttpAccess" );
-    }
-
-    /**
      * test IdentityService through Rest Transport and HttpAccess Provider
      */
     @Test
     public void testServiceThroughRestHttpAccess( )
     {
         callServiceMethod( _identityServiceRestHttpAccess, "_identityServiceApiHttpAccess" );
-    }
-
-    /**
-     * test IdentityService through Rest Transport and SimpleRest Provider
-     */
-    @Test
-    public void testServiceThroughRestSimpleRest( )
-    {
-        callServiceMethod( _identityServiceRestSimpleRest, "_identityServiceApiHttpAccess" );
     }
 
     /**
