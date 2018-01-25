@@ -137,18 +137,6 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode )
-    {
-        _logger.debug( "MockIdentityTransportRest.certifyAttributes not managed return existing identity if possible" );
-
-        return getIdentity( identityChange.getIdentity( ).getConnectionId( ), identityChange.getIdentity( ).getCustomerId( ), identityChange.getAuthor( )
-                .getApplicationCode( ) );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException
     {
         _logger.debug( "MockIdentityTransportRest.getApplicationRights not managed return empty rights" );

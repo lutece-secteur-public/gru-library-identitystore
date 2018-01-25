@@ -158,10 +158,8 @@ public class IdentityServiceTest
     {
         AuthorDto author = new AuthorDto( );
         author.setApplicationCode( "MyDashboard" );
-        author.setApplicationName( "My dashboard" );
-        author.setEmail( "admin-mydashboard@test.com" );
+        author.setId( "admin-mydashboard@test.com" );
         author.setType( 1 );
-        author.setUserName( "admin-mydashboard" );
 
         IdentityChangeDto identChange = new IdentityChangeDto( );
         identChange.setAuthor( author );
@@ -195,9 +193,6 @@ public class IdentityServiceTest
         // TODO
         // identityServiceTesting.downloadFileAttribute( "connecID", 1560, "attr_key", "MyDashboard", "qsdfgh65432$" );
         identityServiceTesting.deleteIdentity( _identity.getConnectionId( ), author.getApplicationCode( ) );
-
-        // test certifyAttributes
-        // TODO, pas de registry ni bean
 
         // test appRight
         // rien a tester

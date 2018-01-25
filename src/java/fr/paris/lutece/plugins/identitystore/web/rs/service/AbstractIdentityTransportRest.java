@@ -276,38 +276,6 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         return responseDto;
     }
 
-    @Override
-    public IdentityDto certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode )
-    {
-        _logger.debug( "Certify identity attributes" );
-        checkUpdateParameters( identityChange );
-
-        Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
-        addAuthentication( mapHeadersRequest );
-
-        Map<String, String> mapParams = new HashMap<String, String>( );
-
-        String strJsonReq;
-
-        try
-        {
-            strJsonReq = _mapper.writeValueAsString( identityChange );
-            mapParams.put( Constants.PARAM_IDENTITY_CHANGE, strJsonReq );
-            mapParams.put( Constants.PARAM_CERTIFIER_CODE, strCertifierCode );
-        }
-        catch( JsonProcessingException e )
-        {
-            String strError = "AbstractIdentityTransportRest - Error serializing IdentityChangeDto : ";
-            _logger.error( strError + e.getMessage( ), e );
-            throw new IdentityStoreException( strError, e );
-        }
-
-        IdentityDto identityDto = _httpTransport.doPostMultiPart( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH + Constants.CERTIFY_ATTRIBUTES_PATH,
-                mapParams, mapHeadersRequest, null, IdentityDto.class, _mapper );
-
-        return identityDto;
-    }
-
     /**
      * {@inheritDoc}
      */

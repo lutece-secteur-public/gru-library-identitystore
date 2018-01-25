@@ -44,7 +44,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.InputStream;
-
 import java.util.Map;
 
 /**
@@ -217,24 +216,6 @@ public class IdentityService
     public InputStream downloadFileAttribute( String strConnectionId, String strCustomerId, String strAttributeKey, String strClientAppCode )
     {
         return _transportProvider.downloadFileAttribute( strConnectionId, strCustomerId, strAttributeKey, strClientAppCode );
-    }
-
-    /**
-     * certify attributes from an identity
-     *
-     * @param identityChange
-     *            change to apply to identity
-     * @param strCertifierCode
-     *            the certifier code ID
-     * @return the created identity
-     * @throws AppException
-     *             if error occured while updating identity
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
-     */
-    public IdentityDto certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode ) throws IdentityNotFoundException, AppException
-    {
-        return _transportProvider.certifyAttributes( identityChange, strCertifierCode );
     }
 
     /**

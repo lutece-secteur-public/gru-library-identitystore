@@ -40,10 +40,8 @@ package fr.paris.lutece.plugins.identitystore.web.rs.dto;
 public final class DtoFormatConstants
 {
     public static final String KEY_AUTHOR = "author";
-    public static final String KEY_AUTHOR_USERNAME = "user_name";
-    public static final String KEY_AUTHOR_EMAIL = "email";
+    public static final String KEY_AUTHOR_ID = "id";
     public static final String KEY_AUTHOR_TYPE = "type";
-    public static final String KEY_AUTHOR_APPLICATION_NAME = "application_name";
     public static final String KEY_AUTHOR_APPLICATION_CODE = "application_code";
     public static final String KEY_APPLICATION_RIGHTS = "application_rights";
     public static final String KEY_APPLICATION_CODE = "application_code";
@@ -64,10 +62,16 @@ public final class DtoFormatConstants
     public static final String KEY_ATTRIBUTE_CERTIFIERS = "certifiers";
     public static final String KEY_ATTRIBUTE_CERTIFIED = "certified";
     public static final String KEY_ATTRIBUTE_CERTIFICATE = "certificate";
+    public static final String KEY_ATTRIBUTE_LASTUPDATE_APPCODE = "application_last_update";
     public static final String KEY_ATTRIBUTE_RIGHTS = "attribut_rights";
     public static final String KEY_IDENTITY_CHANGE = "identity_change";
     public static final String KEY_IDENTITY_CHANGE_IDENTITY = "identity";
     public static final String KEY_IDENTITY_CHANGE_AUTHOR = "author";
+    public static final String KEY_ATTRIBUTE_STATUS = "status";
+    public static final String KEY_ATTRIBUTE_STATUS_CODE = "code";
+    public static final String KEY_ATTRIBUTE_STATUS_NEW_VALUE = "new_value";
+    public static final String KEY_ATTRIBUTE_STATUS_NEW_CERTIFIER = "new_certifier";
+    public static final String KEY_ATTRIBUTE_STATUS_NEW_CERTIFICATE_EXP_DATE = "new_certificate_expiration_date";
     public static final String KEY_CONNECTION_ID = "connection_id";
     public static final String KEY_CUSTOMER_ID = "customer_id";
     public static final String KEY_ID = "id";

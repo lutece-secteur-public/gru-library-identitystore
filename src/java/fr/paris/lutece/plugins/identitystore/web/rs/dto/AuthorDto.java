@@ -43,53 +43,32 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  */
 @JsonRootName( DtoFormatConstants.KEY_AUTHOR )
 @JsonPropertyOrder( {
-        DtoFormatConstants.KEY_AUTHOR_USERNAME, DtoFormatConstants.KEY_AUTHOR_EMAIL, DtoFormatConstants.KEY_AUTHOR_TYPE,
-        DtoFormatConstants.KEY_AUTHOR_APPLICATION_NAME
+        DtoFormatConstants.KEY_AUTHOR_ID, DtoFormatConstants.KEY_AUTHOR_TYPE, DtoFormatConstants.KEY_AUTHOR_APPLICATION_CODE
 } )
 public class AuthorDto
 {
-    private String _strUserName;
-    private String _strEmail;
+	public static final String USER_DEFAULT_ID = "usager";
+    private String _strId;
     private int _nType;
-    private String _strApplicationName;
     private String _strApplicationCode;
-
+    
     /**
-     * @return the _strUserName
+     * @return the _strId
      */
-    @JsonProperty( DtoFormatConstants.KEY_AUTHOR_USERNAME )
-    public String getUserName( )
+    @JsonProperty( DtoFormatConstants.KEY_AUTHOR_ID )
+    public String getId( )
     {
-        return _strUserName;
+        return _strId;
     }
 
     /**
-     * @param strUserName
-     *            the _strUserName to set
+     * @param strId
+     *            the _strId to set
      */
-    @JsonProperty( DtoFormatConstants.KEY_AUTHOR_USERNAME )
-    public void setUserName( String strUserName )
+    @JsonProperty( DtoFormatConstants.KEY_AUTHOR_ID )
+    public void setId( String strId )
     {
-        this._strUserName = strUserName;
-    }
-
-    /**
-     * @return the _strEmail
-     */
-    @JsonProperty( DtoFormatConstants.KEY_AUTHOR_EMAIL )
-    public String getEmail( )
-    {
-        return _strEmail;
-    }
-
-    /**
-     * @param strEmail
-     *            the _strEmail to set
-     */
-    @JsonProperty( DtoFormatConstants.KEY_AUTHOR_EMAIL )
-    public void setEmail( String strEmail )
-    {
-        this._strEmail = strEmail;
+        this._strId = strId;
     }
 
     /**
@@ -109,25 +88,6 @@ public class AuthorDto
     public void setType( int nType )
     {
         this._nType = nType;
-    }
-
-    /**
-     * @return the _strApplicationName
-     */
-    @JsonProperty( DtoFormatConstants.KEY_AUTHOR_APPLICATION_NAME )
-    public String getApplicationName( )
-    {
-        return _strApplicationName;
-    }
-
-    /**
-     * @param strApplicationName
-     *            the _strApplicationName to set
-     */
-    @JsonProperty( DtoFormatConstants.KEY_AUTHOR_APPLICATION_NAME )
-    public void setApplicationName( String strApplicationName )
-    {
-        this._strApplicationName = strApplicationName;
     }
 
     /**

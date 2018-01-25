@@ -34,9 +34,11 @@
 package fr.paris.lutece.plugins.identitystore.web.rs.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import java.io.Serializable;
 
@@ -46,8 +48,8 @@ import java.io.Serializable;
  */
 @JsonRootName( value = DtoFormatConstants.KEY_ATTRIBUTES )
 @JsonPropertyOrder( {
-        DtoFormatConstants.KEY_ATTRIBUTE_KEY, DtoFormatConstants.KEY_ATTRIBUTE_TYPE, DtoFormatConstants.KEY_ATTRIBUTE_VALUE,
-        DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED, DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE, DtoFormatConstants.KEY_ATTRIBUTE_CERTIFICATE
+        DtoFormatConstants.KEY_ATTRIBUTE_KEY, DtoFormatConstants.KEY_ATTRIBUTE_TYPE, DtoFormatConstants.KEY_ATTRIBUTE_VALUE, DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_APPCODE,
+        DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED, DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE, DtoFormatConstants.KEY_ATTRIBUTE_CERTIFICATE, DtoFormatConstants.KEY_ATTRIBUTE_STATUS
 } )
 public class AttributeDto implements Serializable
 {
@@ -58,9 +60,11 @@ public class AttributeDto implements Serializable
     private String _strKey;
     private String _strValue;
     private String _strType;
+    private String _strLastUpdateApplicationCode;
     private boolean _bCertified;
     private boolean _bWritable;
     private CertificateDto _certificate;
+    private AttributeStatusDto _status;
 
     /**
      * @return the _strName
@@ -127,6 +131,24 @@ public class AttributeDto implements Serializable
     {
         return _bCertified;
     }
+    
+    /**
+	 * @return the lastUpdateApplicationCode
+	 */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_APPCODE )
+	public String getLastUpdateApplicationCode()
+	{
+		return _strLastUpdateApplicationCode;
+	}
+
+	/**
+	 * @param lastUpdateApplicationCode the lastUpdateApplicationCode to set
+	 */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_APPCODE )
+	public void setLastUpdateApplicationCode( String strlastUpdateApplicationCode )
+	{
+		_strLastUpdateApplicationCode = strlastUpdateApplicationCode;
+	}	
 
     /**
      * @param bCertified
@@ -193,4 +215,23 @@ public class AttributeDto implements Serializable
     {
         this._certificate = certificate;
     }
+
+	/**
+	 * @return the _status
+	 */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_STATUS )
+    @JsonInclude( Include.NON_NULL )
+	public AttributeStatusDto getStatus( )
+	{
+		return _status;
+	}
+
+	/**
+	 * @param _status the _status to set
+	 */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_STATUS )
+	public void setStatus( AttributeStatusDto status )
+	{
+		this._status = status;
+	}
 }
