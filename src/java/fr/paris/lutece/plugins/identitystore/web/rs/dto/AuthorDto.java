@@ -47,11 +47,11 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 } )
 public class AuthorDto
 {
-	public static final String USER_DEFAULT_ID = "usager";
+    public static final String USER_DEFAULT_ID = "usager";
     private String _strId;
     private int _nType;
     private String _strApplicationCode;
-    
+
     /**
      * @return the _strId
      */

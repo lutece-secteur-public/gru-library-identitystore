@@ -49,18 +49,19 @@ import java.util.Date;
  */
 @JsonRootName( value = DtoFormatConstants.KEY_ATTRIBUTE_STATUS )
 @JsonPropertyOrder( {
-        DtoFormatConstants.KEY_ATTRIBUTE_STATUS_CODE, DtoFormatConstants.KEY_ATTRIBUTE_STATUS_NEW_VALUE, DtoFormatConstants.KEY_ATTRIBUTE_STATUS_NEW_CERTIFIER, DtoFormatConstants.KEY_ATTRIBUTE_STATUS_NEW_CERTIFICATE_EXP_DATE
+        DtoFormatConstants.KEY_ATTRIBUTE_STATUS_CODE, DtoFormatConstants.KEY_ATTRIBUTE_STATUS_NEW_VALUE, DtoFormatConstants.KEY_ATTRIBUTE_STATUS_NEW_CERTIFIER,
+        DtoFormatConstants.KEY_ATTRIBUTE_STATUS_NEW_CERTIFICATE_EXP_DATE
 } )
 public class AttributeStatusDto implements Serializable
 {
-	public static final String OK_CODE = "200";
-	public static final String INFO_DEFAULT_CODE = "300";
-	public static final String INFO_NO_CHANGE_REQUEST_CODE = "301";
-	public static final String INFO_DELETE_NOT_ALLOW_CODE = "302";
-	public static final String INFO_VALUE_CERTIFIED_CODE = "303";
-	public static final String INFO_LONGER_CERTIFIER_CODE = "304";
-	public static final String ERROR_DEFAULT_CODE = "400";
-	
+    public static final String OK_CODE = "200";
+    public static final String INFO_DEFAULT_CODE = "300";
+    public static final String INFO_NO_CHANGE_REQUEST_CODE = "301";
+    public static final String INFO_DELETE_NOT_ALLOW_CODE = "302";
+    public static final String INFO_VALUE_CERTIFIED_CODE = "303";
+    public static final String INFO_LONGER_CERTIFIER_CODE = "304";
+    public static final String ERROR_DEFAULT_CODE = "400";
+
     /**
     *
     */

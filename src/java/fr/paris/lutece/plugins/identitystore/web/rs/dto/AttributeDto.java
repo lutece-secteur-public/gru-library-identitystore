@@ -134,24 +134,25 @@ public class AttributeDto implements Serializable
     {
         return _bCertified;
     }
-    
-    /**
-	 * @return the lastUpdateApplicationCode
-	 */
-    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_APPCODE )
-	public String getLastUpdateApplicationCode()
-	{
-		return _strLastUpdateApplicationCode;
-	}
 
-	/**
-	 * @param lastUpdateApplicationCode the lastUpdateApplicationCode to set
-	 */
+    /**
+     * @return the lastUpdateApplicationCode
+     */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_APPCODE )
-	public void setLastUpdateApplicationCode( String strlastUpdateApplicationCode )
-	{
-		_strLastUpdateApplicationCode = strlastUpdateApplicationCode;
-	}	
+    public String getLastUpdateApplicationCode( )
+    {
+        return _strLastUpdateApplicationCode;
+    }
+
+    /**
+     * @param lastUpdateApplicationCode
+     *            the lastUpdateApplicationCode to set
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_APPCODE )
+    public void setLastUpdateApplicationCode( String strlastUpdateApplicationCode )
+    {
+        _strLastUpdateApplicationCode = strlastUpdateApplicationCode;
+    }
 
     /**
      * @return the lastUpdateDate
@@ -238,22 +239,23 @@ public class AttributeDto implements Serializable
         this._certificate = certificate;
     }
 
-	/**
-	 * @return the _status
-	 */
+    /**
+     * @return the _status
+     */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_STATUS )
     @JsonInclude( Include.NON_NULL )
-	public AttributeStatusDto getStatus( )
-	{
-		return _status;
-	}
+    public AttributeStatusDto getStatus( )
+    {
+        return _status;
+    }
 
-	/**
-	 * @param _status the _status to set
-	 */
+    /**
+     * @param _status
+     *            the _status to set
+     */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_STATUS )
-	public void setStatus( AttributeStatusDto status )
-	{
-		this._status = status;
-	}
+    public void setStatus( AttributeStatusDto status )
+    {
+        this._status = status;
+    }
 }
