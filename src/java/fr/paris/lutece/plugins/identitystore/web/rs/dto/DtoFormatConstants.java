@@ -63,6 +63,7 @@ public final class DtoFormatConstants
     public static final String KEY_ATTRIBUTE_CERTIFIED = "certified";
     public static final String KEY_ATTRIBUTE_CERTIFICATE = "certificate";
     public static final String KEY_ATTRIBUTE_LASTUPDATE_APPCODE = "application_last_update";
+    public static final String KEY_ATTRIBUTE_LASTUPDATE_DATE = "date_last_update";
     public static final String KEY_ATTRIBUTE_RIGHTS = "attribut_rights";
     public static final String KEY_IDENTITY_CHANGE = "identity_change";
     public static final String KEY_IDENTITY_CHANGE_IDENTITY = "identity";

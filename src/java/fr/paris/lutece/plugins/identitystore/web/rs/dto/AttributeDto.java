@@ -33,14 +33,15 @@
  */
 package fr.paris.lutece.plugins.identitystore.web.rs.dto;
 
+import java.io.Serializable;
+import java.sql.Timestamp;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import java.io.Serializable;
 
 /**
  * Attribute Dto
@@ -48,8 +49,9 @@ import java.io.Serializable;
  */
 @JsonRootName( value = DtoFormatConstants.KEY_ATTRIBUTES )
 @JsonPropertyOrder( {
-        DtoFormatConstants.KEY_ATTRIBUTE_KEY, DtoFormatConstants.KEY_ATTRIBUTE_TYPE, DtoFormatConstants.KEY_ATTRIBUTE_VALUE, DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_APPCODE,
-        DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED, DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE, DtoFormatConstants.KEY_ATTRIBUTE_CERTIFICATE, DtoFormatConstants.KEY_ATTRIBUTE_STATUS
+        DtoFormatConstants.KEY_ATTRIBUTE_KEY, DtoFormatConstants.KEY_ATTRIBUTE_TYPE, DtoFormatConstants.KEY_ATTRIBUTE_VALUE,
+        DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_APPCODE, DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_DATE, DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIED,
+        DtoFormatConstants.KEY_ATTRIBUTE_WRITABLE, DtoFormatConstants.KEY_ATTRIBUTE_CERTIFICATE, DtoFormatConstants.KEY_ATTRIBUTE_STATUS
 } )
 public class AttributeDto implements Serializable
 {
@@ -61,6 +63,7 @@ public class AttributeDto implements Serializable
     private String _strValue;
     private String _strType;
     private String _strLastUpdateApplicationCode;
+    private Timestamp _dateLastUpdate;
     private boolean _bCertified;
     private boolean _bWritable;
     private CertificateDto _certificate;
@@ -149,6 +152,25 @@ public class AttributeDto implements Serializable
 	{
 		_strLastUpdateApplicationCode = strlastUpdateApplicationCode;
 	}	
+
+    /**
+     * @return the lastUpdateDate
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_DATE )
+    public Timestamp getLastUpdateDate( )
+    {
+        return _dateLastUpdate;
+    }
+
+    /**
+     * @param date
+     *            the last update date to set
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_DATE )
+    public void setLastUpdateDate( Timestamp dateLastUpdate )
+    {
+        _dateLastUpdate = dateLastUpdate;
+    }
 
     /**
      * @param bCertified
