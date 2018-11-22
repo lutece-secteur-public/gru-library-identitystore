@@ -3,32 +3,32 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" >
 
     <!-- IHttpTransportProvider declarations -->
-    <bean id="httpAccessTransport" class="fr.paris.lutece.plugins.identitystore.web.service.HttpAccessTransport" />
+    <bean id="httpAccessTransport" class="fr.paris.lutece.plugins.identitystore.v2.web.service.HttpAccessTransport" />
 
     <!-- IIdentityTransportProvider declarations -->
     <!-- if not forced AbstractIdentityTransportRest impl, use httpAccessTransport by default -->
 
-    <bean id="apiTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportApiManagerRest">
+    <bean id="apiTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.v2.web.rs.service.IdentityTransportApiManagerRest">
         <property name="IdentityStoreEndPoint">
-            <value>http://127.0.0.1:9092/lutece/rest/identitystore</value>
+            <value>http://127.0.0.1:8082/lutece/rest/identitystore/v2</value>
         </property>
         <property name="apiManagerEndPoint">
-            <value>http://127.0.0.1:9092/lutece/rest/api/token</value>
+            <value>http://127.0.0.1:8082/lutece/rest/api/token</value>
         </property>
     </bean>
-    <bean id="restTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest">
+    <bean id="restTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.v2.web.rs.service.IdentityTransportRest">
         <property name="IdentityStoreEndPoint">
-            <value>http://127.0.0.1:9092/lutece/rest/identitystore</value>
+            <value>http://127.0.0.1:8082/lutece/rest/identitystore/v2</value>
         </property>
     </bean>
     
     <!-- IdentityService impl -->
     
-    <bean id="testIdentityService.api.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService">
+    <bean id="testIdentityService.api.httpAccess" class="fr.paris.lutece.plugins.identitystore.v2.web.service.IdentityService">
         <constructor-arg ref="apiTransport.httpAccess"/>
     </bean>
     
-    <bean id="testIdentityService.rest.httpAccess" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService">
+    <bean id="testIdentityService.rest.httpAccess" class="fr.paris.lutece.plugins.identitystore.v2.web.service.IdentityService">
         <constructor-arg ref="restTransport.httpAccess"/>
     </bean>
 </beans>

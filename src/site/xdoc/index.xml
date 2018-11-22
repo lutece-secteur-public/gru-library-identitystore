@@ -12,14 +12,14 @@
             </subsection>
             <subsection name="Services">
                 <p>
-                The main service is <code>fr.paris.lutece.plugins.identitystore.web.service.IdentityService</code> which provides methods to call Identity Store.
+                The main service is <code>fr.paris.lutece.plugins.identitystore.v2.web.service.IdentityService</code> which provides methods to call Identity Store.
                 </p>
                 <p>
-                It requires an implementation of <code>fr.paris.lutece.plugins.identitystore.web.service.IIdentityTransportProvider</code> to define the HTTP transport.
+                It requires an implementation of <code>fr.paris.lutece.plugins.identitystore.v2.web.service.IIdentityTransportProvider</code> to define the HTTP transport.
                 Two implementations of this interface are provided in the library :
                 <ul>
-                    <li><code>fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportApiManagerRest</code>, which uses ApiManager WSO2 in order to secure requests to the API (by using tokens)</li>
-                    <li><code>fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest</code>, which uses simple requests</li>
+                    <li><code>fr.paris.lutece.plugins.identitystore.v2.web.rs.service.IdentityTransportApiManagerRest</code>, which uses ApiManager WSO2 in order to secure requests to the API (by using tokens)</li>
+                    <li><code>fr.paris.lutece.plugins.identitystore.v2.web.rs.service.IdentityTransportRest</code>, which uses simple requests</li>
                 </ul>
                 </p>
                 <p>
@@ -45,12 +45,12 @@
                 Here is an example of Spring configuration with the HTTP transport <code>IdentityTransportRest</code>:
                     <div class="source">
                         <pre>
-&lt;bean id="lib-identitystore.simpleTransport" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest"&gt;
+&lt;bean id="lib-identitystore.simpleTransport" class="fr.paris.lutece.plugins.identitystore.v2.web.rs.service.IdentityTransportRest"&gt;
     &lt;property name="IdentityStoreEndPoint"&gt;
         &lt;value&gt;http://mydomain.com/url/to/identitystore&lt;/value&gt;
     &lt;/property&gt;
 &lt;/bean&gt;
-&lt;bean id="lib-identitystore.identityService" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService"&gt;
+&lt;bean id="lib-identitystore.identityService" class="fr.paris.lutece.plugins.identitystore.v2.web.service.IdentityService"&gt;
     &lt;constructor-arg ref="lib-identitystore.simpleTransport"/&gt;
 &lt;/bean&gt;
                         </pre>
@@ -60,7 +60,7 @@
                 Here is an example of Spring configuration with the HTTP transport <code>IdentityTransportApiManagerRest</code>:
                     <div class="source">
                         <pre>
-&lt;bean id="lib-identitystore.apiManagerTransport" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportApiManagerRest"&gt;
+&lt;bean id="lib-identitystore.apiManagerTransport" class="fr.paris.lutece.plugins.identitystore.v2.web.rs.service.IdentityTransportApiManagerRest"&gt;
     &lt;property name="identityStoreEndPoint"&gt;
         &lt;value&gt;http://mydomain.com/url/to/apimanager/api/identitystore&lt;/value&gt;
     &lt;/property&gt;
@@ -71,7 +71,7 @@
         &lt;value&gt;your_private_key&lt;/value&gt;
     &lt;/property&gt;
 &lt;/bean&gt;
-&lt;bean id="lib-identitystore.identityService" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService"&gt;
+&lt;bean id="lib-identitystore.identityService" class="fr.paris.lutece.plugins.identitystore.v2.web.service.IdentityService"&gt;
     &lt;constructor-arg ref="lib-identitystore.apiManagerTransport"/&gt;
 &lt;/bean&gt;
                         </pre>
