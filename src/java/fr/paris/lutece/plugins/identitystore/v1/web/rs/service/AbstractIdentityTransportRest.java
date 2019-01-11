@@ -70,7 +70,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         _mapper = new ObjectMapper( );
         _mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
         _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
-        _mapper.enable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
+        _mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
     }
 
     /** HTTP transport provider */
