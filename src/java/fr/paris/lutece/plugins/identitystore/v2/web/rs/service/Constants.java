@@ -48,6 +48,7 @@ public final class Constants
     public static final String DOWNLOAD_FILE_PATH = "/file";
     public static final String UPDATE_IDENTITY_PATH = "/update";
     public static final String CREATE_IDENTITY_PATH = "/create";
+    public static final String SEARCH_IDENTITIES_PATH = "/search";
     public static final String APPLICATION_RIGHTS_PATH = "/apprights";
     public static final String PARAM_ID_CONNECTION = "connection_id";
     public static final String PARAM_ID_CUSTOMER = "customer_id";

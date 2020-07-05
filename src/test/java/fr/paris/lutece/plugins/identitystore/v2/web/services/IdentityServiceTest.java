@@ -62,8 +62,11 @@ import java.io.File;
 import java.io.IOException;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -196,5 +199,10 @@ public class IdentityServiceTest
 
         // test appRight
         // rien a tester
+
+        // test getIdentities
+        Map<String, List<String>> mapAttributeValues = new HashMap<String, List<String>>( );
+        List<String> listAttributeKeyNames = new ArrayList<>( );
+        identityServiceTesting.getIdentities( mapAttributeValues, listAttributeKeyNames, author.getApplicationCode( ) );
     }
 }

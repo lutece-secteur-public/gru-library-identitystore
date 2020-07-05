@@ -43,6 +43,7 @@ import fr.paris.lutece.portal.service.util.AppException;
 import org.apache.commons.fileupload.FileItem;
 
 import java.io.InputStream;
+import java.util.List;
 
 import java.util.Map;
 
@@ -143,4 +144,17 @@ public interface IIdentityTransportProvider
      *             if error occured
      */
     ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException;
+
+    /**
+     * returns a list of identity from combination of attributes
+     *
+     * @param mapAttributeValues
+     *            a map that associates list of values to search for some attributes
+     * @param listAttributeKeyNames
+     *            a list of attributes to retrieve in identities
+     * @param strClientCode
+     *            application code who requested identities
+     * @return identity filled according to application rights for user identified by connection id
+     */
+    List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientCode );
 }

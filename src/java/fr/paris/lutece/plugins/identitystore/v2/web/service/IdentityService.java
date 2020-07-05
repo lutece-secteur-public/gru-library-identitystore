@@ -44,6 +44,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -230,5 +231,21 @@ public class IdentityService
     public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException
     {
         return _transportProvider.getApplicationRights( strClientAppCode );
+    }
+
+    /**
+     * returns a list of identity from combination of attributes
+     *
+     * @param mapAttributeValues
+     *            a map that associates list of values to search for some attributes
+     * @param listAttributeKeyNames
+     *            a list of attributes to retrieve in identities
+     * @param strClientApplicationCode
+     *            application code who requested identities
+     * @return identity filled according to application rights for user identified by connection id
+     */
+    public List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientApplicationCode )
+    {
+        return _transportProvider.getIdentities( mapAttributeValues, listAttributeKeyNames, strClientApplicationCode );
     }
 }

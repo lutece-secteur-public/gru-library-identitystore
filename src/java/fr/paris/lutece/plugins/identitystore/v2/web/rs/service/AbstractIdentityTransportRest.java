@@ -44,6 +44,7 @@ import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ApplicationRightsDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.SearchDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v2.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -56,6 +57,7 @@ import org.apache.log4j.Logger;
 import java.io.InputStream;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -296,6 +298,33 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
                 + Constants.APPLICATION_RIGHTS_PATH, mapParams, mapHeadersRequest, ApplicationRightsDto.class, _mapper );
 
         return appRightsDto;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientCode )
+    {
+        _logger.debug( "Search identities" );
+
+        checkClientApplication( strClientCode );
+
+        ObjectMapper mapper = new ObjectMapper( );
+
+        Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
+        addAuthentication( mapHeadersRequest );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+
+        SearchDto searchDto = new SearchDto( );
+        searchDto.setListAttributeKeyNames( listAttributeKeyNames );
+        searchDto.setMapAttributeValues( mapAttributeValues );
+
+        List<IdentityDto> listIdentityDto = _httpTransport.doPostJSON( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH + 
+                Constants.SEARCH_IDENTITIES_PATH, null, mapHeadersRequest, searchDto, List.class, mapper );
+
+        return listIdentityDto;
     }
 
     /**
