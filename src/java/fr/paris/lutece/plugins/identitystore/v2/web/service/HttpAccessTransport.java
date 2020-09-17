@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.identitystore.v2.web.service;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
@@ -106,6 +107,34 @@ public class HttpAccessTransport implements IHttpTransportProvider
             String strJSON = mapper.writeValueAsString( json );
             String strResponseJSON = clientHttp.doPostJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
+        }
+        catch( Exception e )
+        {
+            handleException( e );
+        }
+
+        return oResponse;
+    }
+   /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
+            ObjectMapper mapper )
+    {
+        HttpAccess clientHttp = new HttpAccess( );
+        Map<String, String> mapHeadersResponse = new HashMap<String, String>( );
+        mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
+        mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
+
+        List<T> oResponse = null;
+        JavaType responseJsonClassType = mapper.getTypeFactory(). constructCollectionType(List.class, responseJsonClass);
+
+        try
+        {
+            String strJSON = mapper.writeValueAsString( json );
+            String strResponseJSON = clientHttp.doPostJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
+            oResponse = mapper.readValue( strResponseJSON, responseJsonClassType );
         }
         catch( Exception e )
         {

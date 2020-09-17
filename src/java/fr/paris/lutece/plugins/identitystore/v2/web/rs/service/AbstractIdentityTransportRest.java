@@ -321,8 +321,8 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         searchDto.setListAttributeKeyNames( listAttributeKeyNames );
         searchDto.setMapAttributeValues( mapAttributeValues );
 
-        List<IdentityDto> listIdentityDto = _httpTransport.doPostJSON( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH + 
-                Constants.SEARCH_IDENTITIES_PATH, null, mapHeadersRequest, searchDto, List.class, mapper );
+        List<IdentityDto> listIdentityDto = _httpTransport.doPostJSONforList(_strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH + 
+                Constants.SEARCH_IDENTITIES_PATH, null, mapHeadersRequest, searchDto, IdentityDto.class, mapper );
 
         return listIdentityDto;
     }

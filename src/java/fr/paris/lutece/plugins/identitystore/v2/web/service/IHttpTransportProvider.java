@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.identitystore.v2.web.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
 
@@ -77,6 +78,28 @@ public interface IHttpTransportProvider
      * @return <T> response
      */
     <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
+            ObjectMapper mapper );
+
+    /**
+     * make POST request on given url with params and headers of a JSON object to retrieve another JSON
+     *
+     * @param strUrl
+     *            url to call
+     * @param mapParams
+     *            params to post
+     * @param mapHeadersRequest
+     *            headers of the request
+     * @param json
+     *            JSON object to post
+     * @param responseJsonClass
+     *            the class
+     * @param <T>
+     *            of the response
+     * @param mapper
+     *            mapper for JSON serialize / deserialize
+     * @return List<T> response
+     */
+    <T> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
             ObjectMapper mapper );
 
     /**
