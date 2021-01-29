@@ -86,14 +86,14 @@ public interface IIdentityTransportProvider
     IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException;
 
     /**
-     * Creates an identity <b>only if the identity does not already exist</b>.<br/>
-     * The identity is created from the provided attributes. <br/>
-     * <br/>
+     * Creates an identity only if the identity does not already exist.
+     * The identity is created from the provided attributes. 
+     * 
      * The order to test if the identity exists:
-     * <ul>
-     * <li>by using the provided customer id if present</li>
-     * <li>by using the provided connection id if present</li>
-     * </ul>
+     * 
+     * - by using the provided customer id if present
+     * - by using the provided connection id if present
+     * 
      *
      * @param identityChange
      *            change to apply to identity

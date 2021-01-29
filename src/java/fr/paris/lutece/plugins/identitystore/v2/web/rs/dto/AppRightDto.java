@@ -141,8 +141,7 @@ public class AppRightDto implements Serializable
     }
 
     /**
-     * @param listCertifier
-     *            the listCertifier to set
+     * @param listCertifiers
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_CERTIFIERS )
     public void setCertifiers( List<String> listCertifiers )

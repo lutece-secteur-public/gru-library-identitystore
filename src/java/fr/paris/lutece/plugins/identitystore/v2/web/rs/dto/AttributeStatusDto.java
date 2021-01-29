@@ -141,8 +141,7 @@ public class AttributeStatusDto implements Serializable
     }
 
     /**
-     * @param dateCertificateExpirationDate
-     *            the _dateCertificateExpirationDate to set
+     * @param dateNewCertificateExpirationDate
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_STATUS_NEW_CERTIFICATE_EXP_DATE )
     @JsonFormat( shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a z" )

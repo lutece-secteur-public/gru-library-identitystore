@@ -100,8 +100,8 @@ public class ApplicationRightsDto implements Serializable
     }
 
     /**
-     * @param _listAppRights
-     *            the _listAppRights to set
+     * set App Rights
+     * @param listAppRights
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_RIGHTS )
     public void setAppRights( List<AppRightDto> listAppRights )

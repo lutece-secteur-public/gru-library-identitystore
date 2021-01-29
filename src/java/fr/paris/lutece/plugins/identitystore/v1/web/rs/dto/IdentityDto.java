@@ -37,7 +37,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
-import fr.paris.lutece.plugins.identitystore.v1.web.rs.dto.AttributeDto;
 
 import java.io.Serializable;
 import java.util.Map;

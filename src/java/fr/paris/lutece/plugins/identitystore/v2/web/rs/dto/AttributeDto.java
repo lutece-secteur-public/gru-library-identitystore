@@ -145,8 +145,7 @@ public class AttributeDto implements Serializable
     }
 
     /**
-     * @param lastUpdateApplicationCode
-     *            the lastUpdateApplicationCode to set
+     * @param strlastUpdateApplicationCode
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_APPCODE )
     public void setLastUpdateApplicationCode( String strlastUpdateApplicationCode )
@@ -164,8 +163,7 @@ public class AttributeDto implements Serializable
     }
 
     /**
-     * @param date
-     *            the last update date to set
+     * @param dateLastUpdate
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_LASTUPDATE_DATE )
     public void setLastUpdateDate( Timestamp dateLastUpdate )
@@ -250,8 +248,7 @@ public class AttributeDto implements Serializable
     }
 
     /**
-     * @param _status
-     *            the _status to set
+     * @param status
      */
     @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_STATUS )
     public void setStatus( AttributeStatusDto status )

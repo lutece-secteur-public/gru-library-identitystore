@@ -75,7 +75,7 @@ public interface IHttpTransportProvider
      *            of the response
      * @param mapper
      *            mapper for JSON serialize / deserialize
-     * @return <T> response
+     * @return T
      */
     <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
             ObjectMapper mapper );
@@ -97,7 +97,7 @@ public interface IHttpTransportProvider
      *            of the response
      * @param mapper
      *            mapper for JSON serialize / deserialize
-     * @return List<T> response
+     * @return response list
      */
     <T> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
             ObjectMapper mapper );
@@ -117,7 +117,7 @@ public interface IHttpTransportProvider
      *            of the response
      * @param mapper
      *            mapper for JSON serialize / deserialize
-     * @return <T> response
+     * @return response list
      */
     <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper );
 
@@ -138,7 +138,7 @@ public interface IHttpTransportProvider
      *            of the response
      * @param mapper
      *            mapper for JSON serialize / deserialize
-     * @return <T> response
+     * @return response list
      */
     <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles,
             Class<T> responseJsonClass, ObjectMapper mapper );
@@ -158,7 +158,7 @@ public interface IHttpTransportProvider
      *            of the response
      * @param mapper
      *            mapper for JSON serialize / deserialize
-     * @return <T> response
+     * @return response list
      */
     <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper );
 }
