@@ -10,7 +10,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>library-identitystore</artifactId>
     <packaging>jar</packaging>
-    <version>2.0.5</version>
+    <version>2.0.6-SNAPSHOT</version>
     <name>Lutece identitystore library</name>
 
     <repositories>
@@ -101,7 +101,7 @@
         <connection>scm:git:https://github.com/lutece-secteur-public/gru-library-identitystore.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-secteur-public/gru-library-identitystore.git</developerConnection>
         <url>https://github.com/lutece-secteur-public/gru-library-identitystore.git</url>
-        <tag>library-identitystore-2.0.5</tag>
+        <tag>HEAD</tag>
     </scm>
 
 </project>
