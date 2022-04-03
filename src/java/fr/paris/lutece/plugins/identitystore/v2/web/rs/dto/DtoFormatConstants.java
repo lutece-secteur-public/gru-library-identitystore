@@ -72,6 +72,7 @@ public final class DtoFormatConstants
     public static final String KEY_ATTRIBUTE_STATUS_CODE = "code";
     public static final String KEY_ATTRIBUTE_STATUS_NEW_VALUE = "new_value";
     public static final String KEY_ATTRIBUTE_STATUS_NEW_CERTIFIER = "new_certifier";
+    public static final String KEY_ATTRIBUTE_STATUS_DELETE_CERTIFIER = "delete_certifier";
     public static final String KEY_ATTRIBUTE_STATUS_NEW_CERTIFICATE_EXP_DATE = "new_certificate_expiration_date";
     public static final String KEY_CONNECTION_ID = "connection_id";
     public static final String KEY_CUSTOMER_ID = "customer_id";

@@ -60,6 +60,8 @@ public class AttributeStatusDto implements Serializable
     public static final String INFO_DELETE_NOT_ALLOW_CODE = "302";
     public static final String INFO_VALUE_CERTIFIED_CODE = "303";
     public static final String INFO_LONGER_CERTIFIER_CODE = "304";
+    public static final String INFO_DELETE_CERTIFER_NOT_ALLOW_CODE = "305";
+    
     public static final String ERROR_DEFAULT_CODE = "400";
 
     /**
@@ -70,7 +72,7 @@ public class AttributeStatusDto implements Serializable
     private String _strNewValue;
     private String _strNewCertifier;
     private Date _dateNewCertificateExpirationDate;
-
+    private String _strDeleteCertifier;
     /**
      * @return the _strStatusCode
      */
@@ -130,6 +132,27 @@ public class AttributeStatusDto implements Serializable
         this._strNewCertifier = strNewCertifier;
     }
 
+    /**
+     * @return the _strNewCertifier
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_STATUS_DELETE_CERTIFIER )
+    @JsonInclude( Include.NON_NULL )
+    public String getDeleteCertifier( )
+    {
+        return _strDeleteCertifier;
+    }
+    
+    /**
+     * @param strDeleteCertifier
+     *            the strDeleteCertifier to set
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_STATUS_DELETE_CERTIFIER )
+    public void setDeleteCertifier( String strDeleteCertifier )
+    {
+        this._strDeleteCertifier = strDeleteCertifier;
+    }
+    
+    
     /**
      * @return the _dateCertificateExpirationDate
      */
