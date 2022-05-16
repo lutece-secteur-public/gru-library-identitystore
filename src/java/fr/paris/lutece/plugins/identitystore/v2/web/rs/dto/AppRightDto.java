@@ -59,6 +59,7 @@ public class AppRightDto implements Serializable
     private String _strAttributeKey;
     private boolean _bReadable;
     private boolean _bWritable;
+    private boolean _bMandatory;
     private List<String> _listCertifiers;
 
     /**
@@ -116,6 +117,26 @@ public class AppRightDto implements Serializable
     public void setWritable( boolean bWritable )
     {
         this._bWritable = bWritable;
+    }
+    
+
+    /**
+     * @return the bMandatory
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_MANDATORY)
+    public boolean isMandatory( )
+    {
+        return _bMandatory;
+    }
+
+    /**
+     * @param bMandatory
+     *            the bMandatory to set
+     */
+    @JsonProperty( DtoFormatConstants.KEY_ATTRIBUTE_MANDATORY )
+    public void setMandatory( boolean bMandatory )
+    {
+        this._bMandatory = bMandatory;
     }
 
     /**

@@ -59,6 +59,7 @@ public final class DtoFormatConstants
     public static final String KEY_ATTRIBUTE_TYPE = "type";
     public static final String KEY_ATTRIBUTE_WRITABLE = "writable";
     public static final String KEY_ATTRIBUTE_READABLE = "readable";
+    public static final String KEY_ATTRIBUTE_MANDATORY = "mandatory";
     public static final String KEY_ATTRIBUTE_CERTIFIERS = "certifiers";
     public static final String KEY_ATTRIBUTE_CERTIFIED = "certified";
     public static final String KEY_ATTRIBUTE_CERTIFICATE = "certificate";
