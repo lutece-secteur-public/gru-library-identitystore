@@ -34,14 +34,15 @@
 package fr.paris.lutece.plugins.identitystore.v2.web.rs.service;
 
 import fr.paris.lutece.plugins.identitystore.v2.web.service.IIdentityTransportProvider;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-import net.sf.json.util.JSONUtils;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.apache.log4j.Logger;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,6 +65,7 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
     /** The Constant PARAMS_GRANT_TYPE_VALUE. */
     private static final String PARAMS_GRANT_TYPE_VALUE = "client_credentials";
     private static Logger _logger = Logger.getLogger( IdentityTransportApiManagerRest.class );
+    private static final ObjectMapper _objectMapper = new ObjectMapper( );
 
     /** URL for REST service apiManager */
     private String _strApiManagerEndPoint;
@@ -104,8 +106,9 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
      * Gets the security token from API Manager
      * 
      * @return the token
+     * @throws IdentityStoreException 
      */
-    private String getToken( )
+    private String getToken( ) throws IdentityStoreException
     {
         String strToken = StringUtils.EMPTY;
 
@@ -122,18 +125,18 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
 
         String strOutput = getHttpTransport( ).doPost( _strApiManagerEndPoint, mapParams, mapHeadersRequest );
 
-        JSONObject strResponseApiManagerJsonObject = null;
+        JsonNode strResponseApiManagerJsonObject = null;
 
-        if ( JSONUtils.mayBeJSON( strOutput ) )
+        try
         {
-            strResponseApiManagerJsonObject = (JSONObject) JSONSerializer.toJSON( strOutput );
+            strResponseApiManagerJsonObject = _objectMapper.readTree( strOutput );
 
             if ( ( strResponseApiManagerJsonObject != null ) && strResponseApiManagerJsonObject.has( PARAMS_ACCES_TOKEN ) )
             {
-                strToken = (String) strResponseApiManagerJsonObject.get( PARAMS_ACCES_TOKEN );
+                strToken = strResponseApiManagerJsonObject.get( PARAMS_ACCES_TOKEN ).asText( );
             }
         }
-        else
+        catch ( JsonProcessingException e )
         {
             _logger.debug( "LibraryIdentityStore - IdentityTransportApiManagerRest.getToken invalid response [" + strOutput + "]" );
         }
@@ -143,9 +146,10 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
 
     /**
      * {@inheritDoc}
+     * @throws IdentityStoreException 
      */
     @Override
-    protected void addAuthentication( Map<String, String> mapHeadersRequest )
+    protected void addAuthentication( Map<String, String> mapHeadersRequest ) throws IdentityStoreException
     {
         String strToken = getToken( );
 

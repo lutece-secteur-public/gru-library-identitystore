@@ -34,14 +34,15 @@
 package fr.paris.lutece.plugins.identitystore.v2.web.service;
 
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ApplicationRightsDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.service.Constants;
+import fr.paris.lutece.plugins.identitystore.v2.web.rs.util.Constants;
 import fr.paris.lutece.portal.service.util.AppException;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.InputStream;
 import java.util.List;
@@ -94,13 +95,12 @@ public class IdentityService
      * @param strApplicationCode
      *            application code of calling application
      * @return identity if found
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
+     * @throws IdentityStoreException 
      *
      */
-    public IdentityDto getIdentityByConnectionId( String strConnectionId, String strApplicationCode ) throws IdentityNotFoundException, AppException
+    public IdentityDto getIdentityByConnectionId( String strConnectionId, String strApplicationCode ) throws AppException, IdentityStoreException
     {
         return getIdentity( strConnectionId, Constants.NO_CUSTOMER_ID, strApplicationCode );
     }
@@ -113,13 +113,12 @@ public class IdentityService
      * @param strApplicationCode
      *            application code of calling application
      * @return identity if found
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
+     * @throws IdentityStoreException 
      *
      */
-    public IdentityDto getIdentityByCustomerId( String strCustomerId, String strApplicationCode ) throws IdentityNotFoundException, AppException
+    public IdentityDto getIdentityByCustomerId( String strCustomerId, String strApplicationCode ) throws AppException, IdentityStoreException
     {
         return getIdentity( StringUtils.EMPTY, strCustomerId, strApplicationCode );
     }
@@ -134,13 +133,12 @@ public class IdentityService
      * @param strApplicationCode
      *            application code of calling application
      * @return identity if found
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
+     * @throws IdentityStoreException 
      *
      */
-    public IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode ) throws IdentityNotFoundException, AppException
+    public IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode ) throws AppException, IdentityStoreException
     {
         return _transportProvider.getIdentity( strConnectionId, strCustomerId, strApplicationCode );
     }
@@ -155,10 +153,9 @@ public class IdentityService
      * @return the updated identity
      * @throws AppException
      *             if error occured while updating identity
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
+     * @throws IdentityStoreException 
      */
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFiles ) throws IdentityNotFoundException, AppException
+    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFiles ) throws AppException, IdentityStoreException
     {
         return _transportProvider.updateIdentity( identityChange, mapFiles );
     }
@@ -177,8 +174,9 @@ public class IdentityService
      *
      * @throws AppException
      *             if error occured while updating identity
+     * @throws IdentityStoreException 
      */
-    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws AppException
+    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws AppException, IdentityStoreException
     {
         return _transportProvider.createIdentity( identityChange );
     }
@@ -190,8 +188,9 @@ public class IdentityService
      *            the connection id
      * @param strApplicationCode
      *            the application code
+     * @throws IdentityStoreException 
      */
-    public void deleteIdentity( String strConnectionId, String strApplicationCode )
+    public void deleteIdentity( String strConnectionId, String strApplicationCode ) throws IdentityStoreException
     {
         _transportProvider.deleteIdentity( strConnectionId, strApplicationCode );
     }
@@ -225,8 +224,9 @@ public class IdentityService
      * @return ApplicationRightsDto for the given application
      * @throws AppException
      *             if error occured
+     * @throws IdentityStoreException 
      */
-    public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException
+    public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException, IdentityStoreException
     {
         return _transportProvider.getApplicationRights( strClientAppCode );
     }
@@ -241,8 +241,9 @@ public class IdentityService
      * @param strClientApplicationCode
      *            application code who requested identities
      * @return identity filled according to application rights for user identified by connection id
+     * @throws IdentityStoreException 
      */
-    public List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientApplicationCode )
+    public List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientApplicationCode ) throws IdentityStoreException
     {
         return _transportProvider.getIdentities( mapAttributeValues, listAttributeKeyNames, strClientApplicationCode );
     }

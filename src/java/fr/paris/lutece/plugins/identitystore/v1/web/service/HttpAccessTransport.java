@@ -35,15 +35,15 @@ package fr.paris.lutece.plugins.identitystore.v1.web.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import fr.paris.lutece.plugins.identitystore.v1.web.rs.service.Constants;
+import fr.paris.lutece.plugins.identitystore.v1.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.util.httpaccess.HttpAccess;
-import fr.paris.lutece.util.httpaccess.HttpAccessException;
 import fr.paris.lutece.util.httpaccess.HttpAccessStatus;
+import fr.paris.lutece.util.httpaccess.InvalidResponseStatus;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.apache.http.client.utils.URIBuilder;
 
@@ -66,9 +66,10 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
     /**
      * {@inheritDoc}
+     * @throws IdentityStoreException 
      */
     @Override
-    public String doPost( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest )
+    public String doPost( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest ) throws IdentityStoreException
     {
         HttpAccess clientHttp = new HttpAccess( );
         Map<String, String> mapHeadersResponse = new HashMap<String, String>( );
@@ -89,10 +90,11 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
     /**
      * {@inheritDoc}
+     * @throws IdentityStoreException 
      */
     @Override
     public <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
-            ObjectMapper mapper )
+            ObjectMapper mapper ) throws IdentityStoreException
     {
         HttpAccess clientHttp = new HttpAccess( );
         Map<String, String> mapHeadersResponse = new HashMap<String, String>( );
@@ -117,7 +119,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
     @Override
     public <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
-            ObjectMapper mapper )
+            ObjectMapper mapper ) throws IdentityStoreException
     {
         HttpAccess clientHttp = new HttpAccess( );
         T oResponse = null;
@@ -148,7 +150,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
     @Override
     public <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles,
-            Class<T> responseJsonClass, ObjectMapper mapper )
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         HttpAccess clientHttp = new HttpAccess( );
         T oResponse = null;
@@ -182,7 +184,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
     @Override
     public <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
-            ObjectMapper mapper )
+            ObjectMapper mapper ) throws IdentityStoreException
     {
         HttpAccess clientHttp = new HttpAccess( );
         T oResponse = null;
@@ -221,12 +223,12 @@ public class HttpAccessTransport implements IHttpTransportProvider
      * @throws IdentityStoreException
      *             otherwise
      */
-    private void handleException( Exception e ) throws IdentityNotFoundException, IdentityStoreException
+    private void handleException( Exception e ) throws IdentityStoreException
     {
         String strError = "LibraryIdentityStore - Error HttpAccessTransport :";
         _logger.error( strError + e.getMessage( ), e );
 
-        if ( e instanceof HttpAccessException && HttpAccessStatus.NOT_FOUND.equals( ( (HttpAccessException) e ).getResponseCode( ) ) )
+        if ( e instanceof InvalidResponseStatus && HttpAccessStatus.SC_NOT_FOUND ==  ( (InvalidResponseStatus) e ).getResponseStatus( ) )
         {
             throw new IdentityNotFoundException( strError, e );
         }

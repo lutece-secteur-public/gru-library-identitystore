@@ -42,7 +42,7 @@ import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import fr.paris.lutece.portal.service.util.AppException;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -109,7 +109,7 @@ public class MockIdentityTransportDataStore extends AbstractIdentityTransportRes
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws IdentityNotFoundException, AppException
+    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws  AppException
     {
     	_logger.debug( "MockIdentityTransportDataStore.createIdentity not managed " );
     	

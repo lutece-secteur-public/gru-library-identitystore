@@ -34,6 +34,9 @@
 package fr.paris.lutece.plugins.identitystore.v2.web.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
+
 import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
@@ -55,8 +58,9 @@ public interface IHttpTransportProvider
      * @param mapHeadersRequest
      *            headers of the request
      * @return response body as String
+     * @throws IdentityStoreException 
      */
-    String doPost( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest );
+    String doPost( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest ) throws IdentityStoreException;
 
     /**
      * make POST request on given url with params and headers of a JSON object to retrieve another JSON
@@ -78,7 +82,7 @@ public interface IHttpTransportProvider
      * @return T
      */
     <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
-            ObjectMapper mapper );
+            ObjectMapper mapper ) throws IdentityStoreException;
 
     /**
      * make POST request on given url with params and headers of a JSON object to retrieve another JSON
@@ -100,7 +104,7 @@ public interface IHttpTransportProvider
      * @return response list
      */
     <T> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
-            ObjectMapper mapper );
+            ObjectMapper mapper ) throws IdentityStoreException;
 
     /**
      * make a Get request on given url with parameters
@@ -119,7 +123,7 @@ public interface IHttpTransportProvider
      *            mapper for JSON serialize / deserialize
      * @return response list
      */
-    <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper );
+    <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;;
 
     /**
      * make a multipart Post request
@@ -139,9 +143,10 @@ public interface IHttpTransportProvider
      * @param mapper
      *            mapper for JSON serialize / deserialize
      * @return response list
+     * @throws IdentityStoreException 
      */
     <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles,
-            Class<T> responseJsonClass, ObjectMapper mapper );
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
 
     /**
      * make a Delete request on given url with parameters
@@ -159,6 +164,7 @@ public interface IHttpTransportProvider
      * @param mapper
      *            mapper for JSON serialize / deserialize
      * @return response list
+     * @throws IdentityStoreException 
      */
-    <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper );
+    <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
 }

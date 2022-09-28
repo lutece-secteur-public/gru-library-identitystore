@@ -45,12 +45,13 @@ import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.SearchDto;
+import fr.paris.lutece.plugins.identitystore.v2.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v2.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v2.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.portal.service.util.AppException;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.apache.log4j.Logger;
 
@@ -117,14 +118,16 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * 
      * @param mapHeadersRequest
      *            map of headers to add
+     * @throws IdentityStoreException 
      */
-    protected abstract void addAuthentication( Map<String, String> mapHeadersRequest );
+    protected abstract void addAuthentication( Map<String, String> mapHeadersRequest ) throws IdentityStoreException;
 
     /**
      * {@inheritDoc}
+     * @throws IdentityStoreException 
      */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode ) throws IdentityNotFoundException, AppException
+    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode ) throws AppException, IdentityStoreException
     {
         _logger.debug( "Get identity attributes of " + strIdConnection );
 
@@ -146,9 +149,10 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
     /**
      * {@inheritDoc}
+     * @throws IdentityStoreException 
      */
     @Override
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException
+    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityStoreException
     {
         _logger.debug( "Update identity attributes" );
         checkUpdateParameters( identityChange );
@@ -223,9 +227,10 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
     /**
      * {@inheritDoc}
+     * @throws IdentityStoreException 
      */
     @Override
-    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws IdentityNotFoundException, AppException
+    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws IdentityStoreException
     {
         _logger.debug( "Create identity" );
         checkCreateParameters( identityChange );
@@ -259,7 +264,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * {@inheritDoc}
      */
     @Override
-    public ResponseDto deleteIdentity( String strIdConnection, String strClientCode ) throws IdentityNotFoundException, AppException
+    public ResponseDto deleteIdentity( String strIdConnection, String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Delete identity with connection id " + strIdConnection );
 
@@ -280,9 +285,10 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
     /**
      * {@inheritDoc}
+     * @throws IdentityStoreException 
      */
     @Override
-    public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException
+    public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException, IdentityStoreException
     {
         _logger.debug( "Get application rights for " + strClientAppCode );
 
@@ -303,9 +309,10 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
     /**
      * {@inheritDoc}
+     * @throws IdentityStoreException 
      */
     @Override
-    public List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientCode )
+    public List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Search identities" );
 

@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.identitystore.v2.web.service;
 
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ApplicationRightsDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
@@ -68,7 +69,7 @@ public interface IIdentityTransportProvider
      *             if inconsitent parmeters provided, or errors occurs...
      *
      */
-    IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode ) throws IdentityNotFoundException, AppException;
+    IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode ) throws IdentityStoreException;
 
     /**
      * apply changes to an identity
@@ -82,8 +83,9 @@ public interface IIdentityTransportProvider
      *             if error occured while updating identity
      * @throws IdentityNotFoundException
      *             if no identity found for input parameters
+     * @throws IdentityStoreException 
      */
-    IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException;
+    IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityStoreException;
 
     /**
      * Creates an identity only if the identity does not already exist.
@@ -101,8 +103,9 @@ public interface IIdentityTransportProvider
      *
      * @throws AppException
      *             if error occurred while updating identity
+     * @throws IdentityNotFoundException 
      */
-    IdentityDto createIdentity( IdentityChangeDto identityChange ) throws AppException;
+    IdentityDto createIdentity( IdentityChangeDto identityChange ) throws IdentityStoreException;
 
     /**
      * Deletes an identity from the specified connectionId
@@ -117,7 +120,7 @@ public interface IIdentityTransportProvider
      * @throws AppException
      *             if inconsistent parameters provided, or errors occurs...
      */
-    ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode ) throws IdentityNotFoundException, AppException;
+    ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode ) throws IdentityStoreException;
 
     /**
      *
@@ -143,7 +146,7 @@ public interface IIdentityTransportProvider
      * @throws AppException
      *             if error occured
      */
-    ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException;
+    ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws IdentityStoreException;
 
     /**
      * returns a list of identity from combination of attributes
@@ -156,5 +159,5 @@ public interface IIdentityTransportProvider
      *            application code who requested identities
      * @return identity filled according to application rights for user identified by connection id
      */
-    List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientCode );
+    List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientCode ) throws IdentityStoreException;;
 }

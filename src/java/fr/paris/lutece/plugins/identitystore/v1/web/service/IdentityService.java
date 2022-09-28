@@ -35,12 +35,13 @@ package fr.paris.lutece.plugins.identitystore.v1.web.service;
 
 import fr.paris.lutece.plugins.identitystore.v1.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.v1.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.v1.web.rs.service.Constants;
+import fr.paris.lutece.plugins.identitystore.v1.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.InputStream;
 
@@ -93,13 +94,12 @@ public class IdentityService
      * @param strApplicationCode
      *            application code of calling application
      * @return identity if found
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
+     * @throws IdentityStoreException 
      *
      */
-    public IdentityDto getIdentityByConnectionId( String strConnectionId, String strApplicationCode ) throws IdentityNotFoundException, AppException
+    public IdentityDto getIdentityByConnectionId( String strConnectionId, String strApplicationCode ) throws AppException, IdentityStoreException
     {
         return getIdentity( strConnectionId, Constants.NO_CUSTOMER_ID, strApplicationCode );
     }
@@ -112,13 +112,12 @@ public class IdentityService
      * @param strApplicationCode
      *            application code of calling application
      * @return identity if found
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
+     * @throws IdentityStoreException 
      *
      */
-    public IdentityDto getIdentityByCustomerId( String strCustomerId, String strApplicationCode ) throws IdentityNotFoundException, AppException
+    public IdentityDto getIdentityByCustomerId( String strCustomerId, String strApplicationCode ) throws AppException, IdentityStoreException
     {
         return getIdentity( StringUtils.EMPTY, strCustomerId, strApplicationCode );
     }
@@ -133,13 +132,12 @@ public class IdentityService
      * @param strApplicationCode
      *            application code of calling application
      * @return identity if found
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
+     * @throws IdentityStoreException 
      *
      */
-    public IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode ) throws IdentityNotFoundException, AppException
+    public IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode ) throws IdentityStoreException
     {
         return _transportProvider.getIdentity( strConnectionId, strCustomerId, strApplicationCode );
     }
@@ -157,7 +155,7 @@ public class IdentityService
      * @throws IdentityNotFoundException
      *             if no identity found for input parameters
      */
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFiles ) throws IdentityNotFoundException, AppException
+    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFiles ) throws IdentityStoreException
     {
         return _transportProvider.updateIdentity( identityChange, mapFiles );
     }
@@ -179,7 +177,7 @@ public class IdentityService
      * @throws AppException
      *             if error occured while updating identity
      */
-    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws AppException
+    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws IdentityStoreException
     {
         return _transportProvider.createIdentity( identityChange );
     }
@@ -191,8 +189,9 @@ public class IdentityService
      *            the connection id
      * @param strApplicationCode
      *            the application code
+     * @throws IdentityStoreException 
      */
-    public void deleteIdentity( String strConnectionId, String strApplicationCode )
+    public void deleteIdentity( String strConnectionId, String strApplicationCode ) throws IdentityStoreException 
     {
         _transportProvider.deleteIdentity( strConnectionId, strApplicationCode );
     }
@@ -228,10 +227,9 @@ public class IdentityService
      * @return the created identity
      * @throws AppException
      *             if error occured while updating identity
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
+     * @throws IdentityStoreException 
      */
-    public IdentityDto certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode ) throws IdentityNotFoundException, AppException
+    public IdentityDto certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode ) throws AppException, IdentityStoreException
     {
         return _transportProvider.certifyAttributes( identityChange, strCertifierCode );
     }

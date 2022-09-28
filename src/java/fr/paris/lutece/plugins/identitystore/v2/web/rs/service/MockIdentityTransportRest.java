@@ -41,7 +41,7 @@ import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ResponseDto;
 import fr.paris.lutece.portal.service.util.AppException;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.InputStream;
@@ -116,7 +116,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws IdentityNotFoundException, AppException
+    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws  AppException
     {
         IdentityDto identity = identityChange.getIdentity( );
 
