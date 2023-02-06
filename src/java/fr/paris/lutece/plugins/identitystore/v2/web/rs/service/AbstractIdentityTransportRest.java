@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2023, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -118,13 +118,14 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * 
      * @param mapHeadersRequest
      *            map of headers to add
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      */
     protected abstract void addAuthentication( Map<String, String> mapHeadersRequest ) throws IdentityStoreException;
 
     /**
      * {@inheritDoc}
-     * @throws IdentityStoreException 
+     * 
+     * @throws IdentityStoreException
      */
     @Override
     public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode ) throws AppException, IdentityStoreException
@@ -149,7 +150,8 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
     /**
      * {@inheritDoc}
-     * @throws IdentityStoreException 
+     * 
+     * @throws IdentityStoreException
      */
     @Override
     public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityStoreException
@@ -176,8 +178,9 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
             throw new IdentityStoreException( strError, e );
         }
 
-        IdentityDto identityDto = _httpTransport.doPostMultiPart( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH
-                + Constants.UPDATE_IDENTITY_PATH, mapParams, mapHeadersRequest, mapFileItem, IdentityDto.class, _mapper );
+        IdentityDto identityDto = _httpTransport.doPostMultiPart(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH + Constants.UPDATE_IDENTITY_PATH, mapParams, mapHeadersRequest,
+                mapFileItem, IdentityDto.class, _mapper );
 
         return identityDto;
     }
@@ -227,7 +230,8 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
     /**
      * {@inheritDoc}
-     * @throws IdentityStoreException 
+     * 
+     * @throws IdentityStoreException
      */
     @Override
     public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws IdentityStoreException
@@ -254,8 +258,9 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
             throw new IdentityStoreException( strError, e );
         }
 
-        IdentityDto identityDto = _httpTransport.doPostMultiPart( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH
-                + Constants.CREATE_IDENTITY_PATH, mapParams, mapHeadersRequest, null, IdentityDto.class, _mapper );
+        IdentityDto identityDto = _httpTransport.doPostMultiPart(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH + Constants.CREATE_IDENTITY_PATH, mapParams, mapHeadersRequest,
+                null, IdentityDto.class, _mapper );
 
         return identityDto;
     }
@@ -285,7 +290,8 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
     /**
      * {@inheritDoc}
-     * @throws IdentityStoreException 
+     * 
+     * @throws IdentityStoreException
      */
     @Override
     public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException, IdentityStoreException
@@ -300,19 +306,21 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
         Map<String, String> mapParams = new HashMap<String, String>( );
 
-        ApplicationRightsDto appRightsDto = _httpTransport.doGet( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH
-                + Constants.APPLICATION_RIGHTS_PATH, mapParams, mapHeadersRequest, ApplicationRightsDto.class, _mapper );
+        ApplicationRightsDto appRightsDto = _httpTransport.doGet(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH + Constants.APPLICATION_RIGHTS_PATH, mapParams,
+                mapHeadersRequest, ApplicationRightsDto.class, _mapper );
 
         return appRightsDto;
     }
 
-
     /**
      * {@inheritDoc}
-     * @throws IdentityStoreException 
+     * 
+     * @throws IdentityStoreException
      */
     @Override
-    public List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientCode ) throws IdentityStoreException
+    public List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientCode )
+            throws IdentityStoreException
     {
         _logger.debug( "Search identities" );
 
@@ -328,8 +336,9 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         searchDto.setListAttributeKeyNames( listAttributeKeyNames );
         searchDto.setMapAttributeValues( mapAttributeValues );
 
-        List<IdentityDto> listIdentityDto = _httpTransport.doPostJSONforList(_strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH + 
-                Constants.SEARCH_IDENTITIES_PATH, null, mapHeadersRequest, searchDto, IdentityDto.class, mapper );
+        List<IdentityDto> listIdentityDto = _httpTransport.doPostJSONforList(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH + Constants.SEARCH_IDENTITIES_PATH, null, mapHeadersRequest,
+                searchDto, IdentityDto.class, mapper );
 
         return listIdentityDto;
     }

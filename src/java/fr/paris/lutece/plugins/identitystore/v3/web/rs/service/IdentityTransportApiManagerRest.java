@@ -31,24 +31,21 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.v2.web.rs.service;
-
-import fr.paris.lutece.plugins.identitystore.v2.web.service.IIdentityTransportProvider;
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-
-import org.apache.commons.lang3.StringUtils;
-
-import org.apache.log4j.Logger;
+package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.HashMap;
-import java.util.Map;
+import fr.paris.lutece.plugins.identitystore.v3.web.service.HttpAccessTransport;
+import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * IdentityRestClientService
@@ -64,6 +61,8 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
 
     /** The Constant PARAMS_GRANT_TYPE_VALUE. */
     private static final String PARAMS_GRANT_TYPE_VALUE = "client_credentials";
+
+    private static final String PARAMS_HEADER_CLIENT_CODE = "client_code";
     private static Logger _logger = Logger.getLogger( IdentityTransportApiManagerRest.class );
     private static final ObjectMapper _objectMapper = new ObjectMapper( );
 
@@ -77,7 +76,7 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
     public IdentityTransportApiManagerRest( )
     {
         super( );
-        this.setHttpTransport( new fr.paris.lutece.plugins.identitystore.v2.web.service.HttpAccessTransport( ) );
+        this.setHttpTransport( new HttpAccessTransport( ) );
     }
 
     /**

@@ -31,46 +31,30 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.v2.web.rs.service;
+package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
-import fr.paris.lutece.plugins.identitystore.v2.web.service.HttpAccessTransport;
-import fr.paris.lutece.plugins.identitystore.v2.web.service.IHttpTransportProvider;
-import fr.paris.lutece.plugins.identitystore.v2.web.service.IIdentityTransportProvider;
+import fr.paris.lutece.util.httpaccess.ResponseStatusValidator;
 
-import java.util.Map;
-
-/**
- * IdentityRestClientService
- */
-public final class IdentityTransportRest extends AbstractIdentityTransportRest implements IIdentityTransportProvider
+public class CustomResponseStatusValidator implements ResponseStatusValidator
 {
-    /**
-     * Simple Constructor
-     */
-    public IdentityTransportRest( )
+    private static CustomResponseStatusValidator instance;
+
+    public static CustomResponseStatusValidator getInstance( )
     {
-        super( );
-        this.setHttpTransport( new HttpAccessTransport( ) );
+        if ( instance == null )
+        {
+            instance = new CustomResponseStatusValidator( );
+        }
+        return instance;
     }
 
-    /**
-     * Constructor with IHttpTransportProvider parameter
-     * 
-     * @param httpTransport
-     *            the provider to use
-     */
-    public IdentityTransportRest( IHttpTransportProvider httpTransport )
+    private CustomResponseStatusValidator( )
     {
-        super( );
-        this.setHttpTransport( httpTransport );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected void addAuthentication( Map<String, String> mapHeadersRequest )
+    public boolean validate( int i )
     {
-        // no authentication for simple rest client
+        return i < 500;
     }
 }

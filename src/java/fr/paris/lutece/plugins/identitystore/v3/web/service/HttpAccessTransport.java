@@ -31,31 +31,26 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.v1.web.service;
+package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import fr.paris.lutece.plugins.identitystore.v1.web.rs.util.Constants;
+import fr.paris.lutece.plugins.identitystore.v2.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.util.httpaccess.HttpAccess;
 import fr.paris.lutece.util.httpaccess.InvalidResponseStatus;
-
-import org.apache.commons.fileupload.FileItem;
+import fr.paris.lutece.util.httpaccess.ResponseStatusValidator;
 import org.apache.commons.lang3.StringUtils;
-
 import org.apache.hc.core5.http.HttpStatus;
-
 import org.apache.hc.core5.net.URIBuilder;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 
 /**
  * IHttpTransportProvider which use library-httpaccess
@@ -63,6 +58,13 @@ import javax.ws.rs.core.MediaType;
 public class HttpAccessTransport implements IHttpTransportProvider
 {
     private static Logger _logger = Logger.getLogger( HttpAccessTransport.class );
+
+    private HttpAccess _httpClient;
+
+    public HttpAccessTransport( )
+    {
+        this._httpClient = new HttpAccess( CustomResponseStatusValidator.getInstance( ) );
+    }
 
     /**
      * {@inheritDoc}
@@ -72,14 +74,13 @@ public class HttpAccessTransport implements IHttpTransportProvider
     @Override
     public String doPost( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest ) throws IdentityStoreException
     {
-        HttpAccess clientHttp = new HttpAccess( );
-        Map<String, String> mapHeadersResponse = new HashMap<String, String>( );
+        final Map<String, String> mapHeadersResponse = new HashMap<>( );
 
         String strOutput = StringUtils.EMPTY;
 
         try
         {
-            strOutput = clientHttp.doPost( strUrl, mapParams, null, null, mapHeadersRequest, mapHeadersResponse );
+            strOutput = this._httpClient.doPost( strUrl, mapParams, null, null, mapHeadersRequest, mapHeadersResponse );
         }
         catch( Exception e )
         {
@@ -98,8 +99,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
     public <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
             ObjectMapper mapper ) throws IdentityStoreException
     {
-        HttpAccess clientHttp = new HttpAccess( );
-        Map<String, String> mapHeadersResponse = new HashMap<String, String>( );
+        final Map<String, String> mapHeadersResponse = new HashMap<>( );
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
         mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
 
@@ -108,8 +108,67 @@ public class HttpAccessTransport implements IHttpTransportProvider
         try
         {
             String strJSON = mapper.writeValueAsString( json );
-            String strResponseJSON = clientHttp.doPostJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
+            String strResponseJSON = this._httpClient.doPostJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
+        }
+        catch( Exception e )
+        {
+            handleException( e );
+        }
+
+        return oResponse;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws IdentityStoreException
+     */
+    @Override
+    public <T> T doPutJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
+            ObjectMapper mapper ) throws IdentityStoreException
+    {
+        final Map<String, String> mapHeadersResponse = new HashMap<>( );
+        mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
+        mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
+
+        T oResponse = null;
+
+        try
+        {
+            String strJSON = mapper.writeValueAsString( json );
+            String strResponseJSON = this._httpClient.doPutJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
+            oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
+        }
+        catch( Exception e )
+        {
+            handleException( e );
+        }
+
+        return oResponse;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws IdentityStoreException
+     */
+    @Override
+    public <T> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    {
+        final Map<String, String> mapHeadersResponse = new HashMap<>( );
+        mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
+        mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
+
+        List<T> oResponse = null;
+        JavaType responseJsonClassType = mapper.getTypeFactory( ).constructCollectionType( List.class, responseJsonClass );
+
+        try
+        {
+            String strJSON = mapper.writeValueAsString( json );
+            String strResponseJSON = this._httpClient.doPostJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
+            oResponse = mapper.readValue( strResponseJSON, responseJsonClassType );
         }
         catch( Exception e )
         {
@@ -123,7 +182,6 @@ public class HttpAccessTransport implements IHttpTransportProvider
     public <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
             ObjectMapper mapper ) throws IdentityStoreException
     {
-        HttpAccess clientHttp = new HttpAccess( );
         T oResponse = null;
 
         try
@@ -138,41 +196,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
                 }
             }
 
-            String strResponseJSON = clientHttp.doGet( uriBuilder.toString( ), null, null, mapHeadersRequest );
-
-            oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
-        }
-        catch( Exception e )
-        {
-            handleException( e );
-        }
-
-        return oResponse;
-    }
-
-    @Override
-    public <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles,
-            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
-    {
-        HttpAccess clientHttp = new HttpAccess( );
-        T oResponse = null;
-
-        try
-        {
-            Map<String, List<String>> params = new HashMap<String, List<String>>( );
-
-            if ( mapParams != null )
-            {
-                for ( String strParamKey : mapParams.keySet( ) )
-                {
-                    // HttpAccess allow to post for a given param a list of value
-                    List<String> listParam = new ArrayList<String>( );
-                    listParam.add( mapParams.get( strParamKey ) );
-                    params.put( strParamKey, listParam );
-                }
-            }
-
-            String strResponseJSON = clientHttp.doPostMultiPart( strEndPointUrl, params, mapFiles, null, null, mapHeadersRequest );
+            String strResponseJSON = this._httpClient.doGet( uriBuilder.toString( ), null, null, mapHeadersRequest );
 
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
         }
@@ -188,7 +212,6 @@ public class HttpAccessTransport implements IHttpTransportProvider
     public <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
             ObjectMapper mapper ) throws IdentityStoreException
     {
-        HttpAccess clientHttp = new HttpAccess( );
         T oResponse = null;
 
         try
@@ -203,7 +226,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
                 }
             }
 
-            String strResponseJSON = clientHttp.doDelete( uriBuilder.toString( ), null, null, mapHeadersRequest, null );
+            String strResponseJSON = this._httpClient.doDelete( uriBuilder.toString( ), null, null, mapHeadersRequest, null );
 
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
         }
@@ -230,9 +253,11 @@ public class HttpAccessTransport implements IHttpTransportProvider
         String strError = "LibraryIdentityStore - Error HttpAccessTransport :";
         _logger.error( strError + e.getMessage( ), e );
 
-        if ( e instanceof InvalidResponseStatus && HttpStatus.SC_NOT_FOUND == ( (InvalidResponseStatus) e ).getResponseStatus( ) )
+        if ( e instanceof InvalidResponseStatus && HttpStatus.SC_NOT_FOUND == ( (InvalidResponseStatus) e ).getResponseStatus( )
+                || e instanceof IdentityNotFoundException )
         {
-            throw new IdentityNotFoundException( strError, e );
+            // throw new IdentityNotFoundException( strError, e );
+            throw new IdentityStoreException( strError, e );
         }
         else
         {

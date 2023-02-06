@@ -31,20 +31,19 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.v2.web.rs.service;
+package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.Identity;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ApplicationRightsDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
-
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,35 +54,26 @@ import java.util.Map;
 public class MockIdentityTransportRest extends AbstractIdentityTransportRest
 {
     private static Logger _logger = Logger.getLogger( MockIdentityTransportRest.class );
-    private List<IdentityDto> _listIdentities;
+    private List<Identity> _listIdentities;
     private final String CONNECTION_ID_PREFIX = "conn_";
     private final String CUSTOMER_ID_PREFIX = "cust_";
 
     public MockIdentityTransportRest( )
     {
         _logger.error( "MockIdentityTransportRest is used" );
-        _listIdentities = new ArrayList<IdentityDto>( );
+        _listIdentities = new ArrayList<Identity>( );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode ) throws IdentityNotFoundException, AppException
+    public IdentitySearchResponse getIdentity( String strCustomerId, String strClientCode )
+            throws IdentityNotFoundException, AppException
     {
-        if ( StringUtils.isEmpty( strIdConnection ) && StringUtils.isEmpty( strCustomerId ) )
+        if ( StringUtils.isEmpty( strCustomerId ) )
         {
             throw new AppException( "params wrong in mock" );
-        }
-        for ( IdentityDto identityDto : _listIdentities )
-        {
-            if ( StringUtils.isEmpty( strIdConnection ) || strIdConnection.equals( identityDto.getConnectionId( ) ) )
-            {
-                if ( StringUtils.isEmpty( strCustomerId ) || strCustomerId.equals( identityDto.getCustomerId( ) ) )
-                {
-                    return identityDto;
-                }
-            }
         }
 
         throw new IdentityNotFoundException( "not found in mock list" );
@@ -93,32 +83,20 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException
+    public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode ) throws IdentityNotFoundException, AppException
     {
         _logger.debug( "MockIdentityTransportRest.updateIdentity not managed return existing identity if possible" );
 
-        return getIdentity( identityChange.getIdentity( ).getConnectionId( ), identityChange.getIdentity( ).getCustomerId( ),
-                identityChange.getAuthor( ).getApplicationCode( ) );
+        return new IdentityChangeResponse();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public InputStream downloadFileAttribute( String strIdConnection, String strCustomerId, String strAttributeKey, String strClientAppCode )
+    public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws AppException
     {
-        _logger.debug( "MockIdentityTransportRest.downloadFileAttribute not managed return null" );
-
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws AppException
-    {
-        IdentityDto identity = identityChange.getIdentity( );
+        Identity identity = identityChange.getIdentity( );
 
         if ( StringUtils.isEmpty( identity.getConnectionId( ) ) )
         {
@@ -130,21 +108,25 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
         }
         _listIdentities.add( identity );
 
-        return identity;
+        return createIdentity( identityChange, strClientCode );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException
+    public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.getApplicationRights not managed return empty rights" );
-        ApplicationRightsDto appRightsDto = new ApplicationRightsDto( );
-        appRightsDto.setAppRights( new ArrayList<>( ) );
-        appRightsDto.setApplicationCode( strClientAppCode );
+        Identity identity = identityChange.getIdentity( );
 
-        return appRightsDto;
+        if ( StringUtils.isEmpty( identity.getConnectionId( ) ) )
+        {
+            identity.setConnectionId( CONNECTION_ID_PREFIX + _listIdentities.size( ) );
+        }
+        if ( StringUtils.isEmpty( identity.getCustomerId( ) ) )
+        {
+            identity.setCustomerId( CUSTOMER_ID_PREFIX + _listIdentities.size( ) );
+        }
+        _listIdentities.add( identity );
+
+        return importIdentity( identityChange, strClientCode );
     }
 
     /**

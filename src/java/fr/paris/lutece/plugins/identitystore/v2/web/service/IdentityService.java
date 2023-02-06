@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2023, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -97,7 +97,7 @@ public class IdentityService
      * @return identity if found
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      *
      */
     public IdentityDto getIdentityByConnectionId( String strConnectionId, String strApplicationCode ) throws AppException, IdentityStoreException
@@ -115,7 +115,7 @@ public class IdentityService
      * @return identity if found
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      *
      */
     public IdentityDto getIdentityByCustomerId( String strCustomerId, String strApplicationCode ) throws AppException, IdentityStoreException
@@ -135,7 +135,7 @@ public class IdentityService
      * @return identity if found
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      *
      */
     public IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode ) throws AppException, IdentityStoreException
@@ -153,7 +153,7 @@ public class IdentityService
      * @return the updated identity
      * @throws AppException
      *             if error occured while updating identity
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      */
     public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFiles ) throws AppException, IdentityStoreException
     {
@@ -161,12 +161,9 @@ public class IdentityService
     }
 
     /**
-     * Creates an identity only if the identity does not already exist.
-     * The identity is created from the provided attributes. 
+     * Creates an identity only if the identity does not already exist. The identity is created from the provided attributes.
      * 
-     * The order to test if the identity exists:
-     *  - by using the provided customer id if present
-     *  - by using the provided connection id if present
+     * The order to test if the identity exists: - by using the provided customer id if present - by using the provided connection id if present
      *
      * @param identityChange
      *            change to apply to identity
@@ -174,7 +171,7 @@ public class IdentityService
      *
      * @throws AppException
      *             if error occured while updating identity
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      */
     public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws AppException, IdentityStoreException
     {
@@ -188,7 +185,7 @@ public class IdentityService
      *            the connection id
      * @param strApplicationCode
      *            the application code
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      */
     public void deleteIdentity( String strConnectionId, String strApplicationCode ) throws IdentityStoreException
     {
@@ -224,7 +221,7 @@ public class IdentityService
      * @return ApplicationRightsDto for the given application
      * @throws AppException
      *             if error occured
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      */
     public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException, IdentityStoreException
     {
@@ -241,9 +238,10 @@ public class IdentityService
      * @param strClientApplicationCode
      *            application code who requested identities
      * @return identity filled according to application rights for user identified by connection id
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      */
-    public List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientApplicationCode ) throws IdentityStoreException
+    public List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientApplicationCode )
+            throws IdentityStoreException
     {
         return _transportProvider.getIdentities( mapAttributeValues, listAttributeKeyNames, strClientApplicationCode );
     }

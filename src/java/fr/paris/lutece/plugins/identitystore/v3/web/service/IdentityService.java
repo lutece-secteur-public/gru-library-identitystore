@@ -31,21 +31,17 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.v1.web.service;
+package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
-import fr.paris.lutece.plugins.identitystore.v1.web.rs.dto.IdentityChangeDto;
-import fr.paris.lutece.plugins.identitystore.v1.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.v1.web.rs.util.Constants;
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
+import fr.paris.lutece.plugins.identitystore.v2.web.rs.util.Constants;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
-
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.InputStream;
-
-import java.util.Map;
 
 /**
  * IdentityService
@@ -97,11 +93,12 @@ public class IdentityService
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
      * @throws IdentityStoreException
-     *
      */
-    public IdentityDto getIdentityByConnectionId( String strConnectionId, String strApplicationCode ) throws AppException, IdentityStoreException
+    public IdentitySearchResponse getIdentityByConnectionId( String strConnectionId, String strApplicationCode ) throws AppException, IdentityStoreException
     {
-        return getIdentity( strConnectionId, Constants.NO_CUSTOMER_ID, strApplicationCode );
+        final IdentitySearchRequest request = new IdentitySearchRequest();
+        request.setConnectionId(strConnectionId);
+        return searchIdentities(request, strApplicationCode);
     }
 
     /**
@@ -115,18 +112,15 @@ public class IdentityService
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
      * @throws IdentityStoreException
-     *
      */
-    public IdentityDto getIdentityByCustomerId( String strCustomerId, String strApplicationCode ) throws AppException, IdentityStoreException
+    public IdentitySearchResponse getIdentityByCustomerId( String strCustomerId, String strApplicationCode ) throws AppException, IdentityStoreException
     {
-        return getIdentity( StringUtils.EMPTY, strCustomerId, strApplicationCode );
+        return getIdentity( strCustomerId, strApplicationCode );
     }
 
     /**
      * get identity matching connectionId and customerId for provided application code
      *
-     * @param strConnectionId
-     *            connection Id (can be null if strCustomerId is provided)
      * @param strCustomerId
      *            customer Id (can be null if strConnectionId is provided)
      * @param strApplicationCode
@@ -135,11 +129,11 @@ public class IdentityService
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
      * @throws IdentityStoreException
-     *
      */
-    public IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode ) throws IdentityStoreException
+    public IdentitySearchResponse getIdentity( String strCustomerId, String strApplicationCode )
+            throws AppException, IdentityStoreException
     {
-        return _transportProvider.getIdentity( strConnectionId, strCustomerId, strApplicationCode );
+        return _transportProvider.getIdentity( strCustomerId, strApplicationCode );
     }
 
     /**
@@ -147,37 +141,33 @@ public class IdentityService
      *
      * @param identityChange
      *            change to apply to identity
-     * @param mapFiles
-     *            fileitem map to upload
+     * @param strClientCode
+     *            application code of calling application
      * @return the updated identity
      * @throws AppException
      *             if error occured while updating identity
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
+     * @throws IdentityStoreException
      */
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFiles ) throws IdentityStoreException
+    public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode ) throws AppException, IdentityStoreException
     {
-        return _transportProvider.updateIdentity( identityChange, mapFiles );
+        return _transportProvider.updateIdentity( customerId, identityChange, strClientCode );
     }
 
     /**
      * Creates an identity only if the identity does not already exist. The identity is created from the provided attributes.
-     * 
-     * The order to test if the identity exists:
-     * 
-     * - by using the provided customer id if present - by using the provided connection id if present
-     * 
+     * <p>
+     * The order to test if the identity exists: - by using the provided customer id if present - by using the provided connection id if present
      *
      * @param identityChange
      *            change to apply to identity
      * @return the created identity
-     *
      * @throws AppException
      *             if error occured while updating identity
+     * @throws IdentityStoreException
      */
-    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws IdentityStoreException
+    public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws AppException, IdentityStoreException
     {
-        return _transportProvider.createIdentity( identityChange );
+        return _transportProvider.createIdentity( identityChange, strClientCode );
     }
 
     /**
@@ -195,40 +185,46 @@ public class IdentityService
     }
 
     /**
+     * returns a list of identity from combination of attributes
      *
-     * @param strConnectionId
-     *            connection Id (can be null if strCustomerId is provided)
-     * @param strCustomerId
-     *            customer Id (can be null if strConnectionId is provided)
-     * @param strAttributeKey
-     *            attribute Key (must match a an attribute of type file)
-     * @param strClientAppCode
-     *            application code of calling application
-     * @return inputstream of attribute file
-     * @throws AppException
-     *             if error occured while retrieving file attribute
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
+     * @param identitySearchRequest
+     *            search request tpo perform
+     * @param strClientCode
+     *            application code who requested identities
+     * @return identity filled according to application rights for user identified by connection id
+     * @throws IdentityStoreException
      */
-    public InputStream downloadFileAttribute( String strConnectionId, String strCustomerId, String strAttributeKey, String strClientAppCode )
+    public IdentitySearchResponse searchIdentities( IdentitySearchRequest identitySearchRequest, String strClientCode ) throws IdentityStoreException
     {
-        return _transportProvider.downloadFileAttribute( strConnectionId, strCustomerId, strAttributeKey, strClientAppCode );
+        return _transportProvider.searchIdentities( identitySearchRequest, strClientCode );
     }
 
     /**
-     * certify attributes from an identity
+     * returns the active service contract for the given application code
+     *
+     * @param strClientCode
+     *            application code who requested service contract
+     * @return the active service contract for the given application code
+     * @throws IdentityStoreException
+     */
+    public ServiceContractSearchResponse getServiceContract( String strClientCode ) throws IdentityStoreException
+    {
+        return _transportProvider.getServiceContract( strClientCode );
+    }
+
+    /**
+     * import an identity
      *
      * @param identityChange
      *            change to apply to identity
-     * @param strCertifierCode
-     *            the certifier code ID
-     * @return the created identity
-     * @throws AppException
-     *             if error occured while updating identity
+     * @param strClientCode
+     *            application code who requested identities
+     * @return identity filled according to application rights for user identified by connection id
      * @throws IdentityStoreException
      */
-    public IdentityDto certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode ) throws AppException, IdentityStoreException
+    public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
     {
-        return _transportProvider.certifyAttributes( identityChange, strCertifierCode );
+        return _transportProvider.importIdentity( identityChange, strClientCode );
     }
+
 }
