@@ -1,0 +1,40 @@
+{
+  "connection_id" : "123456",
+  "customer_id" : "9876",
+  "attributes": [
+    {
+    "key": "family_name",
+    "value": "Foraine",
+    "certProcess": "mon_paris",
+    "certDate": 1668421975
+    },
+    {
+    "key": "preferred_username",
+    "value": "Gru",
+    "certProcess": "fc",
+    "certDate": 1668421975
+    },
+    {
+    "key": "first_name",
+    "value": "Jack",
+    "certProcess": "mon_paris",
+    "certDate": 1668421975
+    },
+    {
+    "key": "email_login",
+    "value": "lb@gmail.com",
+    "certProcess": "mon_paris",
+    "certDate": 1668421975
+    },
+    {
+    "key": "birthdate",
+    "value": "11/11/1986",
+    "certProcess": "fc",
+    "certDate": 1668421975
+    },
+    {
+    "key": "mobile_phone",
+    "value": "0612548763"
+    }
+  ]
+}

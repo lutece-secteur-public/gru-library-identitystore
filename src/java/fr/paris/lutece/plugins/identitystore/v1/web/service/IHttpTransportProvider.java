@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2023, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,7 +56,7 @@ public interface IHttpTransportProvider
      * @param mapHeadersRequest
      *            headers of the request
      * @return response body as String
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      */
     String doPost( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest ) throws IdentityStoreException;
 
@@ -78,7 +78,7 @@ public interface IHttpTransportProvider
      * @param mapper
      *            mapper for JSON serialize / deserialize
      * @return response T
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      */
     <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
             ObjectMapper mapper ) throws IdentityStoreException;
@@ -99,9 +99,10 @@ public interface IHttpTransportProvider
      * @param mapper
      *            mapper for JSON serialize / deserialize
      * @return response list
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      */
-    <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
+    <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper )
+            throws IdentityStoreException;
 
     /**
      * make a multipart Post request
@@ -121,7 +122,7 @@ public interface IHttpTransportProvider
      * @param mapper
      *            mapper for JSON serialize / deserialize
      * @return response list
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      */
     <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles,
             Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
@@ -142,7 +143,8 @@ public interface IHttpTransportProvider
      * @param mapper
      *            mapper for JSON serialize / deserialize
      * @return response list
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      */
-    <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
+    <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
+            ObjectMapper mapper ) throws IdentityStoreException;
 }

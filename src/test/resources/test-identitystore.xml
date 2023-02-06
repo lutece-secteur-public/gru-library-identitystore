@@ -10,15 +10,15 @@
 
     <bean id="apiTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.v2.web.rs.service.IdentityTransportApiManagerRest">
         <property name="IdentityStoreEndPoint">
-            <value>http://127.0.0.1:8082/lutece/rest/identitystore/v2</value>
+            <value>http://127.0.0.1:8080/lutece/rest/identitystore/v2</value>
         </property>
         <property name="apiManagerEndPoint">
-            <value>http://127.0.0.1:8082/lutece/rest/api/token</value>
+            <value>http://127.0.0.1:8080/lutece/rest/api/token</value>
         </property>
     </bean>
     <bean id="restTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.v2.web.rs.service.IdentityTransportRest">
         <property name="IdentityStoreEndPoint">
-            <value>http://127.0.0.1:8082/lutece/rest/identitystore/v2</value>
+            <value>http://127.0.0.1:8080/lutece/rest/identitystore/v2</value>
         </property>
     </bean>
     

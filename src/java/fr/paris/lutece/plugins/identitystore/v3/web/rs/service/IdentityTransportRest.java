@@ -31,11 +31,11 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.v2.web.rs.service;
+package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
-import fr.paris.lutece.plugins.identitystore.v2.web.service.HttpAccessTransport;
-import fr.paris.lutece.plugins.identitystore.v2.web.service.IHttpTransportProvider;
-import fr.paris.lutece.plugins.identitystore.v2.web.service.IIdentityTransportProvider;
+import fr.paris.lutece.plugins.identitystore.v3.web.service.HttpAccessTransport;
+import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
+import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 
 import java.util.Map;
 

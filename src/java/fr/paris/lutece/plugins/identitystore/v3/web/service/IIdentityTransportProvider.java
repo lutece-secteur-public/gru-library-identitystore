@@ -31,21 +31,24 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.v2.web.service;
+package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ApplicationRightsDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
-
 import org.apache.commons.fileupload.FileItem;
 
+import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.List;
-
 import java.util.Map;
 
 /**
@@ -69,23 +72,7 @@ public interface IIdentityTransportProvider
      *             if inconsitent parmeters provided, or errors occurs...
      *
      */
-    IdentityDto getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode ) throws IdentityStoreException;
-
-    /**
-     * apply changes to an identity
-     *
-     * @param identityChange
-     *            change to apply to identity
-     * @param mapFileItem
-     *            file map to upload
-     * @return the updated identity
-     * @throws AppException
-     *             if error occured while updating identity
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
-     * @throws IdentityStoreException
-     */
-    IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityStoreException;
+    IdentitySearchResponse getIdentity( String strConnectionId, String strCustomerId, String strApplicationCode ) throws IdentityStoreException;
 
     /**
      * Creates an identity only if the identity does not already exist. The identity is created from the provided attributes.
@@ -103,7 +90,22 @@ public interface IIdentityTransportProvider
      *             if error occurred while updating identity
      * @throws IdentityNotFoundException
      */
-    IdentityDto createIdentity( IdentityChangeDto identityChange ) throws IdentityStoreException;
+    IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException;
+
+    /**
+     * Updates an identity.
+     *
+     * @param identityChange
+     *            change to apply to identity
+     * @param strClientCode
+     *            application code who requested identities
+     * @return the created identity
+     *
+     * @throws AppException
+     *             if error occurred while updating identity
+     * @throws IdentityNotFoundException
+     */
+    IdentityChangeResponse updateIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException;
 
     /**
      * Deletes an identity from the specified connectionId
@@ -111,7 +113,7 @@ public interface IIdentityTransportProvider
      * @param strConnectionId
      *            the connection id
      * @param strApplicationCode
-     *            the application code
+     *            the application code on the header
      * @return the {@code ResponseDto} object
      * @throws IdentityNotFoundException
      *             if no identity found for input parameters
@@ -121,42 +123,24 @@ public interface IIdentityTransportProvider
     ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode ) throws IdentityStoreException;
 
     /**
-     *
-     * @param strConnectionId
-     *            connection Id (can be null if strCustomerId is provided)
-     * @param strCustomerId
-     *            customer Id (can be null if strConnectionId is provided)
-     * @param strAttributeKey
-     *            attribute Key (must match a an attribute of type file)
-     * @param strClientAppCode
-     *            application code of calling application
-     * @return inputstream of attribute file
-     * @throws AppException
-     *             if error occured while retrieving file attribute
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
-     */
-    InputStream downloadFileAttribute( String strConnectionId, String strCustomerId, String strAttributeKey, String strClientAppCode );
-
-    /**
-     * @param strClientAppCode
-     * @return ApplicationRightsDto for the given application
-     * @throws AppException
-     *             if error occured
-     */
-    ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws IdentityStoreException;
-
-    /**
      * returns a list of identity from combination of attributes
      *
-     * @param mapAttributeValues
-     *            a map that associates list of values to search for some attributes
-     * @param listAttributeKeyNames
-     *            a list of attributes to retrieve in identities
+     * @param identitySearchRequest
+     *            change to apply to identity
      * @param strClientCode
      *            application code who requested identities
      * @return identity filled according to application rights for user identified by connection id
      */
-    List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientCode )
-            throws IdentityStoreException;
+    IdentitySearchResponse searchIdentities( IdentitySearchRequest identitySearchRequest, String strClientCode ) throws IdentityStoreException;
+
+    /**
+     * import an identity to the id store
+     *
+     * @param identityChange
+     *            change to apply to identity
+     * @param strClientCode
+     *            application code who requested identities
+     * @return identity filled according to application rights for user identified by connection id
+     */
+    IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException;
 }

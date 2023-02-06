@@ -31,16 +31,13 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.v2.web.service;
+package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-
-import java.util.List;
-
 import org.apache.commons.fileupload.FileItem;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -125,29 +122,6 @@ public interface IHttpTransportProvider
      */
     <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper )
             throws IdentityStoreException;;
-
-    /**
-     * make a multipart Post request
-     * 
-     * @param strEndPointUrl
-     *            url
-     * @param mapParams
-     *            param to add to request
-     * @param mapHeadersRequest
-     *            request header
-     * @param mapFiles
-     *            file to add to multipart request
-     * @param responseJsonClass
-     *            the class
-     * @param <T>
-     *            of the response
-     * @param mapper
-     *            mapper for JSON serialize / deserialize
-     * @return response list
-     * @throws IdentityStoreException
-     */
-    <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles,
-            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
 
     /**
      * make a Delete request on given url with parameters

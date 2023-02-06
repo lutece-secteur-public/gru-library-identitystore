@@ -31,34 +31,25 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.v2.web.rs.service;
+package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
+import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ApplicationRightsDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ResponseDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.SearchDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.util.Constants;
-import fr.paris.lutece.plugins.identitystore.v2.web.service.IHttpTransportProvider;
-import fr.paris.lutece.plugins.identitystore.v2.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.portal.service.util.AppException;
-
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
-
 import org.apache.log4j.Logger;
 
-import java.io.InputStream;
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -128,7 +119,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * @throws IdentityStoreException
      */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode ) throws AppException, IdentityStoreException
+    public IdentitySearchResponse getIdentity( String strIdConnection, String strCustomerId, String strClientCode ) throws AppException, IdentityStoreException
     {
         _logger.debug( "Get identity attributes of " + strIdConnection );
 
@@ -141,11 +132,12 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         Map<String, String> mapParams = new HashMap<String, String>( );
         mapParams.put( Constants.PARAM_ID_CONNECTION, strIdConnection );
         mapParams.put( Constants.PARAM_ID_CUSTOMER, strCustomerId );
+        mapParams.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
-        IdentityDto identityDto = _httpTransport.doGet( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH, mapParams,
-                mapHeadersRequest, IdentityDto.class, _mapper );
+        IdentitySearchResponse response = _httpTransport.doGet( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH, mapParams,
+                mapHeadersRequest, IdentitySearchResponse.class, _mapper );
 
-        return identityDto;
+        return response;
     }
 
     /**
@@ -154,78 +146,22 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * @throws IdentityStoreException
      */
     @Override
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityStoreException
+    public IdentityChangeResponse updateIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Update identity attributes" );
-        checkUpdateParameters( identityChange );
+        checkUpdateParameters( identityChange, strClientCode );
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
         addAuthentication( mapHeadersRequest );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
         Map<String, String> mapParams = new HashMap<String, String>( );
 
-        String strJsonReq;
+        IdentityChangeResponse response = _httpTransport.doPostJSON(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.UPDATE_IDENTITY_PATH, mapParams, mapHeadersRequest,
+                identityChange, IdentityChangeResponse.class, _mapper );
 
-        try
-        {
-            strJsonReq = _mapper.writeValueAsString( identityChange );
-            mapParams.put( Constants.PARAM_IDENTITY_CHANGE, strJsonReq );
-        }
-        catch( JsonProcessingException e )
-        {
-            String strError = "AbstractIdentityTransportRest - Error serializing IdentityChangeDto : ";
-            _logger.error( strError + e.getMessage( ), e );
-            throw new IdentityStoreException( strError, e );
-        }
-
-        IdentityDto identityDto = _httpTransport.doPostMultiPart(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH + Constants.UPDATE_IDENTITY_PATH, mapParams, mapHeadersRequest,
-                mapFileItem, IdentityDto.class, _mapper );
-
-        return identityDto;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public InputStream downloadFileAttribute( String strIdConnection, String strCustomerId, String strAttributeKey, String strClientAppCode )
-    {
-        checkDownloadFileAttributeParams( strIdConnection, strCustomerId, strAttributeKey, strClientAppCode );
-
-        //
-        // Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
-        // addAuthentication( mapHeadersRequest, strAuthenticationKey );
-        //
-        // Map<String, String> mapParams = new HashMap<String, String>( );
-        // mapParams.put( Constants.PARAM_ID_CONNECTION, strIdConnection );
-        // mapParams.put( Constants.PARAM_ID_CUSTOMER, strCustomerId );
-        // mapParams.put( Constants.PARAM_ATTRIBUTE_KEY, strAttributeKey );
-        // mapParams.put( Constants.PARAM_CLIENT_CODE, strClientAppCode );
-        //
-        // _httpTransport.doGet( _strIdentityStoreEndPoint + Constants.IDENTITY_PATH, mapParams,
-        // mapHeadersRequest, IdentityDto.class, _mapper );
-        //
-        // Client client = Client.create( );
-        // WebResource webResource = client.resource( AppPropertiesService.getProperty(
-        // Constants.URL_IDENTITYSTORE_ENDPOINT ) + Constants.IDENTITY_PATH )
-        // .queryParam( Constants.PARAM_ID_CONNECTION,
-        // ( strIdConnection != null ) ? strIdConnection : StringUtils.EMPTY )
-        // .queryParam( Constants.PARAM_ID_CUSTOMER, strCustomerId )
-        // .queryParam( Constants.PARAM_CLIENT_CODE, strClientAppCode );
-        //
-        // WebResource.Builder builder = webResource.accept( MediaType.WILDCARD_TYPE );
-        //
-        // ClientResponse response = builder.get( ClientResponse.class );
-        //
-        // if ( response.getStatus( ) != Status.OK.getStatusCode( ) )
-        // {
-        // throw new AppException( Constants.ERROR_MESSAGE + response.getStatus( ) );
-        // }
-        //
-        InputStream in = null; // response.getEntityInputStream( );
-
-        return in;
+        return response;
     }
 
     /**
@@ -234,35 +170,22 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * @throws IdentityStoreException
      */
     @Override
-    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws IdentityStoreException
+    public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Create identity" );
-        checkCreateParameters( identityChange );
+        checkCreateParameters( identityChange, strClientCode );
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
         addAuthentication( mapHeadersRequest );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
         Map<String, String> mapParams = new HashMap<String, String>( );
 
-        String strJsonReq;
+        IdentityChangeResponse response = _httpTransport.doPostJSON(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.CREATE_IDENTITY_PATH, mapParams, mapHeadersRequest,
+                identityChange, IdentityChangeResponse.class, _mapper );
 
-        try
-        {
-            strJsonReq = _mapper.writeValueAsString( identityChange );
-            mapParams.put( Constants.PARAM_IDENTITY_CHANGE, strJsonReq );
-        }
-        catch( JsonProcessingException e )
-        {
-            String strError = "AbstractIdentityTransportRest - Error serializing IdentityChangeDto : ";
-            _logger.error( strError + e.getMessage( ), e );
-            throw new IdentityStoreException( strError, e );
-        }
-
-        IdentityDto identityDto = _httpTransport.doPostMultiPart(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH + Constants.CREATE_IDENTITY_PATH, mapParams, mapHeadersRequest,
-                null, IdentityDto.class, _mapper );
-
-        return identityDto;
+        return response;
     }
 
     /**
@@ -281,46 +204,21 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
         Map<String, String> mapParams = new HashMap<String, String>( );
         mapParams.put( Constants.PARAM_ID_CONNECTION, strIdConnection );
+        mapParams.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
-        ResponseDto responseDto = _httpTransport.doDelete( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH, mapParams,
+        ResponseDto response = _httpTransport.doDelete( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH, mapParams,
                 mapHeadersRequest, ResponseDto.class, _mapper );
 
-        return responseDto;
+        return response;
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @throws IdentityStoreException
      */
     @Override
-    public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException, IdentityStoreException
-    {
-        _logger.debug( "Get application rights for " + strClientAppCode );
-
-        checkClientApplication( strClientAppCode );
-
-        Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
-        addAuthentication( mapHeadersRequest );
-        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientAppCode );
-
-        Map<String, String> mapParams = new HashMap<String, String>( );
-
-        ApplicationRightsDto appRightsDto = _httpTransport.doGet(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH + Constants.APPLICATION_RIGHTS_PATH, mapParams,
-                mapHeadersRequest, ApplicationRightsDto.class, _mapper );
-
-        return appRightsDto;
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @throws IdentityStoreException
-     */
-    @Override
-    public List<IdentityDto> getIdentities( Map<String, List<String>> mapAttributeValues, List<String> listAttributeKeyNames, String strClientCode )
-            throws IdentityStoreException
+    public IdentitySearchResponse searchIdentities( IdentitySearchRequest identitySearchRequest, String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Search identities" );
 
@@ -332,15 +230,30 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         addAuthentication( mapHeadersRequest );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
-        SearchDto searchDto = new SearchDto( );
-        searchDto.setListAttributeKeyNames( listAttributeKeyNames );
-        searchDto.setMapAttributeValues( mapAttributeValues );
+        IdentitySearchResponse response = _httpTransport.doPostJSON(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.SEARCH_IDENTITIES_PATH, null, mapHeadersRequest,
+                identitySearchRequest, IdentitySearchResponse.class, mapper );
 
-        List<IdentityDto> listIdentityDto = _httpTransport.doPostJSONforList(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V2 + Constants.IDENTITY_PATH + Constants.SEARCH_IDENTITIES_PATH, null, mapHeadersRequest,
-                searchDto, IdentityDto.class, mapper );
+        return response;
+    }
 
-        return listIdentityDto;
+    @Override
+    public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
+    {
+        _logger.debug( "Import identity" );
+        checkCreateParameters( identityChange, strClientCode );
+
+        Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
+        addAuthentication( mapHeadersRequest );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+
+        Map<String, String> mapParams = new HashMap<String, String>( );
+
+        IdentityChangeResponse response = _httpTransport.doPostJSON(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.IMPORT_IDENTITY_PATH, mapParams, mapHeadersRequest,
+                identityChange, IdentityChangeResponse.class, _mapper );
+
+        return response;
     }
 
     /**
@@ -369,10 +282,10 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * @throws AppException
      *             if the parameters are not valid
      */
-    private void checkCreateParameters( IdentityChangeDto identityChange ) throws AppException
+    private void checkCreateParameters( IdentityChangeRequest identityChange, String strClientCode ) throws AppException
     {
         checkIdentityChange( identityChange );
-        checkClientApplication( identityChange.getAuthor( ).getApplicationCode( ) );
+        checkClientApplication( strClientCode );
     }
 
     /**
@@ -383,11 +296,11 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * @throws AppException
      *             if the parameters are not valid
      */
-    private void checkUpdateParameters( IdentityChangeDto identityChange ) throws AppException
+    private void checkUpdateParameters( IdentityChangeRequest identityChange, String strClientCode ) throws AppException
     {
         checkIdentityChange( identityChange );
         checkIdentity( identityChange.getIdentity( ).getConnectionId( ), identityChange.getIdentity( ).getCustomerId( ) );
-        checkClientApplication( identityChange.getAuthor( ).getApplicationCode( ) );
+        checkClientApplication( strClientCode );
     }
 
     /**
@@ -400,32 +313,6 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      */
     private void checkDeleteParameters( String strClientCode ) throws AppException
     {
-        checkClientApplication( strClientCode );
-    }
-
-    /**
-     * check that parameters are valid, otherwise throws an AppException
-     * 
-     * @param strIdConnection
-     *            connection id
-     * @param strCustomerId
-     *            customer id
-     * @param strAttributeKey
-     *            attribute Key
-     * @param strClientCode
-     *            client code
-     * @throws AppException
-     *             if the parameters are not valid
-     */
-    private void checkDownloadFileAttributeParams( String strIdConnection, String strCustomerId, String strAttributeKey, String strClientCode )
-            throws AppException
-    {
-        if ( StringUtils.isEmpty( strAttributeKey ) )
-        {
-            throw new AppException( "missing parameters : attribute key must be provided" );
-        }
-
-        checkIdentity( strIdConnection, strCustomerId );
         checkClientApplication( strClientCode );
     }
 
@@ -471,11 +358,11 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
      * @throws AppException
      *             if the parameters are not valid
      */
-    private void checkIdentityChange( IdentityChangeDto identityChange ) throws AppException
+    private void checkIdentityChange( IdentityChangeRequest identityChange ) throws AppException
     {
-        if ( ( identityChange == null ) || ( identityChange.getAuthor( ) == null ) || ( identityChange.getIdentity( ) == null ) )
+        if ( ( identityChange == null ) || ( identityChange.getOrigin( ) == null ) || ( identityChange.getIdentity( ) == null ) )
         {
-            throw new AppException( "missing parameters : provided identityChange object is invalid, check author and identity are filled" );
+            throw new AppException( "missing parameters : provided identityChange object is invalid, check origin and identity are filled" );
         }
     }
 }

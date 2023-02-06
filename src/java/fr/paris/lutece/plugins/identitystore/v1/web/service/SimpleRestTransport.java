@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2023, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.identitystore.v1.web.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 import fr.paris.lutece.plugins.identitystore.v1.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
@@ -68,99 +67,64 @@ public class SimpleRestTransport implements IHttpTransportProvider
 
     /**
      * {@inheritDoc}
-     * @throws IdentityStoreException 
+     * 
+     * @throws IdentityStoreException
      */
     @Override
     public String doPost( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest ) throws IdentityStoreException
     {
-    	String strResponse = null;
-    	
-        try 
-    	{
-	    	Invocation.Builder invocationBuilder = getInvocationBuilder( strUrl, null, mapParams, mapHeadersRequest, MediaType.APPLICATION_JSON);
-	    	Response response = invocationBuilder.post( Entity.entity( "{}", MediaType.APPLICATION_JSON ) );
+        String strResponse = null;
 
-	        if ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) )
-	        {
-	            String strError = "LibraryIdentityStore - Error SimpleRestTransport.doPost, status code return " + response.getStatus( );
-	            _logger.error( strError );
-	            throw new IdentityStoreException( strError );
-	        }
-	        else
-	        {
-	        	strResponse = response.readEntity( String.class );
-	        }
-    	}
+        try
+        {
+            Invocation.Builder invocationBuilder = getInvocationBuilder( strUrl, null, mapParams, mapHeadersRequest, MediaType.APPLICATION_JSON );
+            Response response = invocationBuilder.post( Entity.entity( "{}", MediaType.APPLICATION_JSON ) );
+
+            if ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) )
+            {
+                String strError = "LibraryIdentityStore - Error SimpleRestTransport.doPost, status code return " + response.getStatus( );
+                _logger.error( strError );
+                throw new IdentityStoreException( strError );
+            }
+            else
+            {
+                strResponse = response.readEntity( String.class );
+            }
+        }
         catch( Exception e )
         {
             handleException( e );
         }
-        
-		return strResponse;
+
+        return strResponse;
     }
 
     /**
      * {@inheritDoc}
-     * @throws IdentityStoreException 
+     * 
+     * @throws IdentityStoreException
      */
     @Override
     public <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
             ObjectMapper mapper ) throws IdentityStoreException
     {
-    	T oResponse = null;
-    	
-    	try 
-    	{
-	    	Invocation.Builder invocationBuilder = getInvocationBuilder( strUrl, null, mapParams, mapHeadersRequest, MediaType.APPLICATION_JSON);
-	        
-	        Response response = invocationBuilder.post( Entity.entity( json, MediaType.APPLICATION_JSON ) );
-	        
-	        if ( ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) ) && ( response.getStatus( ) != Response.Status.CREATED.getStatusCode( ) ) )
-	        {
-	            String strError = "LibraryIdentityStore - Error SimpleRestTransport.doPostJSON, status code return " + response.getStatus( );
-	            _logger.error( strError );
-	            throw new IdentityStoreException( strError );
-	        }
-	        else
-	        {
-	        	oResponse = response.readEntity( responseJsonClass );
-	        }        
-        }
-        catch( Exception e )
-        {
-            handleException( e );
-        }
-
-        return oResponse;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @throws IdentityStoreException 
-     */
-    @Override
-    public <T> T doGet( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
-    {
         T oResponse = null;
-        try 
-    	{
-	    	Invocation.Builder invocationBuilder = getInvocationBuilder( strUrl, null, mapParams, mapHeadersRequest, MediaType.APPLICATION_JSON);
-	    	
-            Response response = invocationBuilder.get( );
 
-            if ( response.getStatus( ) == Response.Status.NOT_FOUND.getStatusCode( ) )
+        try
+        {
+            Invocation.Builder invocationBuilder = getInvocationBuilder( strUrl, null, mapParams, mapHeadersRequest, MediaType.APPLICATION_JSON );
+
+            Response response = invocationBuilder.post( Entity.entity( json, MediaType.APPLICATION_JSON ) );
+
+            if ( ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) ) && ( response.getStatus( ) != Response.Status.CREATED.getStatusCode( ) ) )
             {
-                throw new IdentityNotFoundException( "LibraryIdentityStore - Error SimpleRestTransport - Identity not found.");
-            }
-            else if ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) )
-            {
-                String strError = "LibraryIdentityStore - Error SimpleRestTransport.doGet, status code return " + response.getStatus( );
+                String strError = "LibraryIdentityStore - Error SimpleRestTransport.doPostJSON, status code return " + response.getStatus( );
                 _logger.error( strError );
                 throw new IdentityStoreException( strError );
             }
             else
             {
-            	oResponse = response.readEntity( responseJsonClass );
+                oResponse = response.readEntity( responseJsonClass );
             }
         }
         catch( Exception e )
@@ -173,84 +137,129 @@ public class SimpleRestTransport implements IHttpTransportProvider
 
     /**
      * {@inheritDoc}
-     * @throws IdentityStoreException 
+     * 
+     * @throws IdentityStoreException
      */
     @Override
-    public <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles,
-            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    public <T> T doGet( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper )
+            throws IdentityStoreException
     {
-    	T oResponse = null;
-    	
-    	try 
-    	{
-    		FormDataMultiPart formParams = new FormDataMultiPart( );
-    	
-	    	Invocation.Builder invocationBuilder = getInvocationBuilder( strEndPointUrl, null, mapParams, mapHeadersRequest, MediaType.MULTIPART_FORM_DATA);
-	        
-            if ( mapFiles != null )
-	        {
-	            for ( String strKey : mapFiles.keySet( ) )
-	            {
-	                FileItem fileItem = mapFiles.get( strKey );
-	                File file = new File( fileItem.getName( ) );
-	
-	                // TODO test it
-	                FileDataBodyPart filePart = new FileDataBodyPart( strKey, file );
-	                formParams.field( strKey, fileItem.getName( ) );
-	                formParams.bodyPart( filePart );
-	            }
-	        }
-
-            Response response = invocationBuilder.post( Entity.entity( formParams, formParams.getMediaType( ) ) ); 
-
-	        if ( response.getStatus( ) == Response.Status.NOT_FOUND.getStatusCode( ) )
-	        {
-	            throw new IdentityNotFoundException( "LibraryIdentityStore - Error SimpleRestTransport - Identity not found.");
-	        }
-	        else if ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) )
-         	{
-                throw new IdentityStoreException( Constants.ERROR_MESSAGE + response.getStatus( ) );
-            }
-
-	        oResponse = response.readEntity( responseJsonClass );
-        }
-        catch( Exception e )
+        T oResponse = null;
+        try
         {
-            handleException( e );
-        }
+            Invocation.Builder invocationBuilder = getInvocationBuilder( strUrl, null, mapParams, mapHeadersRequest, MediaType.APPLICATION_JSON );
 
-        return oResponse;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @throws IdentityStoreException 
-     */
-    @Override
-    public <T> T doDelete( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
-    {
-    	T oResponse = null;
-    	
-    	try 
-    	{
-    		Invocation.Builder invocationBuilder = getInvocationBuilder( strUrl, null, mapParams, mapHeadersRequest, MediaType.APPLICATION_JSON);
-	       
-    		Response response = invocationBuilder.delete( );
+            Response response = invocationBuilder.get( );
 
             if ( response.getStatus( ) == Response.Status.NOT_FOUND.getStatusCode( ) )
             {
                 throw new IdentityNotFoundException( "LibraryIdentityStore - Error SimpleRestTransport - Identity not found." );
             }
-            else if ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) )
+            else
+                if ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) )
+                {
+                    String strError = "LibraryIdentityStore - Error SimpleRestTransport.doGet, status code return " + response.getStatus( );
+                    _logger.error( strError );
+                    throw new IdentityStoreException( strError );
+                }
+                else
+                {
+                    oResponse = response.readEntity( responseJsonClass );
+                }
+        }
+        catch( Exception e )
+        {
+            handleException( e );
+        }
+
+        return oResponse;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws IdentityStoreException
+     */
+    @Override
+    public <T> T doPostMultiPart( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Map<String, FileItem> mapFiles,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    {
+        T oResponse = null;
+
+        try
+        {
+            FormDataMultiPart formParams = new FormDataMultiPart( );
+
+            Invocation.Builder invocationBuilder = getInvocationBuilder( strEndPointUrl, null, mapParams, mapHeadersRequest, MediaType.MULTIPART_FORM_DATA );
+
+            if ( mapFiles != null )
             {
-                String strError = "LibraryIdentityStore - Error SimpleRestTransport.doDelete, status code return " + response.getStatus( );
-                _logger.error( strError );
-                throw new IdentityStoreException( strError );
+                for ( String strKey : mapFiles.keySet( ) )
+                {
+                    FileItem fileItem = mapFiles.get( strKey );
+                    File file = new File( fileItem.getName( ) );
+
+                    // TODO test it
+                    FileDataBodyPart filePart = new FileDataBodyPart( strKey, file );
+                    formParams.field( strKey, fileItem.getName( ) );
+                    formParams.bodyPart( filePart );
+                }
+            }
+
+            Response response = invocationBuilder.post( Entity.entity( formParams, formParams.getMediaType( ) ) );
+
+            if ( response.getStatus( ) == Response.Status.NOT_FOUND.getStatusCode( ) )
+            {
+                throw new IdentityNotFoundException( "LibraryIdentityStore - Error SimpleRestTransport - Identity not found." );
             }
             else
+                if ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) )
+                {
+                    throw new IdentityStoreException( Constants.ERROR_MESSAGE + response.getStatus( ) );
+                }
+
+            oResponse = response.readEntity( responseJsonClass );
+        }
+        catch( Exception e )
+        {
+            handleException( e );
+        }
+
+        return oResponse;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws IdentityStoreException
+     */
+    @Override
+    public <T> T doDelete( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
+            ObjectMapper mapper ) throws IdentityStoreException
+    {
+        T oResponse = null;
+
+        try
+        {
+            Invocation.Builder invocationBuilder = getInvocationBuilder( strUrl, null, mapParams, mapHeadersRequest, MediaType.APPLICATION_JSON );
+
+            Response response = invocationBuilder.delete( );
+
+            if ( response.getStatus( ) == Response.Status.NOT_FOUND.getStatusCode( ) )
             {
-            	oResponse = response.readEntity( responseJsonClass );
+                throw new IdentityNotFoundException( "LibraryIdentityStore - Error SimpleRestTransport - Identity not found." );
             }
+            else
+                if ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) )
+                {
+                    String strError = "LibraryIdentityStore - Error SimpleRestTransport.doDelete, status code return " + response.getStatus( );
+                    _logger.error( strError );
+                    throw new IdentityStoreException( strError );
+                }
+                else
+                {
+                    oResponse = response.readEntity( responseJsonClass );
+                }
         }
         catch( Exception e )
         {
@@ -274,7 +283,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
         _logger.error( strError + e.getMessage( ), e );
         throw new IdentityStoreException( strError, e );
     }
- 
+
     /**
      * Get invocation builder from config
      * 
@@ -284,34 +293,34 @@ public class SimpleRestTransport implements IHttpTransportProvider
      * @param mapHeadersRequest
      * @return the invocation builder
      */
-    private Invocation.Builder getInvocationBuilder ( String strUrl, String strPath, 
-    		Map<String, String> mapParams, Map<String, String> mapHeadersRequest, String strRequestMediaType )
+    private Invocation.Builder getInvocationBuilder( String strUrl, String strPath, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
+            String strRequestMediaType )
     {
-    	Client client = ClientBuilder.newClient( new ClientConfig( ) );
-     	WebTarget webTarget = client.target( strUrl );
-     	
-     	if ( strPath != null )
-     	{
-     		webTarget = webTarget.path( strPath );
-     	}
-     	
+        Client client = ClientBuilder.newClient( new ClientConfig( ) );
+        WebTarget webTarget = client.target( strUrl );
+
+        if ( strPath != null )
+        {
+            webTarget = webTarget.path( strPath );
+        }
+
         if ( mapParams != null )
         {
             for ( String strParamKey : mapParams.keySet( ) )
             {
-            	webTarget = webTarget.queryParam( strParamKey, mapParams.get( strParamKey ) );
+                webTarget = webTarget.queryParam( strParamKey, mapParams.get( strParamKey ) );
             }
         }
-        
+
         Invocation.Builder invocationBuilder = webTarget.request( strRequestMediaType ).accept( MediaType.APPLICATION_JSON );
         if ( mapHeadersRequest != null )
         {
             for ( String strHeaderKey : mapHeadersRequest.keySet( ) )
             {
-            	invocationBuilder.header( strHeaderKey, mapHeadersRequest.get( strHeaderKey ) );
+                invocationBuilder.header( strHeaderKey, mapHeadersRequest.get( strHeaderKey ) );
             }
         }
-        
+
         return invocationBuilder;
     }
 }

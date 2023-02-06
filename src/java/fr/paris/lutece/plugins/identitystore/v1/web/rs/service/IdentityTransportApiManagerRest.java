@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2023, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -109,7 +109,7 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
      * Gets the security token from API Manager
      * 
      * @return the token
-     * @throws IdentityStoreException 
+     * @throws IdentityStoreException
      */
     private String getToken( ) throws IdentityStoreException
     {
@@ -139,7 +139,7 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
                 strToken = strResponseApiManagerJsonObject.get( PARAMS_ACCES_TOKEN ).asText( );
             }
         }
-        catch ( JsonProcessingException e )
+        catch( JsonProcessingException e )
         {
             _logger.debug( "LibraryIdentityStore - IdentityTransportApiManagerRest.getToken invalid response [" + strOutput + "]" );
         }
@@ -149,7 +149,8 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
 
     /**
      * {@inheritDoc}
-     * @throws IdentityStoreException 
+     * 
+     * @throws IdentityStoreException
      */
     @Override
     protected void addAuthentication( Map<String, String> mapHeadersRequest ) throws IdentityStoreException

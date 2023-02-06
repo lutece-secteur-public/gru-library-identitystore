@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2023, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,13 +85,11 @@ public interface IIdentityTransportProvider
     IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityStoreException;
 
     /**
-     * Creates an identity only if the identity does not already exist.
-     * The identity is created from the provided attributes. 
+     * Creates an identity only if the identity does not already exist. The identity is created from the provided attributes.
      * 
      * The order to test if the identity exists:
      * 
-     * - by using the provided customer id if present
-     * - by using the provided connection id if present
+     * - by using the provided customer id if present - by using the provided connection id if present
      * 
      *
      * @param identityChange
@@ -116,7 +114,7 @@ public interface IIdentityTransportProvider
      * @throws AppException
      *             if inconsistent parameters provided, or errors occurs...
      */
-    ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode ) throws  IdentityStoreException;
+    ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode ) throws IdentityStoreException;
 
     /**
      *
@@ -149,5 +147,5 @@ public interface IIdentityTransportProvider
      * @throws IdentityNotFoundException
      *             if no identity found for input parameters
      */
-    IdentityDto certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode ) throws  IdentityStoreException;
+    IdentityDto certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode ) throws IdentityStoreException;
 }

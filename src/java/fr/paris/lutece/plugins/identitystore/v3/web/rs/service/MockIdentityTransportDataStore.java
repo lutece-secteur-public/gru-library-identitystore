@@ -31,24 +31,20 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.v2.web.rs.service;
+package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ApplicationRightsDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ResponseDto;
 import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import fr.paris.lutece.portal.service.util.AppException;
-
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -58,8 +54,7 @@ public class MockIdentityTransportDataStore extends AbstractIdentityTransportRes
 {
     private static Logger _logger = Logger.getLogger( MockIdentityTransportDataStore.class );
 
-    private static final String KEY_DATASTORE_MOCK_IDENTITY_PREFIX = "identitystore.mock.identity.data.";
-    private static final String KEY_DATASTORE_MOCK_APPLICATION_RIGHTS_PREFIX = "identitystore.mock.applicationRights.data.";
+    private static final String KEY_DATASTORE_MOCK_IDENTITY_CHANGE_PREFIX = "identitystore.mock.identity.change.data.";
 
     private static ObjectMapper _mapper = new ObjectMapper( );
 
@@ -72,7 +67,7 @@ public class MockIdentityTransportDataStore extends AbstractIdentityTransportRes
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode ) throws AppException, IdentityStoreException
+    public IdentitySearchResponse getIdentity( String strIdConnection, String strCustomerId, String strClientCode ) throws AppException, IdentityStoreException
     {
         if ( StringUtils.isEmpty( strIdConnection ) && StringUtils.isEmpty( strCustomerId ) )
         {
@@ -81,51 +76,37 @@ public class MockIdentityTransportDataStore extends AbstractIdentityTransportRes
 
         String strId = StringUtils.isEmpty( strIdConnection ) ? strCustomerId : strIdConnection;
 
-        return getMockIdentityFromDatastore( strId );
+        return getMockIdentitySearchFromDatastore( strId );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException
+    public IdentityChangeResponse updateIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityNotFoundException, AppException
     {
         _logger.debug( "MockIdentityTransportDatastore.updateIdentity not managed return existing identity if possible" );
 
-        return getMockIdentityFromDatastore( identityChange.getIdentity( ).getConnectionId( ) );
+        return getMockIdentityChangeFromDatastore( identityChange.getIdentity( ).getConnectionId( ) );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public InputStream downloadFileAttribute( String strIdConnection, String strCustomerId, String strAttributeKey, String strClientAppCode )
-    {
-        _logger.debug( "MockIdentityTransportDataStore.downloadFileAttribute not managed return null" );
-
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws AppException
+    public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws AppException
     {
         _logger.debug( "MockIdentityTransportDataStore.createIdentity not managed " );
 
-        return getMockIdentityFromDatastore( identityChange.getIdentity( ).getConnectionId( ) );
+        return getMockIdentityChangeFromDatastore( identityChange.getIdentity( ).getConnectionId( ) );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException
+    public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.getApplicationRights not managed return rights if exists in DS" );
+        _logger.debug( "MockIdentityTransportDataStore.createIdentity not managed " );
 
-        return getMockApplicationRightsFromDatastore( strClientAppCode );
+        return getMockIdentityChangeFromDatastore( identityChange.getIdentity( ).getConnectionId( ) );
     }
 
     /**
@@ -153,18 +134,18 @@ public class MockIdentityTransportDataStore extends AbstractIdentityTransportRes
     }
 
     /**
-     * get the mock json identity from DataStore
+     * get the mock json identity change from DataStore
      * 
      * @param strId
      * @return the identity Dto
      */
-    private IdentityDto getMockIdentityFromDatastore( String strId )
+    private IdentityChangeResponse getMockIdentityChangeFromDatastore( String strId )
     {
-        String strDsData = DatastoreService.getDataValue( KEY_DATASTORE_MOCK_IDENTITY_PREFIX + strId, "{}" );
+        String strDsData = DatastoreService.getDataValue( KEY_DATASTORE_MOCK_IDENTITY_CHANGE_PREFIX + strId, "{}" );
 
         try
         {
-            return _mapper.readValue( strDsData, IdentityDto.class );
+            return _mapper.readValue( strDsData, IdentityChangeResponse.class );
         }
         catch( Exception e )
         {
@@ -175,18 +156,18 @@ public class MockIdentityTransportDataStore extends AbstractIdentityTransportRes
     }
 
     /**
-     * get the mock json rights from DataStore
-     * 
+     * get the mock json identity from DataStore
+     *
      * @param strId
      * @return the identity Dto
      */
-    private ApplicationRightsDto getMockApplicationRightsFromDatastore( String strId )
+    private IdentitySearchResponse getMockIdentitySearchFromDatastore( String strId )
     {
-        String strDsData = DatastoreService.getDataValue( KEY_DATASTORE_MOCK_APPLICATION_RIGHTS_PREFIX + strId, "{}" );
+        String strDsData = DatastoreService.getDataValue( KEY_DATASTORE_MOCK_IDENTITY_CHANGE_PREFIX + strId, "{}" );
 
         try
         {
-            return _mapper.readValue( strDsData, ApplicationRightsDto.class );
+            return _mapper.readValue( strDsData, IdentitySearchResponse.class );
         }
         catch( Exception e )
         {

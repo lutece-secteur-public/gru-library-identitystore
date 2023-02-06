@@ -31,46 +31,39 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.v2.web.rs.service;
-
-import fr.paris.lutece.plugins.identitystore.v2.web.service.HttpAccessTransport;
-import fr.paris.lutece.plugins.identitystore.v2.web.service.IHttpTransportProvider;
-import fr.paris.lutece.plugins.identitystore.v2.web.service.IIdentityTransportProvider;
-
-import java.util.Map;
+package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
 /**
- * IdentityRestClientService
+ *
+ * Author type
+ *
  */
-public final class IdentityTransportRest extends AbstractIdentityTransportRest implements IIdentityTransportProvider
+public enum AuthorType
 {
+    TYPE_APPLICATION( 0 ),
+    TYPE_USER_OWNER( 1 ),
+    TYPE_USER_ADMINISTRATOR( 2 );
+
+    private int _nAuthorType;
+
     /**
-     * Simple Constructor
+     * private constructor
+     *
+     * @param nAuthorType
+     *            application type to set
      */
-    public IdentityTransportRest( )
+    AuthorType( int nAuthorType )
     {
-        super( );
-        this.setHttpTransport( new HttpAccessTransport( ) );
+        _nAuthorType = nAuthorType;
     }
 
     /**
-     * Constructor with IHttpTransportProvider parameter
-     * 
-     * @param httpTransport
-     *            the provider to use
+     * return author type value
+     *
+     * @return author type value
      */
-    public IdentityTransportRest( IHttpTransportProvider httpTransport )
+    public int getTypeValue( )
     {
-        super( );
-        this.setHttpTransport( httpTransport );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void addAuthentication( Map<String, String> mapHeadersRequest )
-    {
-        // no authentication for simple rest client
+        return _nAuthorType;
     }
 }

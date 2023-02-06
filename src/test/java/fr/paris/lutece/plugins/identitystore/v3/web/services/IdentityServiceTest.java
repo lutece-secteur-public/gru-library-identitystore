@@ -31,61 +31,52 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.v2.web.services;
+package fr.paris.lutece.plugins.identitystore.v3.web.services;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.AuthorDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AuthorType;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.Identity;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.SearchDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.service.MockIdentityTransportRest;
+import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.service.MockIdentityTransportRest;
-import fr.paris.lutece.plugins.identitystore.v2.web.service.IdentityService;
 import fr.paris.lutece.util.httpaccess.HttpAccessService;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
-
 import org.apache.log4j.Logger;
-
 import org.junit.Test;
-
 import org.junit.runner.RunWith;
-
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * test of NotificationService
  */
 @RunWith( SpringJUnit4ClassRunner.class )
 @ContextConfiguration( locations = {
-        "classpath:test-identitystore.xml"
+        "classpath:test-identitystore-v3.xml"
 } )
 public class IdentityServiceTest
 {
     private static Logger _logger = Logger.getLogger( IdentityServiceTest.class );
-    @Resource( name = "testIdentityService.api.httpAccess" )
+    @Resource( name = "testIdentityService.api.httpAccess.v3" )
     private IdentityService _identityServiceApiHttpAccess;
-    @Resource( name = "testIdentityService.rest.httpAccess" )
+    @Resource( name = "testIdentityService.rest.httpAccess.v3" )
     private IdentityService _identityServiceRestHttpAccess;
-    private IdentityDto _identity;
+    private Identity _identity;
 
     /**
      * Constructor, init the notification JSON
@@ -97,15 +88,14 @@ public class IdentityServiceTest
      * @throws IOException
      *             exception
      */
-    public IdentityServiceTest( ) throws JsonParseException, JsonMappingException, IOException
+    public IdentityServiceTest( ) throws IOException
     {
         ObjectMapper mapper = new ObjectMapper( );
-        mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
+        // mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
         mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
         mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
 
-        _identity = mapper.readValue( getClass( ).getResourceAsStream( "/identity.json" ), IdentityDto.class );
-
+        _identity = mapper.readValue( getClass( ).getResourceAsStream( "/identity-v3.json" ), Identity.class );
         // Init HttpAccess singleton through NPE exception due of lack of properties access
         try
         {
@@ -135,6 +125,12 @@ public class IdentityServiceTest
         callServiceMethod( _identityServiceRestHttpAccess, "_identityServiceApiHttpAccess" );
     }
 
+    @Test
+    public void testGetIdentity( ) throws IdentityStoreException
+    {
+        _identityServiceRestHttpAccess.getIdentity( "0", "0", "0" );
+    }
+
     /**
      * test IdentityService through mock and no spring beans
      */
@@ -152,7 +148,7 @@ public class IdentityServiceTest
 
     /**
      * full test of service methods
-     * 
+     *
      * @param identityServiceTesting
      *            the service to test
      * @param messagePrefix
@@ -160,18 +156,18 @@ public class IdentityServiceTest
      */
     private void callServiceMethod( IdentityService identityServiceTesting, String messagePrefix ) throws IdentityStoreException
     {
-        AuthorDto author = new AuthorDto( );
-        author.setApplicationCode( "MyDashboard" );
-        author.setId( "admin-mydashboard@test.com" );
-        author.setType( 1 );
+        RequestAuthor author = new RequestAuthor( );
+        author.setType( AuthorType.admin );
+        author.setName( "MyDashboard" );
 
-        IdentityChangeDto identChange = new IdentityChangeDto( );
-        identChange.setAuthor( author );
-        identChange.setIdentity( _identity );
+        IdentityChangeRequest identityChangeRequest = new IdentityChangeRequest( );
+
+        identityChangeRequest.setOrigin( author );
+        identityChangeRequest.setIdentity( _identity );
 
         // test getIdentity
-        identityServiceTesting.getIdentityByCustomerId( _identity.getCustomerId( ), author.getApplicationCode( ) );
-        identityServiceTesting.getIdentityByConnectionId( _identity.getConnectionId( ), author.getApplicationCode( ) );
+        identityServiceTesting.getIdentityByCustomerId( _identity.getCustomerId( ), author.getName( ) );
+        identityServiceTesting.getIdentityByConnectionId( _identity.getConnectionId( ), author.getName( ) );
 
         // test updateIdentity
         FileItem fileItem = new DiskFileItem( "myFile", "text/plain", false, "test.txt", 1024, new File( getClass( ).getResource( "/" ).getFile( ) ) );
@@ -188,22 +184,17 @@ public class IdentityServiceTest
 
         HashMap<String, FileItem> mapFileItems = new HashMap<String, FileItem>( );
         mapFileItems.put( "myFile", fileItem );
-        identityServiceTesting.updateIdentity( identChange, mapFileItems );
+        identityServiceTesting.updateIdentity( identityChangeRequest, author.getName( ) );
 
         // test createIdentity
-        identityServiceTesting.createIdentity( identChange );
-
-        // test downloadFileAttribute
-        // TODO
-        // identityServiceTesting.downloadFileAttribute( "connecID", 1560, "attr_key", "MyDashboard", "qsdfgh65432$" );
-        identityServiceTesting.deleteIdentity( _identity.getConnectionId( ), author.getApplicationCode( ) );
-
-        // test appRight
-        // rien a tester
+        identityServiceTesting.createIdentity( identityChangeRequest, author.getName( ) );
+        identityServiceTesting.deleteIdentity( _identity.getConnectionId( ), author.getName( ) );
 
         // test getIdentities
+        final IdentitySearchRequest identitySearchRequest = new IdentitySearchRequest( );
+        identitySearchRequest.setSearch( new SearchDto( ) );
         Map<String, List<String>> mapAttributeValues = new HashMap<String, List<String>>( );
         List<String> listAttributeKeyNames = new ArrayList<>( );
-        identityServiceTesting.getIdentities( mapAttributeValues, listAttributeKeyNames, author.getApplicationCode( ) );
+        identityServiceTesting.searchIdentities( identitySearchRequest, author.getName( ) );
     }
 }

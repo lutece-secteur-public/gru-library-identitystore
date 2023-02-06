@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2023, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,14 +40,14 @@ import fr.paris.lutece.plugins.identitystore.v2.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.util.httpaccess.HttpAccess;
-import fr.paris.lutece.util.httpaccess.HttpAccessStatus;
 import fr.paris.lutece.util.httpaccess.InvalidResponseStatus;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.http.HttpStatus;
 
+import org.apache.hc.core5.net.URIBuilder;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -67,7 +67,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
     /**
      * {@inheritDoc}
-     * @throws IdentityStoreException 
+     * 
+     * @throws IdentityStoreException
      */
     @Override
     public String doPost( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest ) throws IdentityStoreException
@@ -91,7 +92,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
     /**
      * {@inheritDoc}
-     * @throws IdentityStoreException 
+     * 
+     * @throws IdentityStoreException
      */
     @Override
     public <T> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
@@ -117,13 +119,15 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
         return oResponse;
     }
-   /**
+
+    /**
      * {@inheritDoc}
- * @throws IdentityStoreException 
+     * 
+     * @throws IdentityStoreException
      */
     @Override
-    public <T> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
-            ObjectMapper mapper ) throws IdentityStoreException
+    public <T> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         HttpAccess clientHttp = new HttpAccess( );
         Map<String, String> mapHeadersResponse = new HashMap<String, String>( );
@@ -131,7 +135,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
         mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
 
         List<T> oResponse = null;
-        JavaType responseJsonClassType = mapper.getTypeFactory(). constructCollectionType(List.class, responseJsonClass);
+        JavaType responseJsonClassType = mapper.getTypeFactory( ).constructCollectionType( List.class, responseJsonClass );
 
         try
         {
@@ -258,10 +262,10 @@ public class HttpAccessTransport implements IHttpTransportProvider
         String strError = "LibraryIdentityStore - Error HttpAccessTransport :";
         _logger.error( strError + e.getMessage( ), e );
 
-        if ( e instanceof InvalidResponseStatus && HttpAccessStatus.SC_NOT_FOUND ==  ( (InvalidResponseStatus) e ).getResponseStatus( ) 
-        		|| e instanceof IdentityNotFoundException )
+        if ( e instanceof InvalidResponseStatus && HttpStatus.SC_NOT_FOUND == ( (InvalidResponseStatus) e ).getResponseStatus( )
+                || e instanceof IdentityNotFoundException )
         {
-            //throw new IdentityNotFoundException( strError, e );
+            // throw new IdentityNotFoundException( strError, e );
             throw new IdentityStoreException( strError, e );
         }
         else
