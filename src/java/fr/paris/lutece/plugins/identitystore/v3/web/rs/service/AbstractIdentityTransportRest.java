@@ -224,15 +224,13 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
         checkClientApplication( strClientCode );
 
-        ObjectMapper mapper = new ObjectMapper( );
-
         Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
         addAuthentication( mapHeadersRequest );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
         IdentitySearchResponse response = _httpTransport.doPostJSON(
                 _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.SEARCH_IDENTITIES_PATH, null, mapHeadersRequest,
-                identitySearchRequest, IdentitySearchResponse.class, mapper );
+                identitySearchRequest, IdentitySearchResponse.class, _mapper );
 
         return response;
     }
