@@ -54,7 +54,8 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
 {
     /** The Constant PARAMS_ACCES_TOKEN. */
     private static final String PARAMS_ACCES_TOKEN = "access_token";
-    private static final String TYPE_AUTHENTIFICATION = "Bearer";
+    private static final String TYPE_AUTHENTIFICATION_BASIC = "Basic";
+    private static final String TYPE_AUTHENTIFICATION_BEARER = "Bearer";
 
     /** The Constant PARAMS_GRANT_TYPE. */
     private static final String PARAMS_GRANT_TYPE = "grant_type";
@@ -120,7 +121,7 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
 
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
         mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED );
-        mapHeadersRequest.put( HttpHeaders.AUTHORIZATION, TYPE_AUTHENTIFICATION + " " + _strApiManagerCredentials );
+        mapHeadersRequest.put( HttpHeaders.AUTHORIZATION, TYPE_AUTHENTIFICATION_BASIC + " " + _strApiManagerCredentials );
 
         String strOutput = getHttpTransport( ).doPost( _strApiManagerEndPoint, mapParams, mapHeadersRequest );
 
@@ -155,7 +156,7 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
 
         if ( StringUtils.isNotBlank( strToken ) )
         {
-            mapHeadersRequest.put( HttpHeaders.AUTHORIZATION, TYPE_AUTHENTIFICATION + " " + strToken );
+            mapHeadersRequest.put( HttpHeaders.AUTHORIZATION, TYPE_AUTHENTIFICATION_BEARER + " " + strToken );
         }
     }
 }
