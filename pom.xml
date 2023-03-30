@@ -15,7 +15,7 @@
  
     <properties>
         <jerseyVersion>2.37</jerseyVersion>
-		<springVersion>5.3.18</springVersion> <!-- for tests -->
+		<springVersion>5.3.26</springVersion> <!-- for tests -->
 
         <componentName>GRU Library Identity Store</componentName>
         <jiraProjectName>LIBIDSTORE</jiraProjectName>
