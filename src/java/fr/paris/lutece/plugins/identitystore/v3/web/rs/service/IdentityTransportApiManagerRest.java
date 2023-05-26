@@ -76,8 +76,7 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
      */
     public IdentityTransportApiManagerRest( )
     {
-        super( );
-        this.setHttpTransport( new HttpAccessTransport( ) );
+        super( new HttpAccessTransport( ) );
     }
 
     /**

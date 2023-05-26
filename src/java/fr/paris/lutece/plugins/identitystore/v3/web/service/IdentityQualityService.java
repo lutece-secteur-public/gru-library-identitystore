@@ -33,9 +33,13 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractsSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 
+/**
+ * Service regarding identity quality.
+ */
 public class IdentityQualityService
 {
 
@@ -54,7 +58,7 @@ public class IdentityQualityService
      * Constructor with IIdentityTransportProvider in parameters
      *
      * @param transportProvider
-     *            IIdentityTransportProvider
+     *            IIdentityQualityTransportProvider
      */
     public IdentityQualityService( final IIdentityQualityTransportProvider transportProvider )
     {
@@ -66,7 +70,7 @@ public class IdentityQualityService
      * setter of transportProvider parameter
      *
      * @param transportProvider
-     *            IIdentityTransportProvider
+     *            IIdentityQualityTransportProvider
      */
     public void setTransportProvider( final IIdentityQualityTransportProvider transportProvider )
     {

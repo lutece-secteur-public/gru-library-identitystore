@@ -49,8 +49,7 @@ public final class IdentityTransportRest extends AbstractIdentityTransportRest i
      */
     public IdentityTransportRest( )
     {
-        super( );
-        this.setHttpTransport( new HttpAccessTransport( ) );
+        super( new HttpAccessTransport( ) );
     }
 
     /**
@@ -59,17 +58,16 @@ public final class IdentityTransportRest extends AbstractIdentityTransportRest i
      * @param httpTransport
      *            the provider to use
      */
-    public IdentityTransportRest( IHttpTransportProvider httpTransport )
+    public IdentityTransportRest( final IHttpTransportProvider httpTransport )
     {
-        super( );
-        this.setHttpTransport( httpTransport );
+        super( httpTransport );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void addAuthentication( Map<String, String> mapHeadersRequest )
+    protected void addAuthentication( final Map<String, String> mapHeadersRequest )
     {
         // no authentication for simple rest client
     }

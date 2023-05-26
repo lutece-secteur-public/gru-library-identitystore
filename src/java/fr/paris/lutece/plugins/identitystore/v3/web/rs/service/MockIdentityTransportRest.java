@@ -60,6 +60,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
 
     public MockIdentityTransportRest( )
     {
+        super( null );
         _logger.error( "MockIdentityTransportRest is used" );
         _listIdentities = new ArrayList<Identity>( );
     }

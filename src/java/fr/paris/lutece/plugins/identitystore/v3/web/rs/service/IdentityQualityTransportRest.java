@@ -33,16 +33,12 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.HttpAccessTransport;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityQualityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import fr.paris.lutece.portal.service.util.AppException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
@@ -51,22 +47,13 @@ import java.util.Map;
 /**
  * IdentityQualityRestClientService
  */
-public class IdentityQualityTransportRest implements IIdentityQualityTransportProvider
+public class IdentityQualityTransportRest extends AbstractTransportRest implements IIdentityQualityTransportProvider
 {
 
-    private static ObjectMapper _mapper;
+    /**
+     * Logger
+     */
     private static Logger _logger = Logger.getLogger( IdentityQualityTransportRest.class );
-
-    static
-    {
-        _mapper = new ObjectMapper( );
-        // _mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
-        _mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
-        // _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
-    }
-
-    /** HTTP transport provider */
-    private IHttpTransportProvider _httpTransport;
 
     /** URL for identityStore Quality REST service */
     private String _strIdentityStoreQualityEndPoint;
@@ -76,8 +63,7 @@ public class IdentityQualityTransportRest implements IIdentityQualityTransportPr
      */
     public IdentityQualityTransportRest( )
     {
-        super( );
-        this._httpTransport = new HttpAccessTransport( );
+        super( new HttpAccessTransport( ) );
     }
 
     /**
@@ -88,8 +74,7 @@ public class IdentityQualityTransportRest implements IIdentityQualityTransportPr
      */
     public IdentityQualityTransportRest( final IHttpTransportProvider httpTransport )
     {
-        super( );
-        this._httpTransport = httpTransport;
+        super( httpTransport );
     }
 
     /**
@@ -101,25 +86,6 @@ public class IdentityQualityTransportRest implements IIdentityQualityTransportPr
     public void setIdentityStoreQualityEndPoint( final String strIdentityStoreQualityEndPoint )
     {
         this._strIdentityStoreQualityEndPoint = strIdentityStoreQualityEndPoint;
-    }
-
-    /**
-     * setter of httpTransport
-     *
-     * @param httpTransport
-     *            IHttpTransportProvider to use
-     */
-    public void setHttpTransport( final IHttpTransportProvider httpTransport )
-    {
-        this._httpTransport = httpTransport;
-    }
-
-    /**
-     * @return the httpTransport
-     */
-    protected IHttpTransportProvider getHttpTransport( )
-    {
-        return _httpTransport;
     }
 
     @Override
@@ -139,22 +105,6 @@ public class IdentityQualityTransportRest implements IIdentityQualityTransportPr
                 mapHeadersRequest, DuplicateRuleSummarySearchResponse.class, _mapper );
 
         return response;
-    }
-
-    /**
-     * check whether the parameters related to the application are valid or not
-     *
-     * @param strApplicationCode
-     *            client application code
-     * @throws AppException
-     *             if the parameters are not valid
-     */
-    public void checkClientApplication( final String strApplicationCode ) throws IdentityStoreException
-    {
-        if ( StringUtils.isBlank( strApplicationCode ) )
-        {
-            throw new IdentityStoreException( fr.paris.lutece.plugins.identitystore.v2.web.rs.util.Constants.PARAM_CLIENT_CODE + " is missing" );
-        }
     }
 
 }

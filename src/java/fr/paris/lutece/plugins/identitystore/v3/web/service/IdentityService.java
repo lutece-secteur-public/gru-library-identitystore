@@ -199,12 +199,15 @@ public class IdentityService
 
     /**
      * returns the active service contract for the given application code
+     * 
+     * @deprecated Please use {@link ServiceContractService} for requests regarding service contract.
      *
      * @param strClientCode
      *            application code who requested service contract
      * @return the active service contract for the given application code
      * @throws IdentityStoreException
      */
+    @Deprecated
     public ServiceContractSearchResponse getServiceContract( String strClientCode ) throws IdentityStoreException
     {
         return _transportProvider.getServiceContract( strClientCode );

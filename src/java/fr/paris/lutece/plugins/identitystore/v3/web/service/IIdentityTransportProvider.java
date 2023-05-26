@@ -128,11 +128,14 @@ public interface IIdentityTransportProvider
     /**
      * returns the active service contract for the given application code
      * 
+     * @deprecated Please use {@link IServiceContractTransportProvider} for requests regarding service contract.
+     *
      * @param strClientCode
      *            application code who requested service contract
      * @return the active service contract for the given application code
      * @throws IdentityStoreException
      */
+    @Deprecated
     ServiceContractSearchResponse getServiceContract( String strClientCode ) throws IdentityStoreException;
 
     /**

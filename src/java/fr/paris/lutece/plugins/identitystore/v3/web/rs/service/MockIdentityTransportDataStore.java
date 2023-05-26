@@ -56,10 +56,9 @@ public class MockIdentityTransportDataStore extends AbstractIdentityTransportRes
 
     private static final String KEY_DATASTORE_MOCK_IDENTITY_CHANGE_PREFIX = "identitystore.mock.identity.change.data.";
 
-    private static ObjectMapper _mapper = new ObjectMapper( );
-
     public MockIdentityTransportDataStore( )
     {
+        super( null );
         _logger.error( "MockIdentityTransportDatastore is used" );
     }
 

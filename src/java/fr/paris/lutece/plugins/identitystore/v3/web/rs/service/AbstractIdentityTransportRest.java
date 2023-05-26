@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
@@ -57,24 +55,18 @@ import java.util.Map;
 /**
  *
  */
-abstract class AbstractIdentityTransportRest implements IIdentityTransportProvider
+abstract class AbstractIdentityTransportRest extends AbstractTransportRest implements IIdentityTransportProvider
 {
-    private static ObjectMapper _mapper;
+    /** logger */
     private static Logger _logger = Logger.getLogger( AbstractIdentityTransportRest.class );
-
-    static
-    {
-        _mapper = new ObjectMapper( );
-        // _mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
-        _mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
-        // _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
-    }
-
-    /** HTTP transport provider */
-    private IHttpTransportProvider _httpTransport;
 
     /** URL for identityStore REST service */
     private String _strIdentityStoreEndPoint;
+
+    protected AbstractIdentityTransportRest( final IHttpTransportProvider transportProvider )
+    {
+        super( transportProvider );
+    }
 
     /**
      * setter of identityStoreEndPoint
@@ -85,25 +77,6 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
     public void setIdentityStoreEndPoint( String strIdentityStoreEndPoint )
     {
         this._strIdentityStoreEndPoint = strIdentityStoreEndPoint;
-    }
-
-    /**
-     * setter of httpTransport
-     * 
-     * @param httpTransport
-     *            IHttpTransportProvider to use
-     */
-    public void setHttpTransport( IHttpTransportProvider httpTransport )
-    {
-        this._httpTransport = httpTransport;
-    }
-
-    /**
-     * @return the httpTransport
-     */
-    protected IHttpTransportProvider getHttpTransport( )
-    {
-        return _httpTransport;
     }
 
     /**
@@ -227,10 +200,12 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
     /**
      * {@inheritDoc}
-     *
+     * 
+     * @deprecated Please use {@link ServiceContractTransportRest} for requests regarding service contract.
      * @throws IdentityStoreException
      */
     @Override
+    @Deprecated
     public ServiceContractSearchResponse getServiceContract( String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Get active service contract" );
@@ -266,22 +241,6 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
                 identityChange, IdentityChangeResponse.class, _mapper );
 
         return response;
-    }
-
-    /**
-     * check whether the parameters related to the application are valid or not
-     *
-     * @param strClientCode
-     *            client application code
-     * @throws AppException
-     *             if the parameters are not valid
-     */
-    public void checkClientApplication( String strClientCode ) throws IdentityStoreException
-    {
-        if ( StringUtils.isBlank( strClientCode ) )
-        {
-            throw new IdentityStoreException( fr.paris.lutece.plugins.identitystore.v2.web.rs.util.Constants.PARAM_CLIENT_CODE + " is missing" );
-        }
     }
 
     /**
