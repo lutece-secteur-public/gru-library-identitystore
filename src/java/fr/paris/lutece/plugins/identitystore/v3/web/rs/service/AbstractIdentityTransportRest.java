@@ -186,9 +186,8 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
 
         final Map<String, String> mapParams = new HashMap<>( );
 
-        final IdentityChangeResponse response = _httpTransport.doPostJSON(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH, mapParams, mapHeadersRequest,
-                identityChange, IdentityChangeResponse.class, _mapper );
+        final IdentityChangeResponse response = _httpTransport.doPostJSON( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH,
+                mapParams, mapHeadersRequest, identityChange, IdentityChangeResponse.class, _mapper );
 
         return response;
     }

@@ -68,8 +68,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    public IdentitySearchResponse getIdentity( String strCustomerId, String strClientCode )
-            throws IdentityNotFoundException, AppException
+    public IdentitySearchResponse getIdentity( String strCustomerId, String strClientCode ) throws IdentityNotFoundException, AppException
     {
         if ( StringUtils.isEmpty( strCustomerId ) )
         {
@@ -83,11 +82,12 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode ) throws IdentityNotFoundException, AppException
+    public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode )
+            throws IdentityNotFoundException, AppException
     {
         _logger.debug( "MockIdentityTransportRest.updateIdentity not managed return existing identity if possible" );
 
-        return new IdentityChangeResponse();
+        return new IdentityChangeResponse( );
     }
 
     /**

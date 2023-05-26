@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
-import fr.paris.lutece.plugins.identitystore.v2.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
@@ -41,7 +40,6 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearch
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * IdentityService
@@ -96,9 +94,9 @@ public class IdentityService
      */
     public IdentitySearchResponse getIdentityByConnectionId( String strConnectionId, String strApplicationCode ) throws AppException, IdentityStoreException
     {
-        final IdentitySearchRequest request = new IdentitySearchRequest();
-        request.setConnectionId(strConnectionId);
-        return searchIdentities(request, strApplicationCode);
+        final IdentitySearchRequest request = new IdentitySearchRequest( );
+        request.setConnectionId( strConnectionId );
+        return searchIdentities( request, strApplicationCode );
     }
 
     /**
@@ -130,8 +128,7 @@ public class IdentityService
      *             if inconsitent parmeters provided, or errors occurs...
      * @throws IdentityStoreException
      */
-    public IdentitySearchResponse getIdentity( String strCustomerId, String strApplicationCode )
-            throws AppException, IdentityStoreException
+    public IdentitySearchResponse getIdentity( String strCustomerId, String strApplicationCode ) throws AppException, IdentityStoreException
     {
         return _transportProvider.getIdentity( strCustomerId, strApplicationCode );
     }
@@ -148,7 +145,8 @@ public class IdentityService
      *             if error occured while updating identity
      * @throws IdentityStoreException
      */
-    public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode ) throws AppException, IdentityStoreException
+    public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode )
+            throws AppException, IdentityStoreException
     {
         return _transportProvider.updateIdentity( customerId, identityChange, strClientCode );
     }

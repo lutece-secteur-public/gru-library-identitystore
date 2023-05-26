@@ -81,7 +81,8 @@ public class MockIdentityTransportDataStore extends AbstractIdentityTransportRes
      * {@inheritDoc}
      */
     @Override
-    public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode ) throws IdentityNotFoundException, AppException
+    public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode )
+            throws IdentityNotFoundException, AppException
     {
         _logger.debug( "MockIdentityTransportDatastore.updateIdentity not managed return existing identity if possible" );
 

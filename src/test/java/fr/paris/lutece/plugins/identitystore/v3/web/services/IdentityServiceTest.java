@@ -187,7 +187,8 @@ public class IdentityServiceTest
             IdentitySearchResponse identityByConnectionId = identityService.getIdentityByConnectionId( _identity.getConnectionId( ), author.getName( ) );
 
             // test updateIdentity
-            IdentityChangeResponse identityChangeResponse = identityService.updateIdentity( identityChangeRequest.getIdentity().getCustomerId(), identityChangeRequest, author.getName( ) );
+            IdentityChangeResponse identityChangeResponse = identityService.updateIdentity( identityChangeRequest.getIdentity( ).getCustomerId( ),
+                    identityChangeRequest, author.getName( ) );
 
             // test createIdentity
             IdentityChangeResponse identity = identityService.createIdentity( identityChangeRequest, author.getName( ) );
