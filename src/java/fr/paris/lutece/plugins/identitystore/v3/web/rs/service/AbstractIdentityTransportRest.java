@@ -45,7 +45,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvid
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 

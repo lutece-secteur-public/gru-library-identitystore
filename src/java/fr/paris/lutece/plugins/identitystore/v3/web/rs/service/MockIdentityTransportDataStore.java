@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
