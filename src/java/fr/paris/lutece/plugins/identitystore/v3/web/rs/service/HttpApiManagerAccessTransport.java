@@ -36,8 +36,6 @@ package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.paris.lutece.plugins.identitystore.v3.web.service.HttpAccessTransport;
-import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -50,7 +48,7 @@ import java.util.Map;
 /**
  * IdentityRestClientService
  */
-public final class IdentityTransportApiManagerRest extends AbstractIdentityTransportRest implements IIdentityTransportProvider
+public final class HttpApiManagerAccessTransport extends HttpAccessTransport 
 {
     /** The Constant PARAMS_ACCES_TOKEN. */
     private static final String PARAMS_ACCES_TOKEN = "access_token";
@@ -63,21 +61,12 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
     /** The Constant PARAMS_GRANT_TYPE_VALUE. */
     private static final String PARAMS_GRANT_TYPE_VALUE = "client_credentials";
 
-    private static final String PARAMS_HEADER_CLIENT_CODE = "client_code";
-    private static Logger _logger = Logger.getLogger( IdentityTransportApiManagerRest.class );
+    private static Logger _logger = Logger.getLogger( HttpApiManagerAccessTransport.class );
     private static final ObjectMapper _objectMapper = new ObjectMapper( );
 
     /** URL for REST service apiManager */
-    private String _strApiManagerEndPoint;
-    private String _strApiManagerCredentials;
-
-    /**
-     * Simple Constructor
-     */
-    public IdentityTransportApiManagerRest( )
-    {
-        super( new HttpAccessTransport( ) );
-    }
+    private String _strAccessManagerEndPointUrl;
+    private String _strAccessManagerCredentials;
 
     /**
      * setter of apiManagerEndPoint
@@ -85,9 +74,9 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
      * @param strApiManagerEndPoint
      *            value to use
      */
-    public void setApiManagerEndPoint( String strApiManagerEndPoint )
+    public void setAccessManagerEndPointUrl( String strApiManagerEndPoint )
     {
-        this._strApiManagerEndPoint = strApiManagerEndPoint;
+        this._strAccessManagerEndPointUrl = strApiManagerEndPoint;
     }
 
     /**
@@ -96,9 +85,9 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
      * @param strApiManagerCredentials
      *            the API Manager credentials
      */
-    public void setApiManagerCredentials( String strApiManagerCredentials )
+    public void setAccessManagerCredentials( String strCredentials )
     {
-        this._strApiManagerCredentials = strApiManagerCredentials;
+        this._strAccessManagerCredentials = strCredentials;
     }
 
     /**
@@ -111,7 +100,7 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
     {
         String strToken = StringUtils.EMPTY;
 
-        _logger.debug( "LibraryIdentityStore - IdentityTransportApiManagerRest.getToken with URL_TOKEN property [" + _strApiManagerEndPoint + "]" );
+        _logger.debug( "AccessManager Rest Transport getToken with URL_TOKEN property [" + _strAccessManagerEndPointUrl + "]" );
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
         Map<String, String> mapParams = new HashMap<String, String>( );
@@ -120,9 +109,18 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
 
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
         mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED );
-        mapHeadersRequest.put( HttpHeaders.AUTHORIZATION, TYPE_AUTHENTIFICATION_BASIC + " " + _strApiManagerCredentials );
+        mapHeadersRequest.put( HttpHeaders.AUTHORIZATION, TYPE_AUTHENTIFICATION_BASIC + " " + _strAccessManagerCredentials );
 
-        String strOutput = getHttpTransport( ).doPost( _strApiManagerEndPoint, mapParams, mapHeadersRequest );
+        final Map<String, String> mapHeadersResponse = new HashMap<>( );
+        String strOutput = StringUtils.EMPTY;
+        
+        try {
+        	strOutput = this._httpClient.doPost( _strAccessManagerEndPointUrl, mapParams, null, null, mapHeadersRequest, mapHeadersResponse );
+        } 
+	    catch( Exception e )
+	    {
+	        handleException( e );
+	    }
 
         JsonNode strResponseApiManagerJsonObject = null;
 
@@ -137,7 +135,8 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
         }
         catch( JsonProcessingException e )
         {
-            _logger.debug( "LibraryIdentityStore - IdentityTransportApiManagerRest.getToken invalid response [" + strOutput + "]" );
+            _logger.debug( "ApiManagerRest.getToken invalid response [" + strOutput + "]" );
+            handleException( e );
         }
 
         return strToken;

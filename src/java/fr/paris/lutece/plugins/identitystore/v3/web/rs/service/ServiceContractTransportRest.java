@@ -33,22 +33,21 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractsSearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
-import fr.paris.lutece.plugins.identitystore.v3.web.service.HttpAccessTransport;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IServiceContractTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import org.apache.log4j.Logger;
-
-import java.util.HashMap;
-import java.util.Map;
+import fr.paris.lutece.portal.service.util.AppException;
 
 public class ServiceContractTransportRest extends AbstractTransportRest implements IServiceContractTransportProvider
 {
@@ -60,14 +59,6 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     private String _strIdentityStoreEndPoint;
 
     /**
-     * Simple Constructor
-     */
-    public ServiceContractTransportRest( )
-    {
-        super( new HttpAccessTransport( ) );
-    }
-
-    /**
      * Constructor with IHttpTransportProvider parameter
      *
      * @param httpTransport
@@ -76,17 +67,8 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     public ServiceContractTransportRest( final IHttpTransportProvider httpTransport )
     {
         super( httpTransport );
-    }
-
-    /**
-     * setter of identityStoreEndPoint
-     *
-     * @param strIdentityStoreEndPoint
-     *            value to use
-     */
-    public void setIdentityStoreEndPoint( final String strIdentityStoreEndPoint )
-    {
-        this._strIdentityStoreEndPoint = strIdentityStoreEndPoint;
+        
+        _strIdentityStoreEndPoint = httpTransport.getApiEndPointUrl( );
     }
 
     /**
@@ -97,7 +79,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     {
         _logger.debug( "Get serivce contract list of " + strClientCode );
 
-        this.checkClientApplication( strClientCode );
+        this.checkClientCode( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -119,7 +101,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     {
         _logger.debug( "Get active serivce contract of " + strClientCode );
 
-        this.checkClientApplication( strClientCode );
+        this.checkClientCode( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -141,7 +123,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     {
         _logger.debug( "Get serivce contract [id=" + nServiceContractId + "] of " + strClientCode );
 
-        this.checkClientApplication( strClientCode );
+        this.checkClientCode( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -165,7 +147,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
         _logger.debug( "Create new serivce contract of " + strClientCode );
         _logger.debug( serviceContract );
 
-        this.checkClientApplication( strClientCode );
+        this.checkClientCode( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -188,7 +170,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
         _logger.debug( "Update serivce contract [id=" + nServiceContractId + "] of " + strCLientCode );
         _logger.debug( serviceContract );
 
-        this.checkClientApplication( strCLientCode );
+        this.checkClientCode( strCLientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strCLientCode );
@@ -211,7 +193,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
         _logger.debug( "Close serivce contract [id=" + nServiceContractId + "] of " + strCLientCode );
         _logger.debug( serviceContract );
 
-        this.checkClientApplication( strCLientCode );
+        this.checkClientCode( strCLientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strCLientCode );
@@ -223,5 +205,21 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
                 mapParams, mapHeadersRequest, serviceContract, ServiceContractChangeResponse.class, _mapper );
 
         return response;
+    }
+    
+    /**
+     * check whether the parameters related to the identity are valid or not
+     *
+     * @param strClientCode
+     *            the strClientCode
+     * @throws AppException
+     *             if the parameters are not valid
+     */
+    public void checkClientCode( String strClientCode ) throws IdentityStoreException
+    {
+        if ( StringUtils.isBlank( strClientCode ) )
+        {
+            throw new IdentityStoreException( "Client code is mandatory." );
+        }
     }
 }

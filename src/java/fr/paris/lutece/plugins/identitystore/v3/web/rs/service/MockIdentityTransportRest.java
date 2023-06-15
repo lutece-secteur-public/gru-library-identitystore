@@ -34,15 +34,21 @@
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.Identity;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,17 +57,26 @@ import java.util.Map;
 /**
  * WARNING this is a mock transport for LuteceTestCase purpose
  */
-public class MockIdentityTransportRest extends AbstractIdentityTransportRest
+public class MockIdentityTransportRest implements IIdentityTransportProvider
 {
     private static Logger _logger = Logger.getLogger( MockIdentityTransportRest.class );
     private List<Identity> _listIdentities;
     private final String CONNECTION_ID_PREFIX = "conn_";
     private final String CUSTOMER_ID_PREFIX = "cust_";
 
+    /** mapper */
+    protected static ObjectMapper _mapper;
+    static
+    {
+        _mapper = new ObjectMapper( );
+        // _mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
+        _mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
+        // _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
+    }
+    
     public MockIdentityTransportRest( )
     {
-        super( null );
-        _logger.error( "MockIdentityTransportRest is used" );
+        _logger.info( "MockIdentityTransportRest is used" );
         _listIdentities = new ArrayList<Identity>( );
     }
 
@@ -134,15 +149,6 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    protected void addAuthentication( Map<String, String> mapHeadersRequest )
-    {
-        // no authentication for mock
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode )
     {
         _logger.debug( "MockIdentityTransportRest.deleteIdentity always return ok" );
@@ -152,4 +158,17 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
 
         return response;
     }
+
+	@Override
+	public IdentitySearchResponse searchIdentities(IdentitySearchRequest identitySearchRequest, String strClientCode)
+			throws IdentityStoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ServiceContractSearchResponse getServiceContract(String strClientCode) throws IdentityStoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

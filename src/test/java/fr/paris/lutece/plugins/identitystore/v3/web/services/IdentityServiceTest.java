@@ -141,7 +141,7 @@ public class IdentityServiceTest
     public void testServiceThroughMockNoSpring( ) throws IdentityStoreException
     {
         MockIdentityTransportRest mockTransport = new MockIdentityTransportRest( );
-        mockTransport.setIdentityStoreEndPoint( "unused" );
+        
 
         // default mockTransport.httpTransport set with simpleRest
         IdentityService identityServiceNoSpring = new IdentityService( mockTransport );

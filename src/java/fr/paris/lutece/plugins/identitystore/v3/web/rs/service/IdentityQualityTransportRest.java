@@ -35,10 +35,12 @@ package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.duplicate.DuplicateRuleSummarySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
-import fr.paris.lutece.plugins.identitystore.v3.web.service.HttpAccessTransport;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityQualityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
+import fr.paris.lutece.portal.service.util.AppException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
@@ -57,7 +59,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
 
     /** URL for identityStore Quality REST service */
     private String _strIdentityStoreQualityEndPoint;
-
+    
     /**
      * Simple Constructor
      */
@@ -75,17 +77,8 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     public IdentityQualityTransportRest( final IHttpTransportProvider httpTransport )
     {
         super( httpTransport );
-    }
-
-    /**
-     * setter of identityStoreQualityEndPoint
-     *
-     * @param strIdentityStoreQualityEndPoint
-     *            value to use
-     */
-    public void setIdentityStoreQualityEndPoint( final String strIdentityStoreQualityEndPoint )
-    {
-        this._strIdentityStoreQualityEndPoint = strIdentityStoreQualityEndPoint;
+        
+        _strIdentityStoreQualityEndPoint = httpTransport.getApiEndPointUrl( );
     }
 
     @Override
@@ -93,7 +86,7 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
     {
         _logger.debug( "Get duplicate rules of " + strApplicationCode );
 
-        this.checkClientApplication( strApplicationCode );
+        this.checkClientCode( strApplicationCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strApplicationCode );
@@ -106,5 +99,20 @@ public class IdentityQualityTransportRest extends AbstractTransportRest implemen
 
         return response;
     }
-
+    
+    /**
+     * check whether the parameters related to the identity are valid or not
+     *
+     * @param strClientCode
+     *            the strClientCode
+     * @throws AppException
+     *             if the parameters are not valid
+     */
+    public void checkClientCode( String strClientCode ) throws IdentityStoreException
+    {
+        if ( StringUtils.isBlank( strClientCode ) )
+        {
+            throw new IdentityStoreException( "Client code is mandatory." );
+        }
+    }
 }

@@ -47,6 +47,9 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class AbstractTransportRest
 {
 
+    /** HTTP transport provider */
+    protected IHttpTransportProvider _httpTransport;
+
     /** mapper */
     protected static ObjectMapper _mapper;
     static
@@ -56,10 +59,7 @@ public abstract class AbstractTransportRest
         _mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
         // _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
     }
-
-    /** HTTP transport provider */
-    protected IHttpTransportProvider _httpTransport;
-
+    
     /**
      * Constructor
      * 
@@ -89,21 +89,4 @@ public abstract class AbstractTransportRest
     {
         return _httpTransport;
     }
-
-    /**
-     * check whether the parameters related to the application are valid or not
-     *
-     * @param strClientCode
-     *            client application code
-     * @throws AppException
-     *             if the parameters are not valid
-     */
-    public void checkClientApplication( String strClientCode ) throws IdentityStoreException
-    {
-        if ( StringUtils.isBlank( strClientCode ) )
-        {
-            throw new IdentityStoreException( Constants.PARAM_CLIENT_CODE + " is missing" );
-        }
-    }
-
 }

@@ -37,7 +37,6 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContr
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractsSearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.service.HttpAccessTransport;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IServiceContractTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
@@ -45,8 +44,11 @@ import fr.paris.lutece.portal.service.datastore.DatastoreService;
 
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class MockServiceContractTransportDataStore extends AbstractTransportRest implements IServiceContractTransportProvider
+
+public class MockServiceContractTransportDataStore  implements IServiceContractTransportProvider
 {
 
     /** logger */
@@ -54,14 +56,22 @@ public class MockServiceContractTransportDataStore extends AbstractTransportRest
 
     private static final String KEY_DATASTORE_MOCK_SERVICE_CONTRACT_PREFIX = "identitystore.mock.servicecontract.";
 
-
+    /** mapper */
+    protected static ObjectMapper _mapper;
+    static
+    {
+        _mapper = new ObjectMapper( );
+        // _mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
+        _mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
+        // _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
+    }
 
     /**
      * Simple Constructor
      */
     public MockServiceContractTransportDataStore( )
     {
-        super( new HttpAccessTransport( ) );
+    	_logger.info( "MockServiceContractTransportDataStore is used" );
     }
 
     /**
@@ -72,7 +82,7 @@ public class MockServiceContractTransportDataStore extends AbstractTransportRest
      */
     public MockServiceContractTransportDataStore( final IHttpTransportProvider httpTransport )
     {
-        super( httpTransport );
+    	_logger.info( "MockServiceContractTransportDataStore is used" );
     }
 
     /**

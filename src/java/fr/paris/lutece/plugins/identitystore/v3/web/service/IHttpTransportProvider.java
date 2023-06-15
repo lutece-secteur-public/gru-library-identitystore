@@ -165,4 +165,18 @@ public interface IHttpTransportProvider
      */
     <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
             ObjectMapper mapper ) throws IdentityStoreException;
+    
+	/**
+	 * set end point
+	 * 
+	 * @param strEndPointUrl
+	 */
+	public void setApiEndPointUrl(String strApiEndPointUrl) ;
+	
+	/**
+	 * get end point
+	 * 
+	 * @return strEndPointUrl
+	 */
+	public String getApiEndPointUrl( );
 }
