@@ -3,98 +3,101 @@
 
 ## Introduction
 
-This library provides services to communicate with Identity Store REST API.
+This library provides services to communicate with Identity Store REST API V3 to read, update or create identities according to the rights of the service contract.
 
 ## Services
 
-The main service is `fr.paris.lutece.plugins.identitystore.web.service.IdentityService` which provides methods to call Identity Store.
+The main services are :
+*  `fr.paris.lutece.plugins.identitystore.web.service.IdentityService` which provides methods for Identities.
+* `fr.paris.lutece.plugins.identitystore.web.service.ServiceContractService` which provides methods for service contracts.
+ </li>
+ <li>
+* a `ServiceContractCache` that provides cache for service contracts.
 
-It requires an implementation of `fr.paris.lutece.plugins.identitystore.web.service.IIdentityTransportProvider` to define the HTTP transport. Two implementations of this interface are provided in the library :
- 
-*  `fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportApiManagerRest` , which uses ApiManager WSO2 in order to secure requests to the API (by using tokens)
-*  `fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest` , which uses simple requests
+
+They  require  implementations of `IIdentityTransportProvider` and `IServiceContractTransportProvider` to define the HTTP transport. Two implementations of HTTPTransport are provided in the library :
+
+*  `fr.paris.lutece.plugins.identitystore.web.rs.service.HTTPApiManagerAccessTransport` , to use an  ApiManager with an OAuth authorization process to get a token from an access manager, in order to secure requests to the API.
+*  `fr.paris.lutece.plugins.identitystore.web.rs.service.HTTPAccessTransport`, which provides direct requests.
 
 
-Both implementations require URL definition of the Identity Store service end point. This URL is stored in the attribute `identityStoreEndPoint` . The `IdentityTransportApiManagerRest` implementation requires extra properties.
+Both implementations require URL definition of the Identity Store service end point. This URL is stored in the attribute `ApiEndPointUrl`.
+
+The HTTPApiManagerAccessTransport requires `AccessManagerEndPointUrl` and `AccessManagerCredentials` extra properties.
 
 ## Configuration using Spring context
 
-First, define the bean for the HTTP transport you want to use:
- 
-* set the property for the URL of the Identity Store service end point
-* set other properties if using the HTTP transport `IdentityTransportApiManagerRest` 
+* define the bean for the HTTP transport you want to use,
+* define the beans for the implementations of the transport for the services  `IdentityService` or  `ServiceContractService` ,
+* define the beans for the services  `IdentityService` or  `ServiceContractService` .
 
 
-Then, define the bean for the service `IdentityService` :
- 
-* as a constructor argument, refer to the bean for HTTP transport
+
+Here is an example of Spring configuration with the HTTP transport `HttpApiManagerAccessTransport` :
+
+```
+    <!-- IHttpTransportProvider declarations -->
+    <bean id="identitystore.httpAccessTransport" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.HttpApiManagerAccessTransport" >
+	<property name="ApiEndPointUrl">
+            <value>${identitydesk.identitystore.ApiEndPointUrl}</value>
+        </property>
+	<property name="AccessManagerEndPointUrl">
+            <value>${identitydesk.identitystore.AccessManagerEndPointUrl}</value>
+        </property>
+	<property name="AccessManagerCredentials">
+            <value>${identitydesk.identitystore.AccessManagerCredentials}</value>
+        </property>
+     </bean>
+
+    <bean id="identity.restTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.IdentityTransportRest">
+        <constructor-arg ref="identitystore.httpAccessTransport"/>
+    </bean>
+     <bean id="serviceContract.restTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.ServiceContractTransportRest">
+        <constructor-arg ref="identitystore.httpAccessTransport"/>
+    </bean>
 
 
-Here is an example of Spring configuration with the HTTP transport `IdentityTransportRest` :
+    <!-- IdentityService impl -->
+    <bean id="identity.identityService" class="fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService">
+        <constructor-arg ref="identity.restTransport.httpAccess"/>
+    </bean>
+
+    <!-- ServiceContractService impl -->
+    <bean id="identity.serviceContractService" class="fr.paris.lutece.plugins.identitystore.v3.web.service.ServiceContractService">
+        <constructor-arg ref="serviceContract.restTransport.httpAccess"/>
+    </bean>
+
+    <!-- Cache -->
+    <bean id="identity.serviceContractCacheService"  class="fr.paris.lutece.plugins.identitydesk.cache.ServiceContractCache">
+        <constructor-arg ref="identity.serviceContractService"/>
+    </bean>
+
 ```
 
-<bean id="lib-identitystore.simpleTransport" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportRest">
-    <property name="IdentityStoreEndPoint">
-        <value>http://mydomain.com/url/to/identitystore</value>
-    </property>
-</bean>
-<bean id="lib-identitystore.identityService" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService">
-    <constructor-arg ref="lib-identitystore.simpleTransport"/>
-</bean>
-                        
+properties :
+
+```
+identitydesk.default.client.code=TEST
+
+identitydesk.identitystore.ApiEndPointUrl=https://gru-gravitee-apim-gateway.rec.apps.paris.mdp/identity
+identitydesk.identitystore.AccessManagerEndPointUrl=https://gru-gravitee-am-gateway.rec.apps.paris.mdp/gru-notifications-domain/oauth/token
+identitydesk.identitystore.AccessManagerCredentials=THE_AM_TOKEN_SD4JF5fss5IGL4PAPZINBQ5IDinvp45osfgS
 ```
 
+Here is an example of Spring configuration with the HTTP transport `HttpAccessTransport` :
 
-Here is an example of Spring configuration with the HTTP transport `IdentityTransportApiManagerRest` :
+```
+    <!-- IHttpTransportProvider declarations -->
+    <bean id="identitystore.httpAccessTransport" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.HttpAccessTransport" >
+	      <property name="ApiEndPointUrl">
+            <value>${identitydesk.identitystore.ApiEndPointUrl}</value>
+        </property>
+     </bean>
+
+     ...
+
 ```
 
-<bean id="lib-identitystore.apiManagerTransport" class="fr.paris.lutece.plugins.identitystore.web.rs.service.IdentityTransportApiManagerRest">
-    <property name="identityStoreEndPoint">
-        <value>http://mydomain.com/url/to/apimanager/api/identitystore</value>
-    </property>
-    <property name="apiManagerEndPoint">
-        <value>http://mydomain.com/url/to/apimanager/token</value>
-    </property>
-    <property name="apiManagerCredentials">
-        <value>your_private_key</value>
-    </property>
-</bean>
-<bean id="lib-identitystore.identityService" class="fr.paris.lutece.plugins.identitystore.web.service.IdentityService">
-    <constructor-arg ref="lib-identitystore.apiManagerTransport"/>
-</bean>
-                        
-```
-
-
-## Configuration in Java code
-
-The service can directly be created in the Java code. Here is an example with the HTTP transport `IdentityTransportApiManagerRest` (the same mechanism can be applied for the HTTP transport `IdentityTransportRest` ).
-
-First, define the following keys in a properties file:
-```
-
-myplugin.endpoint.identitystore=http://mydomain.com/url/to/apimanager/api/identitystore
-myplugin.endpoint.token=http://mydomain.com/url/to/apimanager/token
-myplugin.apimanager.credentials=your_private_key
-                        
-```
-
-
-Then, add the following code in the Java code:
-```
-
-private static final String PROPERTY_ENDPOINT_IDENTITYSTORE = "myplugin.endpoint.identitystore";
-private static final String PROPERTY_ENDPOINT_TOKEN = "myplugin.endpoint.token";
-private static final String PROPERTY_APIMANAGER_CREDENTIALS = "myplugin.apimanager.credentials";
-...
-IdentityTransportApiManagerRest apiManagerTransport = new IdentityTransportApiManagerRest(  );
-apiManagerTransport.setIdentityStoreEndPoint( AppPropertiesService.getProperty( PROPERTY_ENDPOINT_IDENTITYSTORE ) );
-apiManagerTransport.setApiManagerEndPoint( AppPropertiesService.getProperty( PROPERTY_ENDPOINT_TOKEN ) );
-apiManagerTransport.setApiManagerCredentials( AppPropertiesService.getProperty( PROPERTY_APIMANAGER_CREDENTIALS ) );
-
-IdentityService identityService = new IdentityService( apiManagerTransport );
-                        
-```
 
 
 
