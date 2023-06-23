@@ -166,6 +166,28 @@ public interface IHttpTransportProvider
     <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
             ObjectMapper mapper ) throws IdentityStoreException;
     
+    /**
+     * make a Delete request on given url with parameters and json in body
+     * 
+     * @param strEndPointUrl
+     *            url
+     * @param mapParams
+     *            param to add to url
+     * @param mapHeadersRequest
+     *            request header
+     * @param responseJsonClass
+     *            the class
+     * @param <T>
+     *            of the response
+     * @param mapper
+     *            mapper for JSON serialize / deserialize
+     * @return response list
+     * @throws IdentityStoreException
+     */
+    <T> T doDeleteJSON( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, 
+    		Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
+    
+    
 	/**
 	 * set end point
 	 * 

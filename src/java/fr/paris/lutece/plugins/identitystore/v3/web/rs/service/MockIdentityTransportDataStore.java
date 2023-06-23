@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
@@ -125,12 +126,12 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
      * {@inheritDoc}
      */
     @Override
-    public ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode )
+    public IdentityChangeResponse deleteIdentity( String strConnectionId, String strApplicationCode, IdentityChangeRequest identityChange )
     {
         _logger.debug( "MockIdentityTransportDatastore.deleteIdentity always return ok" );
 
-        ResponseDto response = new ResponseDto( );
-        response.setStatus( "OK" );
+        IdentityChangeResponse response = new IdentityChangeResponse( );
+        response.setStatus( IdentityChangeStatus.DELETE_SUCCESS );
         response.setMessage( "OK" );
 
         return response;

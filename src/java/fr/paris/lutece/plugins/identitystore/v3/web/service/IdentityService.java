@@ -169,17 +169,18 @@ public class IdentityService
     }
 
     /**
-     * Deletes an identity from the specified connectionId
+     * Deletes an identity from the specified customer_Id
      * 
-     * @param strConnectionId
-     *            the connection id
+     * @param strCustomerId
+     *            the customer id
      * @param strApplicationCode
      *            the application code
+     * @param identityChange : an identiyChange object to provide  the RequestAuthor values
      * @throws IdentityStoreException
      */
-    public void deleteIdentity( String strConnectionId, String strApplicationCode ) throws IdentityStoreException
+    public void deleteIdentity( String strCustomerId, String strApplicationCode, IdentityChangeRequest identityChange ) throws IdentityStoreException
     {
-        _transportProvider.deleteIdentity( strConnectionId, strApplicationCode );
+        _transportProvider.deleteIdentity( strCustomerId, strApplicationCode, identityChange );
     }
 
     /**

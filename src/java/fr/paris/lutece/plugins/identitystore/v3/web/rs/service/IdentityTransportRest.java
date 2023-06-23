@@ -159,9 +159,21 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
      * {@inheritDoc}
      */
     @Override
-    public ResponseDto deleteIdentity( String strIdConnection, String strClientCode ) throws IdentityStoreException
+    public IdentityChangeResponse deleteIdentity( String strIdConnection, String strClientCode, IdentityChangeRequest identityChange  ) throws IdentityStoreException
     {
-        throw new IdentityStoreException( "Method not available" );
+    	_logger.debug( "Delete identity" );
+        checkAuthor( identityChange );
+        checkClientCode( strClientCode );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+
+        final Map<String, String> mapParams = new HashMap<>( );
+
+        final IdentityChangeResponse response = _httpTransport.doDeleteJSON( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH,
+                mapParams, mapHeadersRequest, identityChange, IdentityChangeResponse.class, _mapper );
+
+        return response;
     }
 
     /**
@@ -338,6 +350,25 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
                 || StringUtils.isEmpty( identityMergeRequest.getIdentities( ).getSecondaryCuid( ) ) )
         {
             throw new IdentityStoreException( "Provided Identity Merge request is null or empty" );
+        }
+    }
+    
+    /**
+     * check whether the parameters related to the identity are valid or not
+     *
+     * @param identityChange
+     * @throws AppException
+     */
+    public void checkAuthor( IdentityChangeRequest identityChange ) throws IdentityStoreException
+    {
+        if ( identityChange.getOrigin( ) == null )
+        {
+            throw new IdentityStoreException( "Provided Author is null" );
+        }
+
+        if ( StringUtils.isEmpty( identityChange.getOrigin( ).getName( ) ) || identityChange.getOrigin( ).getType( ) == null )
+        {
+            throw new IdentityStoreException( "Author and author type fields shall be set" );
         }
     }
 

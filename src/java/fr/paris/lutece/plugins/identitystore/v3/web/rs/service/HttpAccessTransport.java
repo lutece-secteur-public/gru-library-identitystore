@@ -255,6 +255,43 @@ public class HttpAccessTransport implements IHttpTransportProvider
         return oResponse;
     }
 
+    @Override
+    public <T> T doDeleteJSON( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, 
+    		Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    {
+        final Map<String, String> mapHeadersResponse = new HashMap<>( );
+        mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
+        mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
+        
+    	T oResponse = null;
+
+        try
+        {
+            URIBuilder uriBuilder = new URIBuilder( strEndPointUrl );
+
+            if ( ( mapParams != null ) && !mapParams.isEmpty( ) )
+            {
+                for ( String strParamKey : mapParams.keySet( ) )
+                {
+                    uriBuilder.addParameter( strParamKey, mapParams.get( strParamKey ) );
+                }
+            }
+            
+            addAuthentication( mapHeadersRequest );
+            String strJSON = mapper.writeValueAsString( json );
+            
+            String strResponseJSON = this._httpClient.doDeleteJSON( uriBuilder.toString( ), strJSON, null, null, mapHeadersRequest, null );
+
+            oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
+        }
+        catch( Exception e )
+        {
+            handleException( e );
+        }
+
+        return oResponse;
+    }
+    
     /**
      * add error log and throw correct Exception depending on the specified Exception
      * 

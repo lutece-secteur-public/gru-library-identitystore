@@ -112,7 +112,7 @@ public interface IIdentityTransportProvider
      * @throws AppException
      *             if inconsistent parameters provided, or errors occurs...
      */
-    ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode ) throws IdentityStoreException;
+    IdentityChangeResponse deleteIdentity( String strConnectionId, String strApplicationCode, IdentityChangeRequest identityChange  ) throws IdentityStoreException;
 
     /**
      * returns a list of identity from combination of attributes
