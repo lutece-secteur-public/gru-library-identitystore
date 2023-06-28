@@ -232,12 +232,17 @@ public class IdentityService
 
     /**
      * Merge two identities.
-     * @param identityMerge the request containing the master cuid, the secondary cuid, and a list of attribute to be taken from the secondary identity and put on the master identity.
-     * @param strClientCode the client code
+     * 
+     * @param identityMerge
+     *            the request containing the master cuid, the secondary cuid, and a list of attribute to be taken from the secondary identity and put on the
+     *            master identity.
+     * @param strClientCode
+     *            the client code
      * @return IdentityMergeResponse
      */
-    public IdentityMergeResponse mergeIdentities(IdentityMergeRequest identityMerge, String strClientCode) throws IdentityStoreException {
-        return _transportProvider.mergeIdentities(identityMerge, strClientCode);
+    public IdentityMergeResponse mergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException
+    {
+        return _transportProvider.mergeIdentities( identityMerge, strClientCode );
     }
 
 }

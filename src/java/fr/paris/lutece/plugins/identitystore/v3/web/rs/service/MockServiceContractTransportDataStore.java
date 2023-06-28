@@ -45,7 +45,6 @@ import fr.paris.lutece.portal.service.datastore.DatastoreService;
 
 import org.apache.log4j.Logger;
 
-
 public class MockServiceContractTransportDataStore extends AbstractTransportRest implements IServiceContractTransportProvider
 {
 
@@ -53,8 +52,6 @@ public class MockServiceContractTransportDataStore extends AbstractTransportRest
     private static Logger _logger = Logger.getLogger( MockServiceContractTransportDataStore.class );
 
     private static final String KEY_DATASTORE_MOCK_SERVICE_CONTRACT_PREFIX = "identitystore.mock.servicecontract.";
-
-
 
     /**
      * Simple Constructor
@@ -97,9 +94,7 @@ public class MockServiceContractTransportDataStore extends AbstractTransportRest
         return getMockServiceContractListFromDatastore( strClientCode );
     }
 
-
-
-	/**
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -129,7 +124,7 @@ public class MockServiceContractTransportDataStore extends AbstractTransportRest
             throws IdentityStoreException
     {
         _logger.debug( "[MOCK] Create new service contract of " + strClientCode );
-        
+
         return null;
     }
 
@@ -141,7 +136,7 @@ public class MockServiceContractTransportDataStore extends AbstractTransportRest
             final String strCLientCode ) throws IdentityStoreException
     {
         _logger.debug( "[MOCK] Update service contract [id=" + nServiceContractId + "] of " + strCLientCode );
-        
+
         return null;
     }
 
@@ -153,19 +148,20 @@ public class MockServiceContractTransportDataStore extends AbstractTransportRest
             throws IdentityStoreException
     {
         _logger.debug( "[MOCK] Close service contract [id=" + nServiceContractId + "] of " + strCLientCode );
-        
+
         return null;
     }
-    
+
     /**
      * get list of service contract from datastore
      * 
      * @param strClientCode
      * @return the response
      */
-    private ServiceContractSearchResponse getMockServiceContractFromDatastore(String strClientCode) {
-        
-    	String strDsData = DatastoreService.getDataValue( KEY_DATASTORE_MOCK_SERVICE_CONTRACT_PREFIX + strClientCode, "{}" );
+    private ServiceContractSearchResponse getMockServiceContractFromDatastore( String strClientCode )
+    {
+
+        String strDsData = DatastoreService.getDataValue( KEY_DATASTORE_MOCK_SERVICE_CONTRACT_PREFIX + strClientCode, "{}" );
 
         try
         {
@@ -177,17 +173,18 @@ public class MockServiceContractTransportDataStore extends AbstractTransportRest
 
             return null;
         }
-	}
-    
+    }
+
     /**
      * get service contract from datastore
      * 
      * @param strClientCode
      * @return the response
      */
-    private ServiceContractsSearchResponse getMockServiceContractListFromDatastore(String strClientCode) {
-        
-    	String strDsData = DatastoreService.getDataValue( KEY_DATASTORE_MOCK_SERVICE_CONTRACT_PREFIX + strClientCode + ".list", "{}" );
+    private ServiceContractsSearchResponse getMockServiceContractListFromDatastore( String strClientCode )
+    {
+
+        String strDsData = DatastoreService.getDataValue( KEY_DATASTORE_MOCK_SERVICE_CONTRACT_PREFIX + strClientCode + ".list", "{}" );
 
         try
         {
@@ -199,6 +196,6 @@ public class MockServiceContractTransportDataStore extends AbstractTransportRest
 
             return null;
         }
-	}
-    
+    }
+
 }

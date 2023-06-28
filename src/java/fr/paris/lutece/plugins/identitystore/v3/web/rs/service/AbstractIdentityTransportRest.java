@@ -248,12 +248,12 @@ abstract class AbstractIdentityTransportRest extends AbstractTransportRest imple
      * {@inheritDoc}
      */
     @Override
-    public IdentityMergeResponse mergeIdentities(final IdentityMergeRequest identityMerge, final String strClientCode)
-            throws IdentityStoreException {
+    public IdentityMergeResponse mergeIdentities( final IdentityMergeRequest identityMerge, final String strClientCode ) throws IdentityStoreException
+    {
 
-        checkMergeRequest(identityMerge);
-        _logger.debug("merge identities [master cuid= " + identityMerge.getIdentities().getPrimaryCuid() +
-                      "][secondary cuid = " + identityMerge.getIdentities().getSecondaryCuid() + "]");
+        checkMergeRequest( identityMerge );
+        _logger.debug( "merge identities [master cuid= " + identityMerge.getIdentities( ).getPrimaryCuid( ) + "][secondary cuid = "
+                + identityMerge.getIdentities( ).getSecondaryCuid( ) + "]" );
         checkClientApplication( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
