@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContr
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
@@ -239,6 +240,31 @@ abstract class AbstractIdentityTransportRest extends AbstractTransportRest imple
         final IdentityChangeResponse response = _httpTransport.doPostJSON(
                 _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.IMPORT_IDENTITY_PATH, mapParams, mapHeadersRequest,
                 identityChange, IdentityChangeResponse.class, _mapper );
+
+        return response;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IdentityMergeResponse mergeIdentities(final IdentityMergeRequest identityMerge, final String strClientCode)
+            throws IdentityStoreException {
+
+        checkMergeRequest(identityMerge);
+        _logger.debug("merge identities [master cuid= " + identityMerge.getIdentities().getPrimaryCuid() +
+                      "][secondary cuid = " + identityMerge.getIdentities().getSecondaryCuid() + "]");
+        checkClientApplication( strClientCode );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        addAuthentication( mapHeadersRequest );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+
+        final Map<String, String> mapParams = new HashMap<>( );
+
+        final IdentityMergeResponse response = _httpTransport.doPostJSON(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.MERGE_IDENTITIES_PATH, mapParams, mapHeadersRequest,
+                identityMerge, IdentityMergeResponse.class, _mapper );
 
         return response;
     }

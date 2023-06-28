@@ -37,6 +37,8 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
@@ -149,4 +151,11 @@ public interface IIdentityTransportProvider
      */
     IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException;
 
+    /**
+     * Merge two identities.
+     * @param identityMerge the request containing the master cuid, the secondary cuid, and a list of attribute to be taken from the secondary identity and put on the master identity.
+     * @param strClientCode the client code
+     * @return IdentityMergeResponse
+     */
+    IdentityMergeResponse mergeIdentities(IdentityMergeRequest identityMerge, String strClientCode) throws IdentityStoreException;
 }
