@@ -67,7 +67,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     public ServiceContractTransportRest( final IHttpTransportProvider httpTransport )
     {
         super( httpTransport );
-        
+
         _strIdentityStoreEndPoint = httpTransport.getApiEndPointUrl( );
     }
 
@@ -206,7 +206,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
 
         return response;
     }
-    
+
     /**
      * check whether the parameters related to the identity are valid or not
      *

@@ -34,10 +34,12 @@
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
@@ -45,6 +47,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvid
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
+import io.jsonwebtoken.lang.Collections;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -60,25 +63,24 @@ import java.util.Map;
  */
 public class IdentityTransportRest extends AbstractTransportRest implements IIdentityTransportProvider
 {
-	
 
-	/** logger */
+    /** logger */
     private static Logger _logger = Logger.getLogger( IdentityTransportRest.class );
 
     /** URL for identityStore REST service */
     private String _strIdentityStoreEndPoint;
-    
-	/**
-	 * contructor
-	 * 
-	 * @param transportProvider
-	 */
-    protected IdentityTransportRest(IHttpTransportProvider transportProvider) 
+
+    /**
+     * contructor
+     * 
+     * @param transportProvider
+     */
+    protected IdentityTransportRest( IHttpTransportProvider transportProvider )
     {
-		super(transportProvider);
-		
-		_strIdentityStoreEndPoint = transportProvider.getApiEndPointUrl( );
-	}
+        super( transportProvider );
+
+        _strIdentityStoreEndPoint = transportProvider.getApiEndPointUrl( );
+    }
 
     /**
      * {@inheritDoc}
@@ -159,9 +161,10 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
      * {@inheritDoc}
      */
     @Override
-    public IdentityChangeResponse deleteIdentity( String strIdConnection, String strClientCode, IdentityChangeRequest identityChange  ) throws IdentityStoreException
+    public IdentityChangeResponse deleteIdentity( String strIdConnection, String strClientCode, IdentityChangeRequest identityChange )
+            throws IdentityStoreException
     {
-    	_logger.debug( "Delete identity" );
+        _logger.debug( "Delete identity" );
         checkAuthor( identityChange );
         checkClientCode( strClientCode );
 
@@ -243,6 +246,29 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IdentityMergeResponse mergeIdentities( final IdentityMergeRequest identityMerge, final String strClientCode ) throws IdentityStoreException
+    {
+
+        this.checkMergeRequest( identityMerge );
+        _logger.debug( "merge identities [master cuid= " + identityMerge.getPrimaryCuid( ) + "][secondary cuid = " + identityMerge.getSecondaryCuid( ) + "]" );
+        this.checkClientCode( strClientCode );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+
+        final Map<String, String> mapParams = new HashMap<>( );
+
+        final IdentityMergeResponse response = _httpTransport.doPostJSON(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.MERGE_IDENTITIES_PATH, mapParams, mapHeadersRequest,
+                identityMerge, IdentityMergeResponse.class, _mapper );
+
+        return response;
+    }
+
+    /**
      * check whether the parameters related to the identity are valid or not
      *
      * @param strCustomerId
@@ -273,7 +299,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
             throw new IdentityStoreException( "Client code is mandatory." );
         }
     }
-    
+
     /**
      * check whether the parameters related to the identity update are valid or not
      *
@@ -311,10 +337,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
             throw new IdentityStoreException( "Provided Identity Change request is null or empty" );
         }
 
-        if ( identityChange.getOrigin( ) == null )
-        {
-            throw new IdentityStoreException( "Provided Author is null" );
-        }
+        this.checkAuthor( identityChange );
 
         if ( identityChange.getIdentity( ).getAttributes( ).stream( ).anyMatch( a -> !a.isCertified( ) ) )
         {
@@ -345,21 +368,35 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
      */
     public void checkMergeRequest( IdentityMergeRequest identityMergeRequest ) throws IdentityStoreException
     {
-        if ( identityMergeRequest == null || identityMergeRequest.getIdentities( ) == null
-                || StringUtils.isEmpty( identityMergeRequest.getIdentities( ).getPrimaryCuid( ) )
-                || StringUtils.isEmpty( identityMergeRequest.getIdentities( ).getSecondaryCuid( ) ) )
+        this.checkAuthor( identityMergeRequest );
+        if ( identityMergeRequest == null )
         {
-            throw new IdentityStoreException( "Provided Identity Merge request is null or empty" );
+            throw new IdentityStoreException( "Provided Identity Merge request is null" );
+        }
+
+        if ( identityMergeRequest.getPrimaryCuid( ) == null )
+        {
+            throw new IdentityStoreException( "An Identity merge request must provide the CUID of the primary Identity" );
+        }
+
+        if ( identityMergeRequest.getSecondaryCuid( ) == null )
+        {
+            throw new IdentityStoreException( "An Identity merge request must provide the CUID of the secondary Identity" );
+        }
+
+        if ( identityMergeRequest.getIdentity( ) != null && Collections.isEmpty( identityMergeRequest.getIdentity( ).getAttributes( ) ) )
+        {
+            throw new IdentityStoreException( "An Identity merge request that provides an Identity must provide at least one Attribute" );
         }
     }
-    
+
     /**
      * check whether the parameters related to the identity are valid or not
      *
      * @param identityChange
      * @throws AppException
      */
-    public void checkAuthor( IdentityChangeRequest identityChange ) throws IdentityStoreException
+    public void checkAuthor( ChangeRequest identityChange ) throws IdentityStoreException
     {
         if ( identityChange.getOrigin( ) == null )
         {

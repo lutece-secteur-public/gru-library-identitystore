@@ -82,7 +82,7 @@ public class ReferentialService
      * 
      * @return the list of process
      */
-    public ProcessusSearchResponse getProcessList(  ) throws IdentityStoreException
+    public ProcessusSearchResponse getProcessList( ) throws IdentityStoreException
     {
         return this._transportProvider.getProcessList( );
     }
@@ -92,10 +92,9 @@ public class ReferentialService
      * 
      * @return list of levels
      */
-    public LevelSearchResponse getLevelList(  ) throws IdentityStoreException
+    public LevelSearchResponse getLevelList( ) throws IdentityStoreException
     {
-        return this._transportProvider.getLevelList(  );
+        return this._transportProvider.getLevelList( );
     }
 
-   
 }

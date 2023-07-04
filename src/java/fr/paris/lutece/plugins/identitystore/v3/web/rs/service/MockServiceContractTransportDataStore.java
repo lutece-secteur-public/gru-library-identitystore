@@ -47,8 +47,7 @@ import org.apache.log4j.Logger;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
-public class MockServiceContractTransportDataStore  implements IServiceContractTransportProvider
+public class MockServiceContractTransportDataStore implements IServiceContractTransportProvider
 {
 
     /** logger */
@@ -71,7 +70,7 @@ public class MockServiceContractTransportDataStore  implements IServiceContractT
      */
     public MockServiceContractTransportDataStore( )
     {
-    	_logger.info( "MockServiceContractTransportDataStore is used" );
+        _logger.info( "MockServiceContractTransportDataStore is used" );
     }
 
     /**
@@ -82,7 +81,7 @@ public class MockServiceContractTransportDataStore  implements IServiceContractT
      */
     public MockServiceContractTransportDataStore( final IHttpTransportProvider httpTransport )
     {
-    	_logger.info( "MockServiceContractTransportDataStore is used" );
+        _logger.info( "MockServiceContractTransportDataStore is used" );
     }
 
     /**
@@ -107,9 +106,7 @@ public class MockServiceContractTransportDataStore  implements IServiceContractT
         return getMockServiceContractListFromDatastore( strClientCode );
     }
 
-
-
-	/**
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -139,7 +136,7 @@ public class MockServiceContractTransportDataStore  implements IServiceContractT
             throws IdentityStoreException
     {
         _logger.debug( "[MOCK] Create new service contract of " + strClientCode );
-        
+
         return null;
     }
 
@@ -151,7 +148,7 @@ public class MockServiceContractTransportDataStore  implements IServiceContractT
             final String strCLientCode ) throws IdentityStoreException
     {
         _logger.debug( "[MOCK] Update service contract [id=" + nServiceContractId + "] of " + strCLientCode );
-        
+
         return null;
     }
 
@@ -163,19 +160,20 @@ public class MockServiceContractTransportDataStore  implements IServiceContractT
             throws IdentityStoreException
     {
         _logger.debug( "[MOCK] Close service contract [id=" + nServiceContractId + "] of " + strCLientCode );
-        
+
         return null;
     }
-    
+
     /**
      * get list of service contract from datastore
      * 
      * @param strClientCode
      * @return the response
      */
-    private ServiceContractSearchResponse getMockServiceContractFromDatastore(String strClientCode) {
-        
-    	String strDsData = DatastoreService.getDataValue( KEY_DATASTORE_MOCK_SERVICE_CONTRACT_PREFIX + strClientCode, "{}" );
+    private ServiceContractSearchResponse getMockServiceContractFromDatastore( String strClientCode )
+    {
+
+        String strDsData = DatastoreService.getDataValue( KEY_DATASTORE_MOCK_SERVICE_CONTRACT_PREFIX + strClientCode, "{}" );
 
         try
         {
@@ -187,17 +185,18 @@ public class MockServiceContractTransportDataStore  implements IServiceContractT
 
             return null;
         }
-	}
-    
+    }
+
     /**
      * get service contract from datastore
      * 
      * @param strClientCode
      * @return the response
      */
-    private ServiceContractsSearchResponse getMockServiceContractListFromDatastore(String strClientCode) {
-        
-    	String strDsData = DatastoreService.getDataValue( KEY_DATASTORE_MOCK_SERVICE_CONTRACT_PREFIX + strClientCode + ".list", "{}" );
+    private ServiceContractsSearchResponse getMockServiceContractListFromDatastore( String strClientCode )
+    {
+
+        String strDsData = DatastoreService.getDataValue( KEY_DATASTORE_MOCK_SERVICE_CONTRACT_PREFIX + strClientCode + ".list", "{}" );
 
         try
         {
@@ -209,6 +208,6 @@ public class MockServiceContractTransportDataStore  implements IServiceContractT
 
             return null;
         }
-	}
-    
+    }
+
 }

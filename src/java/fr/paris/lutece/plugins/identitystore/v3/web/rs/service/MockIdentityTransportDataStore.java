@@ -38,6 +38,8 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContr
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeStatus;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
@@ -71,9 +73,10 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
         _mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
         // _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
     }
+
     public MockIdentityTransportDataStore( )
     {
-        
+
         _logger.error( "MockIdentityTransportDatastore is used" );
     }
 
@@ -117,9 +120,15 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
     @Override
     public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportDataStore.createIdentity not managed " );
+        _logger.debug( "MockIdentityTransportDataStore.importIdentity not managed " );
 
         return getMockIdentityChangeFromDatastore( identityChange.getIdentity( ).getConnectionId( ) );
+    }
+
+    @Override
+    public IdentityMergeResponse mergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException
+    {
+        return null;
     }
 
     /**
@@ -181,16 +190,17 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
         }
     }
 
-	@Override
-	public IdentitySearchResponse searchIdentities(IdentitySearchRequest identitySearchRequest, String strClientCode)
-			throws IdentityStoreException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public IdentitySearchResponse searchIdentities( IdentitySearchRequest identitySearchRequest, String strClientCode ) throws IdentityStoreException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public ServiceContractSearchResponse getServiceContract(String strClientCode) throws IdentityStoreException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public ServiceContractSearchResponse getServiceContract( String strClientCode ) throws IdentityStoreException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

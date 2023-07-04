@@ -59,7 +59,7 @@ public abstract class AbstractTransportRest
         _mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
         // _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
     }
-    
+
     /**
      * Constructor
      * 

@@ -70,37 +70,37 @@ public class ReferentialTransportRest extends AbstractTransportRest implements I
     public ReferentialTransportRest( final IHttpTransportProvider httpTransport )
     {
         super( httpTransport );
-        
+
         _strIdentityStoreEndPoint = httpTransport.getApiEndPointUrl( );
     }
 
-	@Override
-	public ProcessusSearchResponse getProcessList() throws IdentityStoreException {
-		_logger.debug( "Get process list");
+    @Override
+    public ProcessusSearchResponse getProcessList( ) throws IdentityStoreException
+    {
+        _logger.debug( "Get process list" );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         final Map<String, String> mapParams = new HashMap<>( );
 
         final ProcessusSearchResponse response = _httpTransport.doGet(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.REFERENTIAL_PATH + Constants.REFERENTIAL_PROCESSUS_PATH, 
-                mapParams, mapHeadersRequest,
-                ProcessusSearchResponse.class, _mapper );
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.REFERENTIAL_PATH + Constants.REFERENTIAL_PROCESSUS_PATH, mapParams,
+                mapHeadersRequest, ProcessusSearchResponse.class, _mapper );
 
         return response;
-	}
+    }
 
-	@Override
-	public LevelSearchResponse getLevelList() throws IdentityStoreException {
-		_logger.debug( "Get level list");
+    @Override
+    public LevelSearchResponse getLevelList( ) throws IdentityStoreException
+    {
+        _logger.debug( "Get level list" );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         final Map<String, String> mapParams = new HashMap<>( );
 
         final LevelSearchResponse response = _httpTransport.doGet(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.REFERENTIAL_PATH + Constants.REFERENTIAL_LEVEL_PATH, 
-                mapParams, mapHeadersRequest,
-                LevelSearchResponse.class, _mapper );
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.REFERENTIAL_PATH + Constants.REFERENTIAL_LEVEL_PATH, mapParams,
+                mapHeadersRequest, LevelSearchResponse.class, _mapper );
 
         return response;
-	}
+    }
 }

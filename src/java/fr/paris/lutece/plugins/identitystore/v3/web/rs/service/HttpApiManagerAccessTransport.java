@@ -48,7 +48,7 @@ import java.util.Map;
 /**
  * IdentityRestClientService
  */
-public final class HttpApiManagerAccessTransport extends HttpAccessTransport 
+public final class HttpApiManagerAccessTransport extends HttpAccessTransport
 {
     /** The Constant PARAMS_ACCES_TOKEN. */
     private static final String PARAMS_ACCES_TOKEN = "access_token";
@@ -113,14 +113,15 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
 
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
         String strOutput = StringUtils.EMPTY;
-        
-        try {
-        	strOutput = this._httpClient.doPost( _strAccessManagerEndPointUrl, mapParams, null, null, mapHeadersRequest, mapHeadersResponse );
-        } 
-	    catch( Exception e )
-	    {
-	        handleException( e );
-	    }
+
+        try
+        {
+            strOutput = this._httpClient.doPost( _strAccessManagerEndPointUrl, mapParams, null, null, mapHeadersRequest, mapHeadersResponse );
+        }
+        catch( Exception e )
+        {
+            handleException( e );
+        }
 
         JsonNode strResponseApiManagerJsonObject = null;
 

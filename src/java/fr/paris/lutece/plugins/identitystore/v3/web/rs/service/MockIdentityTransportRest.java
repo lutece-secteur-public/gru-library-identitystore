@@ -33,12 +33,16 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.Identity;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeStatus;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
@@ -48,15 +52,13 @@ import fr.paris.lutece.portal.service.util.AppException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
- * WARNING this is a mock transport for LuteceTestCase purpose
+ * WARNING this is mock transport for LuteceTestCase purpose
  */
 public class MockIdentityTransportRest implements IIdentityTransportProvider
 {
@@ -74,7 +76,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
         // _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
     }
-    
+
     public MockIdentityTransportRest( )
     {
         _logger.info( "MockIdentityTransportRest is used" );
@@ -104,7 +106,14 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     {
         _logger.debug( "MockIdentityTransportRest.updateIdentity not managed return existing identity if possible" );
 
-        return new IdentityChangeResponse( );
+        IdentityChangeResponse response = new IdentityChangeResponse( );
+        response.setStatus( IdentityChangeStatus.UPDATE_SUCCESS );
+        response.setMessage( "OK" );
+        response.setCustomerId( customerId );
+        response.setConnectionId( identityChange.getIdentity( ) != null ? identityChange.getIdentity( ).getCustomerId( ) : null );
+        response.setLastUpdateDate( new Timestamp( new Date( ).getTime( ) ) );
+
+        return response;
     }
 
     /**
@@ -113,6 +122,8 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     @Override
     public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws AppException
     {
+        _logger.debug( "MockIdentityTransportRest.createIdentity always return ok" );
+
         Identity identity = identityChange.getIdentity( );
 
         if ( StringUtils.isEmpty( identity.getConnectionId( ) ) )
@@ -125,12 +136,21 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         }
         _listIdentities.add( identity );
 
-        return createIdentity( identityChange, strClientCode );
+        IdentityChangeResponse response = new IdentityChangeResponse( );
+        response.setStatus( IdentityChangeStatus.CREATE_SUCCESS );
+        response.setMessage( "OK" );
+        response.setCustomerId( identity.getCustomerId( ) );
+        response.setConnectionId( identity.getConnectionId( ) );
+        response.setCreationDate( new Timestamp( new Date( ).getTime( ) ) );
+
+        return response;
     }
 
     @Override
     public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
     {
+        _logger.debug( "MockIdentityTransportRest.importIdentity always return ok" );
+
         Identity identity = identityChange.getIdentity( );
 
         if ( StringUtils.isEmpty( identity.getConnectionId( ) ) )
@@ -143,7 +163,26 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         }
         _listIdentities.add( identity );
 
-        return importIdentity( identityChange, strClientCode );
+        IdentityChangeResponse response = new IdentityChangeResponse( );
+        response.setStatus( IdentityChangeStatus.CREATE_SUCCESS );
+        response.setMessage( "OK" );
+        response.setCustomerId( identity.getCustomerId( ) );
+        response.setConnectionId( identity.getConnectionId( ) );
+        response.setCreationDate( new Timestamp( new Date( ).getTime( ) ) );
+
+        return response;
+    }
+
+    @Override
+    public IdentityMergeResponse mergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException
+    {
+        _logger.debug( "MockIdentityTransportRest.mergeIdentities always return ok" );
+
+        IdentityMergeResponse response = new IdentityMergeResponse( );
+        response.setStatus( IdentityMergeStatus.SUCCESS );
+        response.setMessage( "OK" );
+
+        return response;
     }
 
     /**
@@ -161,16 +200,17 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         return response;
     }
 
-	@Override
-	public IdentitySearchResponse searchIdentities(IdentitySearchRequest identitySearchRequest, String strClientCode)
-			throws IdentityStoreException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public IdentitySearchResponse searchIdentities( IdentitySearchRequest identitySearchRequest, String strClientCode ) throws IdentityStoreException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public ServiceContractSearchResponse getServiceContract(String strClientCode) throws IdentityStoreException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public ServiceContractSearchResponse getServiceContract( String strClientCode ) throws IdentityStoreException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

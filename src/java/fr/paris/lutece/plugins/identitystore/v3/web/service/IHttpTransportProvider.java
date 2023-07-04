@@ -165,7 +165,7 @@ public interface IHttpTransportProvider
      */
     <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
             ObjectMapper mapper ) throws IdentityStoreException;
-    
+
     /**
      * make a Delete request on given url with parameters and json in body
      * 
@@ -184,21 +184,20 @@ public interface IHttpTransportProvider
      * @return response list
      * @throws IdentityStoreException
      */
-    <T> T doDeleteJSON( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, 
-    		Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
-    
-    
-	/**
-	 * set end point
-	 * 
-	 * @param strEndPointUrl
-	 */
-	public void setApiEndPointUrl(String strApiEndPointUrl) ;
-	
-	/**
-	 * get end point
-	 * 
-	 * @return strEndPointUrl
-	 */
-	public String getApiEndPointUrl( );
+    <T> T doDeleteJSON( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass,
+            ObjectMapper mapper ) throws IdentityStoreException;
+
+    /**
+     * set end point
+     * 
+     * @param strEndPointUrl
+     */
+    public void setApiEndPointUrl( String strApiEndPointUrl );
+
+    /**
+     * get end point
+     * 
+     * @return strEndPointUrl
+     */
+    public String getApiEndPointUrl( );
 }

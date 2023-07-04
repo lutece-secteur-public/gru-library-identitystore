@@ -85,8 +85,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
         try
         {
-        	addAuthentication( mapHeadersRequest );
-        	
+            addAuthentication( mapHeadersRequest );
+
             strOutput = this._httpClient.doPost( strUrl, mapParams, null, null, mapHeadersRequest, mapHeadersResponse );
         }
         catch( Exception e )
@@ -114,8 +114,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
         try
         {
-        	addAuthentication( mapHeadersRequest );
-        	
+            addAuthentication( mapHeadersRequest );
+
             String strJSON = mapper.writeValueAsString( json );
             String strResponseJSON = this._httpClient.doPostJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
@@ -145,8 +145,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
         try
         {
-        	addAuthentication( mapHeadersRequest );
-        	
+            addAuthentication( mapHeadersRequest );
+
             String strJSON = mapper.writeValueAsString( json );
             String strResponseJSON = this._httpClient.doPutJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
@@ -177,8 +177,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
         try
         {
-        	addAuthentication( mapHeadersRequest );
-        	
+            addAuthentication( mapHeadersRequest );
+
             String strJSON = mapper.writeValueAsString( json );
             String strResponseJSON = this._httpClient.doPostJSON( strUrl, strJSON, mapHeadersRequest, mapHeadersResponse );
             oResponse = mapper.readValue( strResponseJSON, responseJsonClassType );
@@ -195,7 +195,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
     public <T> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
             ObjectMapper mapper ) throws IdentityStoreException
     {
-    	T oResponse = null;
+        T oResponse = null;
 
         try
         {
@@ -210,7 +210,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
             }
 
             addAuthentication( mapHeadersRequest );
-            
+
             String strResponseJSON = this._httpClient.doGet( uriBuilder.toString( ), null, null, mapHeadersRequest );
 
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
@@ -227,7 +227,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
     public <T> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
             ObjectMapper mapper ) throws IdentityStoreException
     {
-    	T oResponse = null;
+        T oResponse = null;
 
         try
         {
@@ -240,9 +240,9 @@ public class HttpAccessTransport implements IHttpTransportProvider
                     uriBuilder.addParameter( strParamKey, mapParams.get( strParamKey ) );
                 }
             }
-            
+
             addAuthentication( mapHeadersRequest );
-        	            
+
             String strResponseJSON = this._httpClient.doDelete( uriBuilder.toString( ), null, null, mapHeadersRequest, null );
 
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
@@ -256,14 +256,14 @@ public class HttpAccessTransport implements IHttpTransportProvider
     }
 
     @Override
-    public <T> T doDeleteJSON( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, 
-    		Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    public <T> T doDeleteJSON( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
         mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
-        
-    	T oResponse = null;
+
+        T oResponse = null;
 
         try
         {
@@ -276,10 +276,10 @@ public class HttpAccessTransport implements IHttpTransportProvider
                     uriBuilder.addParameter( strParamKey, mapParams.get( strParamKey ) );
                 }
             }
-            
+
             addAuthentication( mapHeadersRequest );
             String strJSON = mapper.writeValueAsString( json );
-            
+
             String strResponseJSON = this._httpClient.doDeleteJSON( uriBuilder.toString( ), strJSON, null, null, mapHeadersRequest, null );
 
             oResponse = mapper.readValue( strResponseJSON, responseJsonClass );
@@ -291,7 +291,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
 
         return oResponse;
     }
-    
+
     /**
      * add error log and throw correct Exception depending on the specified Exception
      * 
@@ -318,7 +318,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
             throw new IdentityStoreException( strError, e );
         }
     }
-    
+
     /**
      * add specific authentication to request
      * 
@@ -326,28 +326,30 @@ public class HttpAccessTransport implements IHttpTransportProvider
      *            map of headers to add
      * @throws IdentityStoreException
      */
-    protected void addAuthentication( Map<String, String> mapHeadersRequest ) throws IdentityStoreException 
+    protected void addAuthentication( Map<String, String> mapHeadersRequest ) throws IdentityStoreException
     {
-    	// default : no authentication
+        // default : no authentication
     }
-    
-	/**
-	 * set end point
-	 * 
-	 * @param strEndPointUrl
-	 */
-	public void setApiEndPointUrl(String strApiEndPointUrl) {
-		
-		_strEndPoint = strApiEndPointUrl;
-	}
-	
-	/**
-	 * get end point
-	 * 
-	 * @return strEndPointUrl
-	 */
-	public String getApiEndPointUrl( ) {
-		
-		return _strEndPoint ;
-	}
+
+    /**
+     * set end point
+     * 
+     * @param strEndPointUrl
+     */
+    public void setApiEndPointUrl( String strApiEndPointUrl )
+    {
+
+        _strEndPoint = strApiEndPointUrl;
+    }
+
+    /**
+     * get end point
+     * 
+     * @return strEndPointUrl
+     */
+    public String getApiEndPointUrl( )
+    {
+
+        return _strEndPoint;
+    }
 }
