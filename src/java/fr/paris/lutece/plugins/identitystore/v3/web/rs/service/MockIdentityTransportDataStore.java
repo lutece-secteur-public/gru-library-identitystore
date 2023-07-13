@@ -133,6 +133,12 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
     }
 
     @Override
+    public IdentityMergeResponse unMergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException
+    {
+        return null;
+    }
+
+    @Override
     public IdentityHistory getIdentityHistory( final String strCustomerId, final String strClientCode ) throws IdentityStoreException
     {
         return null;

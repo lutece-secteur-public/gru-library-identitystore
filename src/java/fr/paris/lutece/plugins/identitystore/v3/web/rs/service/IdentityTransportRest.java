@@ -34,8 +34,6 @@
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
@@ -49,13 +47,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvid
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
-import io.jsonwebtoken.lang.Collections;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -266,6 +258,30 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         final IdentityMergeResponse response = _httpTransport.doPostJSON(
                 _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.MERGE_IDENTITIES_PATH, mapParams, mapHeadersRequest,
                 identityMerge, IdentityMergeResponse.class, _mapper );
+
+        return response;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IdentityMergeResponse unMergeIdentities( final IdentityMergeRequest identityMerge, final String strClientCode ) throws IdentityStoreException
+    {
+
+        IdentityRequestValidator.instance( ).checkCancelMergeRequest( identityMerge );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
+        _logger.debug(
+                "unmerge identities [master cuid= " + identityMerge.getPrimaryCuid( ) + "][secondary cuid = " + identityMerge.getSecondaryCuid( ) + "]" );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+
+        final Map<String, String> mapParams = new HashMap<>( );
+
+        final IdentityMergeResponse response = _httpTransport.doPostJSON(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.CANCEL_MERGE_IDENTITIES_PATH, mapParams,
+                mapHeadersRequest, identityMerge, IdentityMergeResponse.class, _mapper );
 
         return response;
     }

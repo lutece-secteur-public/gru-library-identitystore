@@ -187,6 +187,18 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     }
 
     @Override
+    public IdentityMergeResponse unMergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException
+    {
+        _logger.debug( "MockIdentityTransportRest.unMergeIdentities always return ok" );
+
+        IdentityMergeResponse response = new IdentityMergeResponse( );
+        response.setStatus( IdentityMergeStatus.SUCCESS );
+        response.setMessage( "OK" );
+
+        return response;
+    }
+
+    @Override
     public IdentityHistory getIdentityHistory( final String strCustomerId, final String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "MockIdentityTransportRest.getIdentityHistory always return empty history" );

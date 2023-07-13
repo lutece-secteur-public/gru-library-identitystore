@@ -249,6 +249,20 @@ public class IdentityService
     }
 
     /**
+     * Unmerge two identities.
+     *
+     * @param identityMerge
+     *            the request containing the master cuid, the secondary cuid
+     * @param strClientCode
+     *            the client code
+     * @return IdentityMergeResponse
+     */
+    public IdentityMergeResponse unMergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException
+    {
+        return _transportProvider.unMergeIdentities( identityMerge, strClientCode );
+    }
+
+    /**
      * Gives the identity history (identity+attributes) from a customerID
      *
      * @param strCustomerId

@@ -166,6 +166,17 @@ public interface IIdentityTransportProvider
     IdentityMergeResponse mergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException;
 
     /**
+     * Unmerge two identities.
+     *
+     * @param identityMerge
+     *            the request containing the master cuid, the secondary cuid
+     * @param strClientCode
+     *            the client code
+     * @return IdentityMergeResponse
+     */
+    IdentityMergeResponse unMergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException;
+
+    /**
      * Gives the identity history (identity+attributes) from a customerID
      *
      * @param strCustomerId
