@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
@@ -93,8 +94,8 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     {
         _logger.debug( "Get identity attributes of " + strCustomerId );
 
-        this.checkCustomerId( strCustomerId );
-        this.checkClientCode( strClientCode );
+        IdentityRequestValidator.instance( ).checkCustomerId( strCustomerId );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
 
@@ -119,9 +120,9 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
             throws IdentityStoreException
     {
         _logger.debug( "Update identity attributes" );
-        checkIdentityChange( identityChange );
-        checkIdentityForUpdate( identityChange.getIdentity( ).getConnectionId( ), strCustomerId );
-        checkClientCode( strClientCode );
+        IdentityRequestValidator.instance( ).checkIdentityChange( identityChange );
+        IdentityRequestValidator.instance( ).checkIdentityForUpdate( identityChange.getIdentity( ).getConnectionId( ), strCustomerId );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -144,8 +145,8 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Create identity" );
-        checkIdentityChange( identityChange );
-        checkClientCode( strClientCode );
+        IdentityRequestValidator.instance( ).checkIdentityChange( identityChange );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -166,8 +167,8 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
             throws IdentityStoreException
     {
         _logger.debug( "Delete identity" );
-        checkAuthor( identityChange );
-        checkClientCode( strClientCode );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
+        IdentityRequestValidator.instance( ).checkOrigin( identityChange );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -190,8 +191,8 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     {
         _logger.debug( "Search identities" );
 
-        checkIdentitySearch( identitySearchRequest );
-        checkClientCode( strClientCode );
+        IdentityRequestValidator.instance( ).checkIdentitySearch( identitySearchRequest );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -215,7 +216,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     {
         _logger.debug( "Get active service contract" );
 
-        checkClientCode( strClientCode );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -231,8 +232,8 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Import identity" );
-        checkIdentityChange( identityChange );
-        checkClientCode( strClientCode );
+        IdentityRequestValidator.instance( ).checkIdentityChange( identityChange );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -253,9 +254,9 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityMergeResponse mergeIdentities( final IdentityMergeRequest identityMerge, final String strClientCode ) throws IdentityStoreException
     {
 
-        this.checkMergeRequest( identityMerge );
+        IdentityRequestValidator.instance( ).checkMergeRequest( identityMerge );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
         _logger.debug( "merge identities [master cuid= " + identityMerge.getPrimaryCuid( ) + "][secondary cuid = " + identityMerge.getSecondaryCuid( ) + "]" );
-        this.checkClientCode( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -273,8 +274,8 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityHistory getIdentityHistory( final String strCustomerId, final String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Get identity history [cuid=" + strCustomerId + "]" );
-        checkClientCode( strClientCode );
-        checkCustomerId( strCustomerId );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
+        IdentityRequestValidator.instance( ).checkCustomerId( strCustomerId );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
@@ -284,147 +285,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
                 IdentityHistory.class, _mapper );
 
         return response;
-    }
-
-    /**
-     * check whether the parameters related to the identity are valid or not
-     *
-     * @param strCustomerId
-     *            the customer id
-     * @throws AppException
-     *             if the parameters are not valid
-     */
-    public void checkCustomerId( String strCustomerId ) throws IdentityStoreException
-    {
-        if ( StringUtils.isBlank( strCustomerId ) )
-        {
-            throw new IdentityStoreException( fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants.PARAM_ID_CONNECTION + "is missing." );
-        }
-    }
-
-    /**
-     * check whether the parameters related to the identity are valid or not
-     *
-     * @param strClientCode
-     *            the strClientCode
-     * @throws AppException
-     *             if the parameters are not valid
-     */
-    public void checkClientCode( String strClientCode ) throws IdentityStoreException
-    {
-        if ( StringUtils.isBlank( strClientCode ) )
-        {
-            throw new IdentityStoreException( "Client code is mandatory." );
-        }
-    }
-
-    /**
-     * check whether the parameters related to the identity update are valid or not
-     *
-     * @param strConnectionId
-     *            the connection id
-     * @param strCustomerId
-     *            the customer id
-     * @throws AppException
-     *             if the parameters are not valid
-     */
-    public void checkIdentityForUpdate( String strConnectionId, String strCustomerId ) throws IdentityStoreException
-    {
-        if ( StringUtils.isNotEmpty( strConnectionId ) && StringUtils.isBlank( strCustomerId ) )
-        {
-            throw new IdentityStoreException( "You cannot update an identity providing its connection_id. You must specify "
-                    + fr.paris.lutece.plugins.identitystore.v2.web.rs.util.Constants.PARAM_ID_CUSTOMER );
-        }
-
-        if ( StringUtils.isBlank( strCustomerId ) )
-        {
-            throw new IdentityStoreException( fr.paris.lutece.plugins.identitystore.v2.web.rs.util.Constants.PARAM_ID_CUSTOMER + " is missing" );
-        }
-    }
-
-    /**
-     * check whether the parameters related to the identity are valid or not
-     *
-     * @param identityChange
-     * @throws AppException
-     */
-    public void checkIdentityChange( IdentityChangeRequest identityChange ) throws IdentityStoreException
-    {
-        if ( identityChange == null || identityChange.getIdentity( ) == null || CollectionUtils.isEmpty( identityChange.getIdentity( ).getAttributes( ) ) )
-        {
-            throw new IdentityStoreException( "Provided Identity Change request is null or empty" );
-        }
-
-        this.checkAuthor( identityChange );
-
-        if ( identityChange.getIdentity( ).getAttributes( ).stream( ).anyMatch( a -> !a.isCertified( ) ) )
-        {
-            throw new IdentityStoreException( "Provided attributes shall be certified" );
-        }
-    }
-
-    public void checkIdentitySearch( IdentitySearchRequest identitySearch ) throws IdentityStoreException
-    {
-        if ( StringUtils.isNotEmpty( identitySearch.getConnectionId( ) ) && identitySearch.getSearch( ) != null )
-        {
-            throw new IdentityStoreException( "You cannot provide a connection_id and a Search at the same time." );
-        }
-        if ( StringUtils.isEmpty( identitySearch.getConnectionId( ) ) && ( identitySearch.getSearch( ) == null
-                || identitySearch.getSearch( ).getAttributes( ) == null || identitySearch.getSearch( ).getAttributes( ).isEmpty( ) ) )
-        {
-            throw new IdentityStoreException( "Provided Identity Search request is null or empty" );
-        }
-    }
-
-    /**
-     * Check whether the parameters related to the identity merge request are valid or not
-     *
-     * @param identityMergeRequest
-     *            the identity merge request
-     * @throws AppException
-     *             if the parameters are not valid
-     */
-    public void checkMergeRequest( IdentityMergeRequest identityMergeRequest ) throws IdentityStoreException
-    {
-        this.checkAuthor( identityMergeRequest );
-        if ( identityMergeRequest == null )
-        {
-            throw new IdentityStoreException( "Provided Identity Merge request is null" );
-        }
-
-        if ( identityMergeRequest.getPrimaryCuid( ) == null )
-        {
-            throw new IdentityStoreException( "An Identity merge request must provide the CUID of the primary Identity" );
-        }
-
-        if ( identityMergeRequest.getSecondaryCuid( ) == null )
-        {
-            throw new IdentityStoreException( "An Identity merge request must provide the CUID of the secondary Identity" );
-        }
-
-        if ( identityMergeRequest.getIdentity( ) != null && Collections.isEmpty( identityMergeRequest.getIdentity( ).getAttributes( ) ) )
-        {
-            throw new IdentityStoreException( "An Identity merge request that provides an Identity must provide at least one Attribute" );
-        }
-    }
-
-    /**
-     * check whether the parameters related to the identity are valid or not
-     *
-     * @param identityChange
-     * @throws AppException
-     */
-    public void checkAuthor( ChangeRequest identityChange ) throws IdentityStoreException
-    {
-        if ( identityChange.getOrigin( ) == null )
-        {
-            throw new IdentityStoreException( "Provided Author is null" );
-        }
-
-        if ( StringUtils.isEmpty( identityChange.getOrigin( ).getName( ) ) || identityChange.getOrigin( ).getType( ) == null )
-        {
-            throw new IdentityStoreException( "Author and author type fields shall be set" );
-        }
     }
 
 }
