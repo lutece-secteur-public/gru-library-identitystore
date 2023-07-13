@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistory;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
@@ -163,4 +164,16 @@ public interface IIdentityTransportProvider
      * @return IdentityMergeResponse
      */
     IdentityMergeResponse mergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException;
+
+    /**
+     * Gives the identity history (identity+attributes) from a customerID
+     *
+     * @param strCustomerId
+     *            customerID
+     * @param strClientCode
+     *            client code
+     * @return the history
+     */
+    IdentityHistory getIdentityHistory( String strCustomerId, String strClientCode ) throws IdentityStoreException;
+
 }
