@@ -46,6 +46,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRe
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
@@ -237,4 +238,12 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public UpdatedIdentitySearchResponse getUpdatedIdentities( final String strDays, final String strClientCode ) throws IdentityStoreException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

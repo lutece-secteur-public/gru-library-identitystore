@@ -42,6 +42,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRe
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
@@ -303,4 +304,19 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         return response;
     }
 
+    @Override
+    public UpdatedIdentitySearchResponse getUpdatedIdentities( String strDays, String strClientCode ) throws IdentityStoreException
+    {
+        _logger.debug( "Get updated identities since " + strDays + " days ago" );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+
+        final UpdatedIdentitySearchResponse response = _httpTransport.doGet(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.UPDATED_IDENTITIES_PATH + "?" + Constants.PARAM_DAYS + "=" + strDays, null,
+                mapHeadersRequest, UpdatedIdentitySearchResponse.class, _mapper );
+
+        return response;
+    }
 }
