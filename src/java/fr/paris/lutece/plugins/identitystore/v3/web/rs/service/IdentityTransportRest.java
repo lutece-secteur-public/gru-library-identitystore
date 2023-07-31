@@ -161,7 +161,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     {
         _logger.debug( "Delete identity" );
         IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
-        IdentityRequestValidator.instance( ).checkOrigin( identityChange.getOrigin() );
+        IdentityRequestValidator.instance( ).checkOrigin( identityChange.getOrigin( ) );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
