@@ -33,14 +33,19 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
+import java.util.List;
+
+import fr.paris.lutece.plugins.identitystore.v2.business.IExternalAttributeSource;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistory;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.CertifiedAttribute;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.QualifiedIdentity;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -52,6 +57,7 @@ public class IdentityService
 {
     /** transport provider */
     private IIdentityTransportProvider _transportProvider;
+    private List<IExternalAttributeSource> _listExternalAttributesSource;
 
     /**
      * Simple Constructor
@@ -84,6 +90,16 @@ public class IdentityService
         this._transportProvider = transportProvider;
     }
 
+    /** 
+     * setter of additional attribute source parameter
+     * 
+     * @param listExternalAttributesSource
+     */
+    public void setExternalAttributesSourceList (List<IExternalAttributeSource> listExternalAttributesSource)
+    {
+    	this._listExternalAttributesSource = listExternalAttributesSource;
+    }
+    
     /**
      * get identity matching connectionId for provided application code
      *
@@ -134,10 +150,12 @@ public class IdentityService
      */
     public IdentitySearchResponse getIdentity( String strCustomerId, String strApplicationCode ) throws AppException, IdentityStoreException
     {
-        return _transportProvider.getIdentity( strCustomerId, strApplicationCode );
+    	IdentitySearchResponse identitySearchResponse = _transportProvider.getIdentity( strCustomerId, strApplicationCode );
+    	
+    	return identitySearchResponseWithAdditionnalData( identitySearchResponse ); 
     }
 
-    /**
+	/**
      * apply changes to an identity
      *
      * @param identityChange
@@ -288,5 +306,40 @@ public class IdentityService
     {
         return _transportProvider.getUpdatedIdentities( strDays, strClientCode );
     }
+    
+    /**
+     * Complete attribute list with external sources
+     * 
+     * @param identitySearchResponse
+     * @return the IdentitySearchResponse
+     */
+    private IdentitySearchResponse identitySearchResponseWithAdditionnalData(IdentitySearchResponse identitySearchResponse) throws IdentityStoreException
+    {
+    	// none
+    	if ( _listExternalAttributesSource == null ) 
+    	{
+    		return identitySearchResponse;
+    	}
+    	
+    	try {
+    		// Check all external sources
+    		for ( IExternalAttributeSource source : _listExternalAttributesSource )
+    		{
+    			// fill each identity
+    			for ( QualifiedIdentity identity : identitySearchResponse.getIdentities( ) )
+    			{
+    				List<CertifiedAttribute> listAdditionnalAttributes = source.getAdditionnalAttributes( identity.getCustomerId( ) );
+
+    				identity.getAttributes( ).addAll( listAdditionnalAttributes ); 
+    			}
+    		}
+    	}
+    	catch (Exception e )
+    	{
+    		throw new IdentityStoreException( e.getMessage( ) );
+    	}
+
+    	return identitySearchResponse;
+	}
 
 }
