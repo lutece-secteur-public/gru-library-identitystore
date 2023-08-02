@@ -90,16 +90,16 @@ public class IdentityService
         this._transportProvider = transportProvider;
     }
 
-    /** 
+    /**
      * setter of additional attribute source parameter
      * 
      * @param listExternalAttributesSource
      */
-    public void setExternalAttributesSourceList (List<IExternalAttributeSource> listExternalAttributesSource)
+    public void setExternalAttributesSourceList( List<IExternalAttributeSource> listExternalAttributesSource )
     {
-    	this._listExternalAttributesSource = listExternalAttributesSource;
+        this._listExternalAttributesSource = listExternalAttributesSource;
     }
-    
+
     /**
      * get identity matching connectionId for provided application code
      *
@@ -150,12 +150,12 @@ public class IdentityService
      */
     public IdentitySearchResponse getIdentity( String strCustomerId, String strApplicationCode ) throws AppException, IdentityStoreException
     {
-    	IdentitySearchResponse identitySearchResponse = _transportProvider.getIdentity( strCustomerId, strApplicationCode );
-    	
-    	return identitySearchResponseWithAdditionnalData( identitySearchResponse ); 
+        IdentitySearchResponse identitySearchResponse = _transportProvider.getIdentity( strCustomerId, strApplicationCode );
+
+        return identitySearchResponseWithAdditionnalData( identitySearchResponse );
     }
 
-	/**
+    /**
      * apply changes to an identity
      *
      * @param identityChange
@@ -306,40 +306,41 @@ public class IdentityService
     {
         return _transportProvider.getUpdatedIdentities( strDays, strClientCode );
     }
-    
+
     /**
      * Complete attribute list with external sources
      * 
      * @param identitySearchResponse
      * @return the IdentitySearchResponse
      */
-    private IdentitySearchResponse identitySearchResponseWithAdditionnalData(IdentitySearchResponse identitySearchResponse) throws IdentityStoreException
+    private IdentitySearchResponse identitySearchResponseWithAdditionnalData( IdentitySearchResponse identitySearchResponse ) throws IdentityStoreException
     {
-    	// none
-    	if ( _listExternalAttributesSource == null ) 
-    	{
-    		return identitySearchResponse;
-    	}
-    	
-    	try {
-    		// Check all external sources
-    		for ( IExternalAttributeSource source : _listExternalAttributesSource )
-    		{
-    			// fill each identity
-    			for ( QualifiedIdentity identity : identitySearchResponse.getIdentities( ) )
-    			{
-    				List<CertifiedAttribute> listAdditionnalAttributes = source.getAdditionnalAttributes( identity.getCustomerId( ) );
+        // none
+        if ( _listExternalAttributesSource == null )
+        {
+            return identitySearchResponse;
+        }
 
-    				identity.getAttributes( ).addAll( listAdditionnalAttributes ); 
-    			}
-    		}
-    	}
-    	catch (Exception e )
-    	{
-    		throw new IdentityStoreException( e.getMessage( ) );
-    	}
+        try
+        {
+            // Check all external sources
+            for ( IExternalAttributeSource source : _listExternalAttributesSource )
+            {
+                // fill each identity
+                for ( QualifiedIdentity identity : identitySearchResponse.getIdentities( ) )
+                {
+                    List<CertifiedAttribute> listAdditionnalAttributes = source.getAdditionnalAttributes( identity.getCustomerId( ) );
 
-    	return identitySearchResponse;
-	}
+                    identity.getAttributes( ).addAll( listAdditionnalAttributes );
+                }
+            }
+        }
+        catch( Exception e )
+        {
+            throw new IdentityStoreException( e.getMessage( ) );
+        }
+
+        return identitySearchResponse;
+    }
 
 }
