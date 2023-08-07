@@ -178,7 +178,6 @@ public class IdentityServiceTest
             search.getAttributes( ).add( email );
             email.setKey( "login" );
             email.setValue( "toto@gmail.com" );
-            email.setStrict( true );
             identitySearchRequest.setSearch( search );
             IdentitySearchResponse searchResponse = identityService.searchIdentities( identitySearchRequest, author.getName( ) );
 
