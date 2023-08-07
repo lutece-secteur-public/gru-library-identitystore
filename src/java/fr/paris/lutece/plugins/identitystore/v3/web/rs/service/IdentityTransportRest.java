@@ -113,7 +113,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
             throws IdentityStoreException
     {
         _logger.debug( "Update identity attributes" );
-        IdentityRequestValidator.instance( ).checkIdentityChange( identityChange );
+        IdentityRequestValidator.instance( ).checkIdentityChange( identityChange, true );
         IdentityRequestValidator.instance( ).checkIdentityForUpdate( identityChange.getIdentity( ).getConnectionId( ), strCustomerId );
         IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
 
@@ -138,7 +138,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Create identity" );
-        IdentityRequestValidator.instance( ).checkIdentityChange( identityChange );
+        IdentityRequestValidator.instance( ).checkIdentityChange( identityChange, false );
         IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
@@ -225,7 +225,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Import identity" );
-        IdentityRequestValidator.instance( ).checkIdentityChange( identityChange );
+        IdentityRequestValidator.instance( ).checkIdentityChange( identityChange, false );
         IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
