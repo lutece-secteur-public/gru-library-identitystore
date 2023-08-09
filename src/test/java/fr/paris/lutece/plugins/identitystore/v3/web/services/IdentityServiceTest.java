@@ -51,8 +51,6 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.service.MockIdentityTrans
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.util.httpaccess.HttpAccessService;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,9 +58,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -173,7 +169,7 @@ public class IdentityServiceTest
             // test getIdentities
             final IdentitySearchRequest identitySearchRequest = new IdentitySearchRequest( );
             SearchDto search = new SearchDto( );
-            SearchAttributeDto email = new SearchAttributeDto( );
+            SearchAttribute email = new SearchAttribute( );
             search.setAttributes( new ArrayList<>( ) );
             search.getAttributes( ).add( email );
             email.setKey( "login" );
@@ -192,15 +188,6 @@ public class IdentityServiceTest
             IdentityChangeResponse identity = identityService.createIdentity( identityChangeRequest, author.getName( ) );
             // identityService.deleteIdentity( _identity.getConnectionId( ), author.getName( ) );
 
-            // Service contract
-            final ServiceContractSearchResponse response = identityService.getServiceContract( "TEST" );
-            if ( !ServiceContractSearchStatusType.NOT_FOUND.equals( response.getStatus( ) ) )
-            {
-                final ServiceContractDto serviceContract = response.getServiceContract( );
-                serviceContract.getAttributeDefinitions( ).forEach( attributeDefinitionDto -> {
-
-                } );
-            }
         }
         catch( IdentityStoreException e )
         {
