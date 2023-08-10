@@ -81,7 +81,7 @@ public class ServiceContractService
 
     /**
      * Get all service contract associated to the given client code.
-     * 
+     *
      * @param strClientCode
      *            the client code.
      * @return ServiceContractsSearchResponse
@@ -89,6 +89,16 @@ public class ServiceContractService
     public ServiceContractsSearchResponse getServiceContractList( final String strClientCode ) throws IdentityStoreException
     {
         return this._transportProvider.getServiceContractList( strClientCode );
+    }
+
+    /**
+     * Get all service contracts.
+     *
+     * @return ServiceContractsSearchResponse
+     */
+    public ServiceContractsSearchResponse getAllServiceContractList( ) throws IdentityStoreException
+    {
+        return this._transportProvider.getAllServiceContractList( );
     }
 
     /**

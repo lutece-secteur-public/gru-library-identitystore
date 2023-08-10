@@ -97,6 +97,24 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
      * {@inheritDoc}
      */
     @Override
+    public ServiceContractsSearchResponse getAllServiceContractList( ) throws IdentityStoreException
+    {
+        _logger.debug( "Get all serivce contract list" );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        final Map<String, String> mapParams = new HashMap<>( );
+
+        final ServiceContractsSearchResponse response = _httpTransport.doGet(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH, mapParams, mapHeadersRequest,
+                ServiceContractsSearchResponse.class, _mapper );
+
+        return response;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ServiceContractSearchResponse getActiveServiceContract( final String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Get active serivce contract of " + strClientCode );

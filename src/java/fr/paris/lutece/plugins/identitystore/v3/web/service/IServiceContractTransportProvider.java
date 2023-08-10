@@ -44,12 +44,19 @@ public interface IServiceContractTransportProvider
 
     /**
      * Get all service contract associated to the given client code.
-     * 
+     *
      * @param strClientCode
      *            the client code.
      * @return ServiceContractsSearchResponse
      */
     ServiceContractsSearchResponse getServiceContractList( final String strClientCode ) throws IdentityStoreException;
+
+    /**
+     * Get all service contracts.
+     *
+     * @return ServiceContractsSearchResponse
+     */
+    ServiceContractsSearchResponse getAllServiceContractList( ) throws IdentityStoreException;
 
     /**
      * Get the active service contract associated to the given client code.

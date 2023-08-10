@@ -110,6 +110,17 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
      * {@inheritDoc}
      */
     @Override
+    public ServiceContractsSearchResponse getAllServiceContractList( ) throws IdentityStoreException
+    {
+        _logger.debug( "[MOCK] Get all service contracts list" );
+
+        return getMockServiceContractListFromDatastore( "all" );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ServiceContractSearchResponse getActiveServiceContract( final String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "[MOCK] Get active service contract of " + strClientCode );
