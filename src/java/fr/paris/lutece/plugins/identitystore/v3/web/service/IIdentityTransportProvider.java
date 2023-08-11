@@ -197,4 +197,18 @@ public interface IIdentityTransportProvider
      */
     UpdatedIdentitySearchResponse getUpdatedIdentities( String strDays, String strClientCode ) throws IdentityStoreException;
 
+    /**
+     * Dé-certification d'une identité.<br/>
+     * Une identité ne pouvant pas posséder d'attributs non-certifiés, une dé-certification implique la certification de ses attributs avec le processus défini
+     * par la property : <code>identitystore.identity.uncertify.processus</code> (par défaut : "dec", qui correspond au niveau le plus faible de certification
+     * (auto-déclaratif))
+     *
+     * @param strCustomerId
+     *            the customer ID
+     * @param strClientCode
+     *            the client code
+     * @return IdentityChangeResponse
+     */
+    IdentityChangeResponse uncertifyIdentity( String strCustomerId, String strClientCode ) throws IdentityStoreException;
+
 }

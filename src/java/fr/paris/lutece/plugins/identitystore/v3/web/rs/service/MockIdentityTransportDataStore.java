@@ -151,6 +151,12 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
         return null;
     }
 
+    @Override
+    public IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode ) throws IdentityStoreException
+    {
+        return null;
+    }
+
     /**
      * {@inheritDoc}
      */

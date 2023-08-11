@@ -319,4 +319,22 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
 
         return response;
     }
+
+    @Override
+    public IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode ) throws IdentityStoreException
+    {
+        _logger.debug( "Uncertify identity [cuid=" + strCustomerId + "]" );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
+        IdentityRequestValidator.instance( ).checkCustomerId( strCustomerId );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+
+        final IdentityChangeResponse response = _httpTransport.doPutJSON(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.UNCERTIFY_ATTRIBUTES_PATH + "/" + strCustomerId,
+                null, mapHeadersRequest, null, IdentityChangeResponse.class, _mapper );
+
+        return response;
+    }
+
 }
