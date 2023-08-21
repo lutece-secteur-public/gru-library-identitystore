@@ -38,6 +38,8 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContr
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistory;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
@@ -52,6 +54,7 @@ import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -300,6 +303,30 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         final IdentityHistory response = _httpTransport.doGet(
                 _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.HISTORY_PATH + "/" + strCustomerId, null, mapHeadersRequest,
                 IdentityHistory.class, _mapper );
+
+        return response;
+    }
+
+    @Override
+    public IdentityHistorySearchResponse searchIdentityHistory( final IdentityHistorySearchRequest request, final String strClientCode )
+            throws IdentityStoreException
+    {
+        _logger.debug( "Search identity history with request [cuid=" + request.getCustomerId( ) + "][client_code=" + request.getClientCode( ) + "][author_name="
+                + request.getAuthorName( ) + "][change_type=" + request.getIdentityChangeType( ).name( ) + "][nb_days_from=" + request.getNbDaysFrom( )
+                + "][metadata="
+                + request.getMetadata( ).entrySet( ).stream( ).map( entry -> entry.getKey( ) + " : " + entry.getValue( ) ).collect( Collectors.joining( ", " ) )
+                + "]" );
+        IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
+        IdentityRequestValidator.instance( ).checkIdentityHistory( request );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+
+        final Map<String, String> mapParams = new HashMap<>( );
+
+        final IdentityHistorySearchResponse response = _httpTransport.doPostJSON(
+                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.HISTORY_PATH + Constants.SEARCH_HISTORY_PATH, mapParams, mapHeadersRequest,
+                request, IdentityHistorySearchResponse.class, _mapper );
 
         return response;
     }
