@@ -312,8 +312,8 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
             throws IdentityStoreException
     {
         _logger.debug( "Search identity history with request [cuid=" + request.getCustomerId( ) + "][client_code=" + request.getClientCode( ) + "][author_name="
-                + request.getAuthorName( ) + "][change_type=" + request.getIdentityChangeType( ).name( ) + "][nb_days_from=" + request.getNbDaysFrom( )
-                + "][metadata="
+                + request.getAuthorName( ) + "][change_type=" + ( request.getIdentityChangeType( ) != null ? request.getIdentityChangeType( ).name( ) : "" )
+                + "][nb_days_from=" + request.getNbDaysFrom( ) + "][metadata="
                 + request.getMetadata( ).entrySet( ).stream( ).map( entry -> entry.getKey( ) + " : " + entry.getValue( ) ).collect( Collectors.joining( ", " ) )
                 + "]" );
         IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );

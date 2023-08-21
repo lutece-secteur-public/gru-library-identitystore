@@ -137,20 +137,20 @@ public class IdentityServiceTest
     public void testSearchIdentityHistory( ) throws IdentityStoreException
     {
         // Search all modifications triggered by rule RG_GEN_SuspectDoublon_08 within 15 last days
-        final IdentityHistorySearchRequest requestWithMetadata = new IdentityHistorySearchRequest();
-        requestWithMetadata.getMetadata().put(Constants.METADATA_DUPLICATE_RULE_CODE, "RG_GEN_SuspectDoublon_08");
-        requestWithMetadata.setNbDaysFrom(15);
-        final IdentityHistorySearchResponse responseWithMetadata = _identityServiceRestHttpAccess.searchIdentityHistory(requestWithMetadata, "TEST");
+        final IdentityHistorySearchRequest requestWithMetadata = new IdentityHistorySearchRequest( );
+        requestWithMetadata.getMetadata( ).put( Constants.METADATA_DUPLICATE_RULE_CODE, "RG_GEN_SuspectDoublon_08" );
+        requestWithMetadata.setNbDaysFrom( 15 );
+        final IdentityHistorySearchResponse responseWithMetadata = _identityServiceRestHttpAccess.searchIdentityHistory( requestWithMetadata, "TEST" );
 
         // Search all modifications on Identity cuid_fake
-        final IdentityHistorySearchRequest requestByCuid = new IdentityHistorySearchRequest();
-        requestByCuid.setCustomerId("cuid_fake");
-        final IdentityHistorySearchResponse responseWByCuid = _identityServiceRestHttpAccess.searchIdentityHistory(requestByCuid, "TEST");
+        final IdentityHistorySearchRequest requestByCuid = new IdentityHistorySearchRequest( );
+        requestByCuid.setCustomerId( "cuid_fake" );
+        final IdentityHistorySearchResponse responseWByCuid = _identityServiceRestHttpAccess.searchIdentityHistory( requestByCuid, "TEST" );
 
         // Search all modifications performed by author Imaginary
-        final IdentityHistorySearchRequest requestByAuthor = new IdentityHistorySearchRequest();
-        requestByCuid.setAuthorName("Imaginary");
-        final IdentityHistorySearchResponse responseWByAuthor = _identityServiceRestHttpAccess.searchIdentityHistory(requestByAuthor, "TEST");
+        final IdentityHistorySearchRequest requestByAuthor = new IdentityHistorySearchRequest( );
+        requestByCuid.setAuthorName( "Imaginary" );
+        final IdentityHistorySearchResponse responseWByAuthor = _identityServiceRestHttpAccess.searchIdentityHistory( requestByAuthor, "TEST" );
     }
 
     /**
