@@ -46,8 +46,11 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContr
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.Identity;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.*;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.service.MockIdentityTransportRest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.util.httpaccess.HttpAccessService;
@@ -128,6 +131,26 @@ public class IdentityServiceTest
     public void testGetIdentity( ) throws IdentityStoreException
     {
         _identityServiceRestHttpAccess.getIdentity( "0", "0" );
+    }
+
+    @Test
+    public void testSearchIdentityHistory( ) throws IdentityStoreException
+    {
+        // Search all modifications triggered by rule RG_GEN_SuspectDoublon_08 within 15 last days
+        final IdentityHistorySearchRequest requestWithMetadata = new IdentityHistorySearchRequest();
+        requestWithMetadata.getMetadata().put(Constants.METADATA_DUPLICATE_RULE_CODE, "RG_GEN_SuspectDoublon_08");
+        requestWithMetadata.setNbDaysFrom(15);
+        final IdentityHistorySearchResponse responseWithMetadata = _identityServiceRestHttpAccess.searchIdentityHistory(requestWithMetadata, "TEST");
+
+        // Search all modifications on Identity cuid_fake
+        final IdentityHistorySearchRequest requestByCuid = new IdentityHistorySearchRequest();
+        requestByCuid.setCustomerId("cuid_fake");
+        final IdentityHistorySearchResponse responseWByCuid = _identityServiceRestHttpAccess.searchIdentityHistory(requestByCuid, "TEST");
+
+        // Search all modifications performed by author Imaginary
+        final IdentityHistorySearchRequest requestByAuthor = new IdentityHistorySearchRequest();
+        requestByCuid.setAuthorName("Imaginary");
+        final IdentityHistorySearchResponse responseWByAuthor = _identityServiceRestHttpAccess.searchIdentityHistory(requestByAuthor, "TEST");
     }
 
     /**
