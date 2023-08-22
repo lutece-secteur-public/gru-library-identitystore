@@ -340,9 +340,9 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
-        final UpdatedIdentitySearchResponse response = _httpTransport.doGet(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.UPDATED_IDENTITIES_PATH + "?" + Constants.PARAM_DAYS + "=" + strDays, null,
-                mapHeadersRequest, UpdatedIdentitySearchResponse.class, _mapper );
+        final UpdatedIdentitySearchResponse response = _httpTransport.doGet( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH
+                + Constants.UPDATED_IDENTITIES_PATH + "?" + Constants.PARAM_DAYS + "=" + strDays, null, mapHeadersRequest, UpdatedIdentitySearchResponse.class,
+                _mapper );
 
         return response;
     }
