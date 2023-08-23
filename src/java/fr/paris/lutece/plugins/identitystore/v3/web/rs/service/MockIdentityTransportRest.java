@@ -42,6 +42,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRe
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.HistorySearchStatusType;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistory;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistoryGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
@@ -204,14 +205,18 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     }
 
     @Override
-    public IdentityHistory getIdentityHistory( final String strCustomerId, final String strClientCode ) throws IdentityStoreException
+    public IdentityHistoryGetResponse getIdentityHistory( final String strCustomerId, final String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "MockIdentityTransportRest.getIdentityHistory always return empty history" );
 
+        final IdentityHistoryGetResponse response = new IdentityHistoryGetResponse( );
         final IdentityHistory history = new IdentityHistory( );
         history.setCustomerId( strCustomerId );
+        response.setHistory( history );
+        response.setStatus( HistorySearchStatusType.SUCCESS );
+        response.setMessage( "OK" );
 
-        return history;
+        return response;
     }
 
     @Override

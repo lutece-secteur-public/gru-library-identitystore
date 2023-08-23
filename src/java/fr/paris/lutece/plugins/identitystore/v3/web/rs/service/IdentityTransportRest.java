@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContr
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistory;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistoryGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
@@ -291,7 +292,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     }
 
     @Override
-    public IdentityHistory getIdentityHistory( final String strCustomerId, final String strClientCode ) throws IdentityStoreException
+    public IdentityHistoryGetResponse getIdentityHistory( final String strCustomerId, final String strClientCode ) throws IdentityStoreException
     {
         _logger.debug( "Get identity history [cuid=" + strCustomerId + "]" );
         IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
@@ -300,9 +301,9 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
 
-        final IdentityHistory response = _httpTransport.doGet(
+        final IdentityHistoryGetResponse response = _httpTransport.doGet(
                 _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.HISTORY_PATH + "/" + strCustomerId, null, mapHeadersRequest,
-                IdentityHistory.class, _mapper );
+                IdentityHistoryGetResponse.class, _mapper );
 
         return response;
     }
