@@ -396,7 +396,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
         }
         if ( response != null && StringUtils.isNotBlank( response.getI18nMessageKey( ) ) )
         {
-            response.setLocalizedMessage( I18nService.getLocalizedString( response.getI18nMessageKey( ), Locale.getDefault( ) ) );
+            response.setLocalizedMessage( I18nService.getLocalizedString( response.getI18nMessageKey( ), I18nService.getDefaultLocale( ) ) );
         }
         return response;
     }
@@ -461,7 +461,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
             responseList = responseList.stream( ).map( r -> {
                 if ( StringUtils.isNotBlank( r.getI18nMessageKey( ) ) )
                 {
-                    r.setLocalizedMessage( I18nService.getLocalizedString( r.getI18nMessageKey( ), Locale.getDefault( ) ) );
+                    r.setLocalizedMessage( I18nService.getLocalizedString( r.getI18nMessageKey( ), I18nService.getDefaultLocale( ) ) );
                 }
                 return r;
             } ).collect( Collectors.toList( ) );
