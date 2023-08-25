@@ -36,19 +36,17 @@ package fr.paris.lutece.plugins.identitystore.v3.web.service;
 import java.util.List;
 
 import fr.paris.lutece.plugins.identitystore.v2.business.IExternalAttributeSource;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistory;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistoryGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.CertifiedAttribute;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AttributeDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.QualifiedIdentity;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -345,9 +343,9 @@ public class IdentityService
             for ( IExternalAttributeSource source : _listExternalAttributesSource )
             {
                 // fill each identity
-                for ( QualifiedIdentity identity : identitySearchResponse.getIdentities( ) )
+                for ( final IdentityDto identity : identitySearchResponse.getIdentities( ) )
                 {
-                    List<CertifiedAttribute> listAdditionnalAttributes = source.getAdditionnalAttributes( identity.getCustomerId( ) );
+                    List<AttributeDto> listAdditionnalAttributes = source.getAdditionnalAttributes( identity.getCustomerId( ) );
 
                     identity.getAttributes( ).addAll( listAdditionnalAttributes );
                 }

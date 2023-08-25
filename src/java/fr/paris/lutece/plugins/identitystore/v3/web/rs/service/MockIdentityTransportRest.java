@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.Identity;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeStatus;
@@ -50,7 +50,6 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRe
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchStatusType;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
@@ -70,7 +69,7 @@ import java.util.List;
 public class MockIdentityTransportRest implements IIdentityTransportProvider
 {
     private static Logger _logger = Logger.getLogger( MockIdentityTransportRest.class );
-    private List<Identity> _listIdentities;
+    private List<IdentityDto> _listIdentities;
     private final String CONNECTION_ID_PREFIX = "conn_";
     private final String CUSTOMER_ID_PREFIX = "cust_";
 
@@ -87,7 +86,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     public MockIdentityTransportRest( )
     {
         _logger.info( "MockIdentityTransportRest is used" );
-        _listIdentities = new ArrayList<Identity>( );
+        _listIdentities = new ArrayList<IdentityDto>( );
     }
 
     /**
@@ -131,7 +130,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     {
         _logger.debug( "MockIdentityTransportRest.createIdentity always return ok" );
 
-        Identity identity = identityChange.getIdentity( );
+        IdentityDto identity = identityChange.getIdentity( );
 
         if ( StringUtils.isEmpty( identity.getConnectionId( ) ) )
         {
@@ -158,7 +157,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     {
         _logger.debug( "MockIdentityTransportRest.importIdentity always return ok" );
 
-        Identity identity = identityChange.getIdentity( );
+        IdentityDto identity = identityChange.getIdentity( );
 
         if ( StringUtils.isEmpty( identity.getConnectionId( ) ) )
         {

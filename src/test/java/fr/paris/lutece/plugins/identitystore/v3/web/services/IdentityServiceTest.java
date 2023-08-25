@@ -40,10 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AuthorType;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractDto;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchStatusType;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.Identity;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchRequest;
@@ -78,7 +75,7 @@ public class IdentityServiceTest
     private IdentityService _identityServiceApiHttpAccess;
     @Resource( name = "testIdentityService.rest.httpAccess.v3" )
     private IdentityService _identityServiceRestHttpAccess;
-    private Identity _identity;
+    private IdentityDto _identity;
 
     /**
      * Constructor, init the notification JSON
@@ -97,7 +94,7 @@ public class IdentityServiceTest
         mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
         mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
 
-        _identity = mapper.readValue( getClass( ).getResourceAsStream( "/identity-v3.json" ), Identity.class );
+        _identity = mapper.readValue( getClass( ).getResourceAsStream( "/identity-v3.json" ), IdentityDto.class );
         // Init HttpAccess singleton through NPE exception due of lack of properties access
         try
         {
