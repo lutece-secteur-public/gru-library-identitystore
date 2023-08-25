@@ -36,7 +36,9 @@ package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -47,6 +49,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IStatusType;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.error.ErrorResponse;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.net.URIBuilder;
@@ -391,6 +394,10 @@ public class HttpAccessTransport implements IHttpTransportProvider
                 response.setI18nMessageKey( er.getI18nMessageKey( ) );
             }
         }
+        if ( response != null && StringUtils.isNotBlank( response.getI18nMessageKey( ) ) )
+        {
+            response.setLocalizedMessage( I18nService.getLocalizedString( response.getI18nMessageKey( ), Locale.getDefault( ) ) );
+        }
         return response;
     }
 
@@ -448,6 +455,16 @@ public class HttpAccessTransport implements IHttpTransportProvider
                     responseList.add( response );
                 }
             }
+        }
+        if ( !responseList.isEmpty( ) )
+        {
+            responseList = responseList.stream( ).map( r -> {
+                if ( StringUtils.isNotBlank( r.getI18nMessageKey( ) ) )
+                {
+                    r.setLocalizedMessage( I18nService.getLocalizedString( r.getI18nMessageKey( ), Locale.getDefault( ) ) );
+                }
+                return r;
+            } ).collect( Collectors.toList( ) );
         }
         return responseList;
     }
