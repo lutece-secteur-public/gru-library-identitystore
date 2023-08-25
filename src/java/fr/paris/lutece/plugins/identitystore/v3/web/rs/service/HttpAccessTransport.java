@@ -394,10 +394,6 @@ public class HttpAccessTransport implements IHttpTransportProvider
                 response.setI18nMessageKey( er.getI18nMessageKey( ) );
             }
         }
-        if ( response != null && StringUtils.isNotBlank( response.getI18nMessageKey( ) ) )
-        {
-            response.setLocalizedMessage( I18nService.getLocalizedString( response.getI18nMessageKey( ), I18nService.getDefaultLocale( ) ) );
-        }
         return response;
     }
 
@@ -455,16 +451,6 @@ public class HttpAccessTransport implements IHttpTransportProvider
                     responseList.add( response );
                 }
             }
-        }
-        if ( !responseList.isEmpty( ) )
-        {
-            responseList = responseList.stream( ).map( r -> {
-                if ( StringUtils.isNotBlank( r.getI18nMessageKey( ) ) )
-                {
-                    r.setLocalizedMessage( I18nService.getLocalizedString( r.getI18nMessageKey( ), I18nService.getDefaultLocale( ) ) );
-                }
-                return r;
-            } ).collect( Collectors.toList( ) );
         }
         return responseList;
     }
