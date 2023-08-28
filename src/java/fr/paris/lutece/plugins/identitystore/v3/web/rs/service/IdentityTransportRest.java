@@ -64,10 +64,10 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
 {
 
     /** logger */
-    private static Logger _logger = Logger.getLogger( IdentityTransportRest.class );
+    private static final Logger _logger = Logger.getLogger( IdentityTransportRest.class );
 
     /** URL for identityStore REST service */
-    private String _strIdentityStoreEndPoint;
+    private final String _strIdentityStoreEndPoint;
 
     /**
      * contructor
@@ -95,8 +95,9 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
-
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        // mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, strAuthorType );
+        // mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, strClientCode );
 
         final Map<String, String> mapParams = new HashMap<>( );
 

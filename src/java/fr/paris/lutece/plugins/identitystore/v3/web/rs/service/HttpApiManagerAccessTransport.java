@@ -82,7 +82,7 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
     /**
      * Sets the API Manager credentials
      * 
-     * @param strApiManagerCredentials
+     * @param strCredentials
      *            the API Manager credentials
      */
     public void setAccessManagerCredentials( String strCredentials )
