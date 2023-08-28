@@ -33,31 +33,11 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IStatusType;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatus;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.error.ErrorResponse;
-import fr.paris.lutece.portal.service.i18n.I18nService;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.hc.core5.http.HttpStatus;
-import org.apache.hc.core5.net.URIBuilder;
-import org.apache.log4j.Logger;
-
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.error.ErrorResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.CustomResponseStatusValidator;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
@@ -65,6 +45,17 @@ import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundExcep
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.util.httpaccess.HttpAccess;
 import fr.paris.lutece.util.httpaccess.InvalidResponseStatus;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.log4j.Logger;
+
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * IHttpTransportProvider which use library-httpaccess
@@ -113,8 +104,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
      * @throws IdentityStoreException
      */
     @Override
-    public <T extends ResponseDto<? extends IStatusType>> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-            Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    public <T extends ResponseDto> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
@@ -144,8 +135,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
      * @throws IdentityStoreException
      */
     @Override
-    public <T extends ResponseDto<? extends IStatusType>> T doPutJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-            Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    public <T extends ResponseDto> T doPutJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
@@ -175,8 +166,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
      * @throws IdentityStoreException
      */
     @Override
-    public <T extends ResponseDto<? extends IStatusType>> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams,
-            Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    public <T extends ResponseDto> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
@@ -201,7 +192,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
     }
 
     @Override
-    public <T extends ResponseDto<? extends IStatusType>> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
+    public <T extends ResponseDto> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
             Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         T oResponse = null;
@@ -233,8 +224,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
     }
 
     @Override
-    public <T extends ResponseDto<? extends IStatusType>> T doDelete( String strEndPointUrl, Map<String, String> mapParams,
-            Map<String, String> mapHeadersRequest, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    public <T extends ResponseDto> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         T oResponse = null;
 
@@ -265,8 +256,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
     }
 
     @Override
-    public <T extends ResponseDto<? extends IStatusType>> T doDeleteJSON( String strEndPointUrl, Map<String, String> mapParams,
-            Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
+    public <T extends ResponseDto> T doDeleteJSON( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
         mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
@@ -373,7 +364,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
      *            the desired {@link ResponseDto} subclass
      * @return the desired {@link ResponseDto} subclass instance
      */
-    private <T extends ResponseDto<? extends IStatusType>> T mapJson( final ObjectMapper mapper, final String jsonStr, final Class<T> responseClass )
+    private <T extends ResponseDto> T mapJson( final ObjectMapper mapper, final String jsonStr, final Class<T> responseClass )
             throws JsonProcessingException, InstantiationException, IllegalAccessException
     {
         T response = null;
@@ -389,8 +380,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
             {
                 // If it is an error response, we need to convert it to the desired response class
                 response = responseClass.newInstance( );
+                response.setStatus( er.getStatus( ) );
                 response.setMessage( er.getMessage( ) );
-                response.setResponseStatus( er.getResponseStatus( ) );
                 response.setI18nMessageKey( er.getI18nMessageKey( ) );
             }
         }
@@ -408,7 +399,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
      *            the desired {@link ResponseDto} subclass
      * @return a {@link List} of the desired {@link ResponseDto} subclass instances
      */
-    private <T extends ResponseDto<? extends IStatusType>> List<T> mapJsonList( final ObjectMapper mapper, final String jsonStr, final Class<T> responseClass )
+    private <T extends ResponseDto> List<T> mapJsonList( final ObjectMapper mapper, final String jsonStr, final Class<T> responseClass )
             throws JsonProcessingException, InstantiationException, IllegalAccessException
     {
         List<T> responseList = new ArrayList<>( );
@@ -430,8 +421,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
                     for ( final ErrorResponse er : errorResponseList )
                     {
                         final T response = responseClass.newInstance( );
+                        response.setStatus( er.getStatus( ) );
                         response.setMessage( er.getMessage( ) );
-                        response.setResponseStatus( er.getResponseStatus( ) );
                         response.setI18nMessageKey( er.getI18nMessageKey( ) );
                         responseList.add( response );
                     }
@@ -445,8 +436,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
                 {
                     // If it is an error responseList, we need to convert it to the desired responseList class
                     final T response = responseClass.newInstance( );
+                    response.setStatus( er.getStatus( ) );
                     response.setMessage( er.getMessage( ) );
-                    response.setResponseStatus( er.getResponseStatus( ) );
                     response.setI18nMessageKey( er.getI18nMessageKey( ) );
                     responseList.add( response );
                 }

@@ -35,9 +35,7 @@ package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IStatusType;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import org.apache.commons.fileupload.FileItem;
 
 import java.util.List;
 import java.util.Map;
@@ -80,8 +78,8 @@ public interface IHttpTransportProvider
      *            mapper for JSON serialize / deserialize
      * @return T
      */
-    <T extends ResponseDto<? extends IStatusType>> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-            Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
+    <T extends ResponseDto> T doPostJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
 
     /**
      * make POST request on given url with params and headers of a JSON object to retrieve another JSON
@@ -102,8 +100,8 @@ public interface IHttpTransportProvider
      *            mapper for JSON serialize / deserialize
      * @return T
      */
-    <T extends ResponseDto<? extends IStatusType>> T doPutJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-            Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
+    <T extends ResponseDto> T doPutJSON( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
 
     /**
      * make POST request on given url with params and headers of a JSON object to retrieve another JSON
@@ -124,8 +122,8 @@ public interface IHttpTransportProvider
      *            mapper for JSON serialize / deserialize
      * @return response list
      */
-    <T extends ResponseDto<? extends IStatusType>> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams,
-            Map<String, String> mapHeadersRequest, Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
+    <T extends ResponseDto> List<T> doPostJSONforList( String strUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
 
     /**
      * make a Get request on given url with parameters
@@ -144,8 +142,8 @@ public interface IHttpTransportProvider
      *            mapper for JSON serialize / deserialize
      * @return response list
      */
-    <T extends ResponseDto<? extends IStatusType>> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;;
+    <T extends ResponseDto> T doGet( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
+            ObjectMapper mapper ) throws IdentityStoreException;;
 
     /**
      * make a Delete request on given url with parameters
@@ -165,8 +163,8 @@ public interface IHttpTransportProvider
      * @return response list
      * @throws IdentityStoreException
      */
-    <T extends ResponseDto<? extends IStatusType>> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
+    <T extends ResponseDto> T doDelete( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Class<T> responseJsonClass,
+            ObjectMapper mapper ) throws IdentityStoreException;
 
     /**
      * make a Delete request on given url with parameters and json in body
@@ -186,13 +184,13 @@ public interface IHttpTransportProvider
      * @return response list
      * @throws IdentityStoreException
      */
-    <T extends ResponseDto<? extends IStatusType>> T doDeleteJSON( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest,
-            Object json, Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
+    <T extends ResponseDto> T doDeleteJSON( String strEndPointUrl, Map<String, String> mapParams, Map<String, String> mapHeadersRequest, Object json,
+            Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException;
 
     /**
      * set end point
      * 
-     * @param strEndPointUrl
+     * @param strApiEndPointUrl
      */
     public void setApiEndPointUrl( String strApiEndPointUrl );
 

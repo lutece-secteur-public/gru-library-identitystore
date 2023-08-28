@@ -35,19 +35,17 @@ package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatusType;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeStatus;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.HistorySearchStatusType;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistory;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistoryGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
@@ -113,7 +111,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _logger.debug( "MockIdentityTransportRest.updateIdentity not managed return existing identity if possible" );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
-        response.setStatus( IdentityChangeStatus.UPDATE_SUCCESS );
+        response.setStatus( ResponseStatusType.SUCCESS );
         response.setMessage( "OK" );
         response.setCustomerId( customerId );
         response.setConnectionId( identityChange.getIdentity( ) != null ? identityChange.getIdentity( ).getCustomerId( ) : null );
@@ -143,7 +141,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _listIdentities.add( identity );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
-        response.setStatus( IdentityChangeStatus.CREATE_SUCCESS );
+        response.setStatus( ResponseStatusType.SUCCESS );
         response.setMessage( "OK" );
         response.setCustomerId( identity.getCustomerId( ) );
         response.setConnectionId( identity.getConnectionId( ) );
@@ -170,7 +168,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _listIdentities.add( identity );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
-        response.setStatus( IdentityChangeStatus.CREATE_SUCCESS );
+        response.setStatus( ResponseStatusType.SUCCESS );
         response.setMessage( "OK" );
         response.setCustomerId( identity.getCustomerId( ) );
         response.setConnectionId( identity.getConnectionId( ) );
@@ -185,7 +183,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _logger.debug( "MockIdentityTransportRest.mergeIdentities always return ok" );
 
         IdentityMergeResponse response = new IdentityMergeResponse( );
-        response.setStatus( IdentityMergeStatus.SUCCESS );
+        response.setStatus( ResponseStatusType.SUCCESS );
         response.setMessage( "OK" );
 
         return response;
@@ -197,7 +195,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _logger.debug( "MockIdentityTransportRest.unMergeIdentities always return ok" );
 
         IdentityMergeResponse response = new IdentityMergeResponse( );
-        response.setStatus( IdentityMergeStatus.SUCCESS );
+        response.setStatus( ResponseStatusType.SUCCESS );
         response.setMessage( "OK" );
 
         return response;
@@ -212,7 +210,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         final IdentityHistory history = new IdentityHistory( );
         history.setCustomerId( strCustomerId );
         response.setHistory( history );
-        response.setStatus( HistorySearchStatusType.SUCCESS );
+        response.setStatus( ResponseStatusType.SUCCESS );
         response.setMessage( "OK" );
 
         return response;
@@ -224,7 +222,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _logger.debug( "MockIdentityTransportRest.getIdentityHistory always return empty history" );
 
         final IdentityHistorySearchResponse history = new IdentityHistorySearchResponse( );
-        history.setStatus( HistorySearchStatusType.SUCCESS );
+        history.setStatus( ResponseStatusType.SUCCESS );
 
         return history;
     }
@@ -238,7 +236,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _logger.debug( "MockIdentityTransportRest.deleteIdentity always return ok" );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
-        response.setStatus( IdentityChangeStatus.DELETE_SUCCESS );
+        response.setStatus( ResponseStatusType.SUCCESS );
         response.setMessage( "OK" );
 
         return response;
