@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.identitystore.v3.web.service;
 import java.util.List;
 
 import fr.paris.lutece.plugins.identitystore.v2.business.IExternalAttributeSource;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistoryGetResponse;
@@ -113,9 +114,11 @@ public class IdentityService
      *             if inconsitent parmeters provided, or errors occurs...
      * @throws IdentityStoreException
      */
-    public IdentitySearchResponse getIdentityByConnectionId( String strConnectionId, String strApplicationCode ) throws AppException, IdentityStoreException
+    public IdentitySearchResponse getIdentityByConnectionId( String strConnectionId, String strApplicationCode, RequestAuthor author )
+            throws AppException, IdentityStoreException
     {
         final IdentitySearchRequest request = new IdentitySearchRequest( );
+        request.setOrigin( author );
         request.setConnectionId( strConnectionId );
         return searchIdentities( request, strApplicationCode );
     }
@@ -132,9 +135,10 @@ public class IdentityService
      *             if inconsitent parmeters provided, or errors occurs...
      * @throws IdentityStoreException
      */
-    public IdentitySearchResponse getIdentityByCustomerId( String strCustomerId, String strApplicationCode ) throws AppException, IdentityStoreException
+    public IdentitySearchResponse getIdentityByCustomerId( String strCustomerId, String strApplicationCode, RequestAuthor origin )
+            throws AppException, IdentityStoreException
     {
-        return getIdentity( strCustomerId, strApplicationCode );
+        return getIdentity( strCustomerId, strApplicationCode, origin );
     }
 
     /**
@@ -146,12 +150,13 @@ public class IdentityService
      *            application code of calling application
      * @return identity if found
      * @throws AppException
-     *             if inconsitent parmeters provided, or errors occurs...
+     *             if inconsistent parameters provided, or errors occurs...
      * @throws IdentityStoreException
      */
-    public IdentitySearchResponse getIdentity( String strCustomerId, String strApplicationCode ) throws AppException, IdentityStoreException
+    public IdentitySearchResponse getIdentity( String strCustomerId, String strApplicationCode, RequestAuthor origin )
+            throws AppException, IdentityStoreException
     {
-        IdentitySearchResponse identitySearchResponse = _transportProvider.getIdentity( strCustomerId, strApplicationCode );
+        IdentitySearchResponse identitySearchResponse = _transportProvider.getIdentity( strCustomerId, strApplicationCode, origin );
 
         return identitySearchResponseWithAdditionnalData( identitySearchResponse );
     }

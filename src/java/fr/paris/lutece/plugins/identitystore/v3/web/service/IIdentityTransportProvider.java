@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
@@ -62,6 +63,8 @@ public interface IIdentityTransportProvider
      *            customer Id
      * @param strApplicationCode
      *            application code of calling application
+     * @param origin
+     *            signature of the request
      * @return identity if found
      * @throws IdentityNotFoundException
      *             if no identity found for input parameters
@@ -69,7 +72,7 @@ public interface IIdentityTransportProvider
      *             if inconsitent parmeters provided, or errors occurs...
      *
      */
-    IdentitySearchResponse getIdentity( String strCustomerId, String strApplicationCode ) throws IdentityStoreException;
+    IdentitySearchResponse getIdentity( String strCustomerId, String strApplicationCode, RequestAuthor origin ) throws IdentityStoreException;
 
     /**
      * Creates an identity only if the identity does not already exist. The identity is created from the provided attributes.

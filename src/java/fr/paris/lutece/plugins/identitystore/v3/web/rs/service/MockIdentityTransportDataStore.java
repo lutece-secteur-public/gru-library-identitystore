@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatusType;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
@@ -84,7 +85,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
      * {@inheritDoc}
      */
     @Override
-    public IdentitySearchResponse getIdentity( String strCustomerId, String strClientCode ) throws AppException, IdentityStoreException
+    public IdentitySearchResponse getIdentity( String strCustomerId, String strClientCode, RequestAuthor author ) throws AppException, IdentityStoreException
     {
         if ( StringUtils.isEmpty( strCustomerId ) )
         {

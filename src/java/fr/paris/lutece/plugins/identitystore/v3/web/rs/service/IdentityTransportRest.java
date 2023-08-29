@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
@@ -87,7 +88,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
      * @throws IdentityStoreException
      */
     @Override
-    public IdentitySearchResponse getIdentity( String strCustomerId, String strClientCode ) throws AppException, IdentityStoreException
+    public IdentitySearchResponse getIdentity( String strCustomerId, String strClientCode, RequestAuthor origin ) throws AppException, IdentityStoreException
     {
         _logger.debug( "Get identity attributes of " + strCustomerId );
 
@@ -96,8 +97,8 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
-        // mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, strAuthorType );
-        // mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, origin.getType( ).name( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, origin.getName( ) );
 
         final Map<String, String> mapParams = new HashMap<>( );
 

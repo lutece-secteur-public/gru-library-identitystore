@@ -127,7 +127,7 @@ public class IdentityServiceTest
     @Test
     public void testGetIdentity( ) throws IdentityStoreException
     {
-        _identityServiceRestHttpAccess.getIdentity( "0", "0" );
+        _identityServiceRestHttpAccess.getIdentity( "0", "0", getRequestAuthor( ) );
     }
 
     @Test
@@ -174,9 +174,7 @@ public class IdentityServiceTest
      */
     private void callServiceMethod( IdentityService identityService, String messagePrefix ) throws IdentityStoreException
     {
-        RequestAuthor author = new RequestAuthor( );
-        author.setType( AuthorType.admin );
-        author.setName( "TEST" );
+        final RequestAuthor author = getRequestAuthor( );
 
         IdentityChangeRequest identityChangeRequest = new IdentityChangeRequest( );
 
@@ -197,8 +195,9 @@ public class IdentityServiceTest
             identitySearchRequest.setSearch( search );
             IdentitySearchResponse searchResponse = identityService.searchIdentities( identitySearchRequest, author.getName( ) );
 
-            IdentitySearchResponse identityByCustomerId = identityService.getIdentityByCustomerId( _identity.getCustomerId( ), author.getName( ) );
-            IdentitySearchResponse identityByConnectionId = identityService.getIdentityByConnectionId( _identity.getConnectionId( ), author.getName( ) );
+            IdentitySearchResponse identityByCustomerId = identityService.getIdentityByCustomerId( _identity.getCustomerId( ), author.getName( ), author );
+            IdentitySearchResponse identityByConnectionId = identityService.getIdentityByConnectionId( _identity.getConnectionId( ), author.getName( ),
+                    getRequestAuthor( ) );
 
             // test updateIdentity
             IdentityChangeResponse identityChangeResponse = identityService.updateIdentity( identityChangeRequest.getIdentity( ).getCustomerId( ),
@@ -213,5 +212,13 @@ public class IdentityServiceTest
         {
             System.out.println( "Une erreur est survenue lors des test: " + e.getMessage( ) );
         }
+    }
+
+    private static RequestAuthor getRequestAuthor( )
+    {
+        RequestAuthor author = new RequestAuthor( );
+        author.setType( AuthorType.admin );
+        author.setName( "TEST" );
+        return author;
     }
 }
