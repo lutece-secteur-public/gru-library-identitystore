@@ -381,8 +381,6 @@ public class HttpAccessTransport implements IHttpTransportProvider
                 // If it is an error response, we need to convert it to the desired response class
                 response = responseClass.newInstance( );
                 response.setStatus( er.getStatus( ) );
-                response.setMessage( er.getMessage( ) );
-                response.setI18nMessageKey( er.getI18nMessageKey( ) );
             }
         }
         return response;
@@ -422,8 +420,6 @@ public class HttpAccessTransport implements IHttpTransportProvider
                     {
                         final T response = responseClass.newInstance( );
                         response.setStatus( er.getStatus( ) );
-                        response.setMessage( er.getMessage( ) );
-                        response.setI18nMessageKey( er.getI18nMessageKey( ) );
                         responseList.add( response );
                     }
                 }
@@ -437,8 +433,6 @@ public class HttpAccessTransport implements IHttpTransportProvider
                     // If it is an error responseList, we need to convert it to the desired responseList class
                     final T response = responseClass.newInstance( );
                     response.setStatus( er.getStatus( ) );
-                    response.setMessage( er.getMessage( ) );
-                    response.setI18nMessageKey( er.getI18nMessageKey( ) );
                     responseList.add( response );
                 }
             }
