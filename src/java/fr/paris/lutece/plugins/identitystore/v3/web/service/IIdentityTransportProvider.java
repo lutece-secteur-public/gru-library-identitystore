@@ -33,12 +33,10 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistory;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistoryGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchResponse;
