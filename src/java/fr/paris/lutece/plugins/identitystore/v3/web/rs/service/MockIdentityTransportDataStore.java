@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
@@ -49,6 +48,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearch
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.ResponseStatusFactory;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
@@ -172,7 +172,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
         _logger.debug( "MockIdentityTransportDatastore.deleteIdentity always return ok" );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
-        response.setStatus( ResponseStatus.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
+        response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
 
         return response;
     }

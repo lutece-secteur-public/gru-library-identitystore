@@ -37,7 +37,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
@@ -51,6 +50,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearch
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.ResponseStatusFactory;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
@@ -113,7 +113,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _logger.debug( "MockIdentityTransportRest.updateIdentity not managed return existing identity if possible" );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
-        response.setStatus( ResponseStatus.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
+        response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
         response.setCustomerId( customerId );
         response.setConnectionId( identityChange.getIdentity( ) != null ? identityChange.getIdentity( ).getCustomerId( ) : null );
         response.setLastUpdateDate( new Timestamp( new Date( ).getTime( ) ) );
@@ -142,7 +142,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _listIdentities.add( identity );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
-        response.setStatus( ResponseStatus.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
+        response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
         response.setCustomerId( identity.getCustomerId( ) );
         response.setConnectionId( identity.getConnectionId( ) );
         response.setCreationDate( new Timestamp( new Date( ).getTime( ) ) );
@@ -168,7 +168,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _listIdentities.add( identity );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
-        response.setStatus( ResponseStatus.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
+        response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
         response.setCustomerId( identity.getCustomerId( ) );
         response.setConnectionId( identity.getConnectionId( ) );
         response.setCreationDate( new Timestamp( new Date( ).getTime( ) ) );
@@ -182,7 +182,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _logger.debug( "MockIdentityTransportRest.mergeIdentities always return ok" );
 
         IdentityMergeResponse response = new IdentityMergeResponse( );
-        response.setStatus( ResponseStatus.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
+        response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
 
         return response;
     }
@@ -193,7 +193,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _logger.debug( "MockIdentityTransportRest.unMergeIdentities always return ok" );
 
         IdentityMergeResponse response = new IdentityMergeResponse( );
-        response.setStatus( ResponseStatus.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
+        response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
 
         return response;
     }
@@ -207,7 +207,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         final IdentityHistory history = new IdentityHistory( );
         history.setCustomerId( strCustomerId );
         response.setHistory( history );
-        response.setStatus( ResponseStatus.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
+        response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
 
         return response;
     }
@@ -218,7 +218,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _logger.debug( "MockIdentityTransportRest.getIdentityHistory always return empty history" );
 
         final IdentityHistorySearchResponse history = new IdentityHistorySearchResponse( );
-        history.setStatus( ResponseStatus.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
+        history.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
 
         return history;
     }
@@ -232,7 +232,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         _logger.debug( "MockIdentityTransportRest.deleteIdentity always return ok" );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
-        response.setStatus( ResponseStatus.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
+        response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
 
         return response;
     }
