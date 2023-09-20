@@ -39,13 +39,16 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AuthorType;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.*;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.SearchAttribute;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.SearchDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.service.MockIdentityTransportRest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
@@ -59,7 +62,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * test of NotificationService
@@ -70,6 +73,7 @@ import java.util.*;
 } )
 public class IdentityServiceTest
 {
+    private static final String CLIENT_CODE = "TEST";
     private static Logger _logger = Logger.getLogger( IdentityServiceTest.class );
     @Resource( name = "testIdentityService.api.httpAccess.v3" )
     private IdentityService _identityServiceApiHttpAccess;
@@ -137,17 +141,20 @@ public class IdentityServiceTest
         final IdentityHistorySearchRequest requestWithMetadata = new IdentityHistorySearchRequest( );
         requestWithMetadata.getMetadata( ).put( Constants.METADATA_DUPLICATE_RULE_CODE, "RG_GEN_SuspectDoublon_08" );
         requestWithMetadata.setNbDaysFrom( 15 );
-        final IdentityHistorySearchResponse responseWithMetadata = _identityServiceRestHttpAccess.searchIdentityHistory( requestWithMetadata, "TEST" );
+        final IdentityHistorySearchResponse responseWithMetadata = _identityServiceRestHttpAccess.searchIdentityHistory( requestWithMetadata, CLIENT_CODE,
+                getRequestAuthor( ) );
 
         // Search all modifications on Identity cuid_fake
         final IdentityHistorySearchRequest requestByCuid = new IdentityHistorySearchRequest( );
         requestByCuid.setCustomerId( "cuid_fake" );
-        final IdentityHistorySearchResponse responseWByCuid = _identityServiceRestHttpAccess.searchIdentityHistory( requestByCuid, "TEST" );
+        final IdentityHistorySearchResponse responseWByCuid = _identityServiceRestHttpAccess.searchIdentityHistory( requestByCuid, CLIENT_CODE,
+                getRequestAuthor( ) );
 
         // Search all modifications performed by author Imaginary
         final IdentityHistorySearchRequest requestByAuthor = new IdentityHistorySearchRequest( );
         requestByCuid.setAuthorName( "Imaginary" );
-        final IdentityHistorySearchResponse responseWByAuthor = _identityServiceRestHttpAccess.searchIdentityHistory( requestByAuthor, "TEST" );
+        final IdentityHistorySearchResponse responseWByAuthor = _identityServiceRestHttpAccess.searchIdentityHistory( requestByAuthor, CLIENT_CODE,
+                getRequestAuthor( ) );
     }
 
     /**
@@ -178,7 +185,6 @@ public class IdentityServiceTest
 
         IdentityChangeRequest identityChangeRequest = new IdentityChangeRequest( );
 
-        identityChangeRequest.setOrigin( author );
         identityChangeRequest.setIdentity( _identity );
 
         // test getIdentity
@@ -193,19 +199,19 @@ public class IdentityServiceTest
             email.setKey( "login" );
             email.setValue( "toto@gmail.com" );
             identitySearchRequest.setSearch( search );
-            IdentitySearchResponse searchResponse = identityService.searchIdentities( identitySearchRequest, author.getName( ) );
+            IdentitySearchResponse searchResponse = identityService.searchIdentities( identitySearchRequest, CLIENT_CODE, author );
 
-            IdentitySearchResponse identityByCustomerId = identityService.getIdentityByCustomerId( _identity.getCustomerId( ), author.getName( ), author );
-            IdentitySearchResponse identityByConnectionId = identityService.getIdentityByConnectionId( _identity.getConnectionId( ), author.getName( ),
+            IdentitySearchResponse identityByCustomerId = identityService.getIdentityByCustomerId( _identity.getCustomerId( ), CLIENT_CODE, author );
+            IdentitySearchResponse identityByConnectionId = identityService.getIdentityByConnectionId( _identity.getConnectionId( ), CLIENT_CODE,
                     getRequestAuthor( ) );
 
             // test updateIdentity
             IdentityChangeResponse identityChangeResponse = identityService.updateIdentity( identityChangeRequest.getIdentity( ).getCustomerId( ),
-                    identityChangeRequest, author.getName( ) );
+                    identityChangeRequest, CLIENT_CODE, author );
 
             // test createIdentity
-            IdentityChangeResponse identity = identityService.createIdentity( identityChangeRequest, author.getName( ) );
-            // identityService.deleteIdentity( _identity.getConnectionId( ), author.getName( ) );
+            IdentityChangeResponse identity = identityService.createIdentity( identityChangeRequest, CLIENT_CODE, author );
+            // identityService.deleteIdentity( _identity.getConnectionId( ), CLIENT_CODE );
 
         }
         catch( IdentityStoreException e )
@@ -218,7 +224,7 @@ public class IdentityServiceTest
     {
         RequestAuthor author = new RequestAuthor( );
         author.setType( AuthorType.admin );
-        author.setName( "TEST" );
+        author.setName( CLIENT_CODE );
         return author;
     }
 }

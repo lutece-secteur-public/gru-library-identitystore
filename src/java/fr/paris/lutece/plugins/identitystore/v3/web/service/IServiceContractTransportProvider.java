@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
@@ -45,50 +47,70 @@ public interface IServiceContractTransportProvider
     /**
      * Get all service contract associated to the given client code.
      *
-     * @param strClientCode
+     * @param strTargetClientCode
      *            the client code.
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return ServiceContractsSearchResponse
      */
-    ServiceContractsSearchResponse getServiceContractList( final String strClientCode ) throws IdentityStoreException;
+    ServiceContractsSearchResponse getServiceContractList( final String strTargetClientCode, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
      * Get all service contracts.
      *
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return ServiceContractsSearchResponse
      */
-    ServiceContractsSearchResponse getAllServiceContractList( ) throws IdentityStoreException;
+    ServiceContractsSearchResponse getAllServiceContractList( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * Get the active service contract associated to the given client code.
-     * 
-     * @param strClientCode
+     *
+     * @param strTargetClientCode
      *            the client code.
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return ServiceContractSearchResponse
      */
-    ServiceContractSearchResponse getActiveServiceContract( final String strClientCode ) throws IdentityStoreException;
+    ServiceContractSearchResponse getActiveServiceContract( final String strTargetClientCode, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
-     * Get the service contract associated to the given ID and application client code.
-     * 
-     * @param strClientCode
-     *            the client code.
+     * Get the service contract associated to the given ID and client code.
+     *
      * @param nServiceContractId
      *            the ID.
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return ServiceContractSearchResponse
      */
-    ServiceContractSearchResponse getServiceContract( final String strClientCode, final Integer nServiceContractId ) throws IdentityStoreException;
+    ServiceContractSearchResponse getServiceContract( final Integer nServiceContractId, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
-     * Create a new Service Contract assoated with the given client code.<br/>
+     * Create a new Service Contract associated with the given client code.<br/>
      * The service contract is created from the provided {@link ServiceContractDto}.
      * 
      * @param serviceContract
      *            the service contract to create.
      * @param strClientCode
-     *            the client code.
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return ServiceContractChangeResponse
      */
-    ServiceContractChangeResponse createServiceContract( final ServiceContractDto serviceContract, final String strClientCode ) throws IdentityStoreException;
+    ServiceContractChangeResponse createServiceContract( final ServiceContractDto serviceContract, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
      * Updates a service contract.<br/>
@@ -98,12 +120,14 @@ public interface IServiceContractTransportProvider
      *            the service contract to update
      * @param nServiceContractId
      *            the service contract ID
-     * @param strCLientCode
-     *            the client code
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return ServiceContractChangeResponse
      */
-    ServiceContractChangeResponse updateServiceContract( final ServiceContractDto serviceContract, final Integer nServiceContractId,
-            final String strCLientCode ) throws IdentityStoreException;
+    ServiceContractChangeResponse updateServiceContract( final ServiceContractDto serviceContract, final Integer nServiceContractId, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * Closes a service contract by specifying an end date.<br/>
@@ -113,10 +137,18 @@ public interface IServiceContractTransportProvider
      *            the service contract to close
      * @param nServiceContractId
      *            the service contract ID
-     * @param strCLientCode
-     *            the client code
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return ServiceContractChangeResponse
      */
-    ServiceContractChangeResponse closeServiceContract( final ServiceContractDto serviceContract, final Integer nServiceContractId, final String strCLientCode )
-            throws IdentityStoreException;
+    ServiceContractChangeResponse closeServiceContract( final ServiceContractDto serviceContract, final Integer nServiceContractId, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException;
+
+    default void checkCommonHeaders( final String clientCode, final RequestAuthor author ) throws IdentityStoreException
+    {
+        IdentityRequestValidator.instance( ).checkAuthor( author );
+        IdentityRequestValidator.instance( ).checkClientCode( clientCode );
+    }
 }

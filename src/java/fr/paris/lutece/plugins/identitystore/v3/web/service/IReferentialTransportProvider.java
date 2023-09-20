@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.LevelSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.ProcessusSearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
@@ -43,17 +45,32 @@ public interface IReferentialTransportProvider
     /**
      * get process list
      * 
+     * @param clientCode
+     *            the client code of the calling application
+     * @param author
+     *            the author of the request
      * @return the list
      * @throws IdentityStoreException
      */
-    ProcessusSearchResponse getProcessList( ) throws IdentityStoreException;
+    ProcessusSearchResponse getProcessList( final String clientCode, final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * get level list
      * 
+     * @param clientCode
+     *            the client code of the calling application
+     * @param author
+     *            the author of the request
+     * 
      * @return the list
      * @throws IdentityStoreException
      */
-    LevelSearchResponse getLevelList( ) throws IdentityStoreException;
+    LevelSearchResponse getLevelList( final String clientCode, final RequestAuthor author ) throws IdentityStoreException;
+
+    default void checkCommonHeaders( final String clientCode, final RequestAuthor author ) throws IdentityStoreException
+    {
+        IdentityRequestValidator.instance( ).checkAuthor( author );
+        IdentityRequestValidator.instance( ).checkClientCode( clientCode );
+    }
 
 }

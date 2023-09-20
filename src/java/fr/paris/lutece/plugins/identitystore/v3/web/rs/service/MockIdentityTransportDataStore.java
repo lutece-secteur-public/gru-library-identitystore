@@ -100,7 +100,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
      * {@inheritDoc}
      */
     @Override
-    public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode )
+    public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author )
             throws IdentityNotFoundException, AppException
     {
         _logger.debug( "MockIdentityTransportDatastore.updateIdentity not managed return existing identity if possible" );
@@ -112,7 +112,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
      * {@inheritDoc}
      */
     @Override
-    public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws AppException
+    public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author ) throws AppException
     {
         _logger.debug( "MockIdentityTransportDataStore.createIdentity not managed " );
 
@@ -120,7 +120,8 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
     }
 
     @Override
-    public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
+    public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author )
+            throws IdentityStoreException
     {
         _logger.debug( "MockIdentityTransportDataStore.importIdentity not managed " );
 
@@ -128,37 +129,40 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
     }
 
     @Override
-    public IdentityMergeResponse mergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException
+    public IdentityMergeResponse mergeIdentities( IdentityMergeRequest identityMerge, String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
         return null;
     }
 
     @Override
-    public IdentityMergeResponse unMergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException
+    public IdentityMergeResponse unMergeIdentities( IdentityMergeRequest identityMerge, String strClientCode, RequestAuthor author )
+            throws IdentityStoreException
     {
         return null;
     }
 
     @Override
-    public IdentityHistoryGetResponse getIdentityHistory( final String strCustomerId, final String strClientCode ) throws IdentityStoreException
+    public IdentityHistoryGetResponse getIdentityHistory( final String strCustomerId, final String strClientCode, RequestAuthor author )
+            throws IdentityStoreException
     {
         return null;
     }
 
     @Override
-    public IdentityHistorySearchResponse searchIdentityHistory( IdentityHistorySearchRequest request, String strClientCode ) throws IdentityStoreException
+    public IdentityHistorySearchResponse searchIdentityHistory( IdentityHistorySearchRequest request, String strClientCode, RequestAuthor author )
+            throws IdentityStoreException
     {
         return null;
     }
 
     @Override
-    public UpdatedIdentitySearchResponse getUpdatedIdentities( String strDays, String strClientCode ) throws IdentityStoreException
+    public UpdatedIdentitySearchResponse getUpdatedIdentities( String strDays, String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
         return null;
     }
 
     @Override
-    public IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor origin )
+    public IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
         return null;
@@ -168,7 +172,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
      * {@inheritDoc}
      */
     @Override
-    public IdentityChangeResponse deleteIdentity( String strConnectionId, String strApplicationCode, IdentityChangeRequest identityChange )
+    public IdentityChangeResponse deleteIdentity( String strCustomerId, String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
         _logger.debug( "MockIdentityTransportDatastore.deleteIdentity always return ok" );
 
@@ -223,14 +227,15 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
     }
 
     @Override
-    public IdentitySearchResponse searchIdentities( IdentitySearchRequest identitySearchRequest, String strClientCode ) throws IdentityStoreException
+    public IdentitySearchResponse searchIdentities( IdentitySearchRequest identitySearchRequest, String strClientCode, RequestAuthor author )
+            throws IdentityStoreException
     {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public ServiceContractSearchResponse getServiceContract( String strClientCode ) throws IdentityStoreException
+    public ServiceContractSearchResponse getServiceContract( String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
         // TODO Auto-generated method stub
         return null;

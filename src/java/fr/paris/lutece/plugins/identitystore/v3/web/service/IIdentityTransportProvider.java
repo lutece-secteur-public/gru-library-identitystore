@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
@@ -59,10 +60,10 @@ public interface IIdentityTransportProvider
      *
      * @param strCustomerId
      *            customer Id
-     * @param strApplicationCode
-     *            application code of calling application
-     * @param origin
-     *            signature of the request
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            author of the request
      * @return identity if found
      * @throws IdentityNotFoundException
      *             if no identity found for input parameters
@@ -70,7 +71,7 @@ public interface IIdentityTransportProvider
      *             if inconsitent parmeters provided, or errors occurs...
      *
      */
-    IdentitySearchResponse getIdentity( String strCustomerId, String strApplicationCode, RequestAuthor origin ) throws IdentityStoreException;
+    IdentitySearchResponse getIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * Creates an identity only if the identity does not already exist. The identity is created from the provided attributes.
@@ -82,13 +83,18 @@ public interface IIdentityTransportProvider
      *
      * @param identityChange
      *            change to apply to identity
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return the {@link IdentityChangeResponse}
      *
      * @throws AppException
      *             if error occurred while updating identity
      * @throws IdentityNotFoundException
      */
-    IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException;
+    IdentityChangeResponse createIdentity( final IdentityChangeRequest identityChange, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
      * Updates an identity.
@@ -98,30 +104,32 @@ public interface IIdentityTransportProvider
      * @param identityChange
      *            change to apply to identity
      * @param strClientCode
-     *            application code who requested identities
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return the {@link IdentityChangeResponse}
      *
      * @throws AppException
      *             if error occurred while updating identity
      * @throws IdentityNotFoundException
      */
-    IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException;
+    IdentityChangeResponse updateIdentity( final String customerId, final IdentityChangeRequest identityChange, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * Deletes an identity from the specified connectionId
-     * 
-     * @param strConnectionId
-     *            the connection id
-     * @param strApplicationCode
-     *            the application code on the header
+     *
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return the {@code ResponseDto} object
      * @throws IdentityNotFoundException
      *             if no identity found for input parameters
      * @throws AppException
      *             if inconsistent parameters provided, or errors occurs...
      */
-    IdentityChangeResponse deleteIdentity( String strConnectionId, String strApplicationCode, IdentityChangeRequest identityChange )
-            throws IdentityStoreException;
+    IdentityChangeResponse deleteIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * returns a list of identity from combination of attributes
@@ -129,10 +137,13 @@ public interface IIdentityTransportProvider
      * @param identitySearchRequest
      *            change to apply to identity
      * @param strClientCode
-     *            application code who requested identities
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return identity filled according to application rights for user identified by connection id
      */
-    IdentitySearchResponse searchIdentities( IdentitySearchRequest identitySearchRequest, String strClientCode ) throws IdentityStoreException;
+    IdentitySearchResponse searchIdentities( final IdentitySearchRequest identitySearchRequest, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
      * returns the active service contract for the given application code
@@ -140,12 +151,14 @@ public interface IIdentityTransportProvider
      * @deprecated Please use {@link IServiceContractTransportProvider} for requests regarding service contract.
      *
      * @param strClientCode
-     *            application code who requested service contract
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return the active service contract for the given application code
      * @throws IdentityStoreException
      */
     @Deprecated
-    ServiceContractSearchResponse getServiceContract( String strClientCode ) throws IdentityStoreException;
+    ServiceContractSearchResponse getServiceContract( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * import an identity to the id store
@@ -153,10 +166,13 @@ public interface IIdentityTransportProvider
      * @param identityChange
      *            change to apply to identity
      * @param strClientCode
-     *            application code who requested identities
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return identity filled according to application rights for user identified by connection id
      */
-    IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException;
+    IdentityChangeResponse importIdentity( final IdentityChangeRequest identityChange, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
      * Merge two identities.
@@ -165,10 +181,13 @@ public interface IIdentityTransportProvider
      *            the request containing the master cuid, the secondary cuid, and a list of attribute to be taken from the secondary identity and put on the
      *            master identity.
      * @param strClientCode
-     *            the client code
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return IdentityMergeResponse
      */
-    IdentityMergeResponse mergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException;
+    IdentityMergeResponse mergeIdentities( final IdentityMergeRequest identityMerge, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
      * Unmerge two identities.
@@ -176,10 +195,13 @@ public interface IIdentityTransportProvider
      * @param identityMerge
      *            the request containing the master cuid, the secondary cuid
      * @param strClientCode
-     *            the client code
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return IdentityMergeResponse
      */
-    IdentityMergeResponse unMergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException;
+    IdentityMergeResponse unMergeIdentities( final IdentityMergeRequest identityMerge, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
      * Gives the identity history (identity+attributes) from a customerID
@@ -187,10 +209,13 @@ public interface IIdentityTransportProvider
      * @param strCustomerId
      *            customerID
      * @param strClientCode
-     *            client code
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return the history
      */
-    IdentityHistoryGetResponse getIdentityHistory( String strCustomerId, String strClientCode ) throws IdentityStoreException;
+    IdentityHistoryGetResponse getIdentityHistory( final String strCustomerId, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
      * Search for identities history according to given request
@@ -198,19 +223,27 @@ public interface IIdentityTransportProvider
      * @param request
      *            request
      * @param strClientCode
-     *            client code
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return the history
      */
-    IdentityHistorySearchResponse searchIdentityHistory( IdentityHistorySearchRequest request, String strClientCode ) throws IdentityStoreException;
+    IdentityHistorySearchResponse searchIdentityHistory( final IdentityHistorySearchRequest request, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
      * get identities that have been updated during the previous `days`.
      * 
      * @param strDays
      *            max number of days since the last update
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return the list of identities
      */
-    UpdatedIdentitySearchResponse getUpdatedIdentities( String strDays, String strClientCode ) throws IdentityStoreException;
+    UpdatedIdentitySearchResponse getUpdatedIdentities( final String strDays, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
     /**
      * Dé-certification d'une identité.<br/>
@@ -221,9 +254,17 @@ public interface IIdentityTransportProvider
      * @param strCustomerId
      *            the customer ID
      * @param strClientCode
-     *            the client code
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return IdentityChangeResponse
      */
-    IdentityChangeResponse uncertifyIdentity( String strCustomerId, String strClientCode, RequestAuthor origin ) throws IdentityStoreException;
+    IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
 
+    default void checkCommonHeaders( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
+    {
+        IdentityRequestValidator.instance( ).checkAuthor( author );
+        IdentityRequestValidator.instance( ).checkClientCode( strClientCode );
+    }
 }

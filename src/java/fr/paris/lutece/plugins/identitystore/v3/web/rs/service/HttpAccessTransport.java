@@ -278,7 +278,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
             }
 
             addAuthentication( mapHeadersRequest );
-            String strJSON = mapper.writeValueAsString( json );
+            String strJSON = json != null ? mapper.writeValueAsString( json ) : "";
 
             String strResponseJSON = this._httpClient.doDeleteJSON( uriBuilder.toString( ), strJSON, null, null, mapHeadersRequest, null );
 

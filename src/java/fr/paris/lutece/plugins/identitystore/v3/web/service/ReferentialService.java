@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.LevelSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.ProcessusSearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
@@ -82,9 +83,9 @@ public class ReferentialService
      * 
      * @return the list of process
      */
-    public ProcessusSearchResponse getProcessList( ) throws IdentityStoreException
+    public ProcessusSearchResponse getProcessList( final String clientCode, final RequestAuthor author ) throws IdentityStoreException
     {
-        return this._transportProvider.getProcessList( );
+        return this._transportProvider.getProcessList( clientCode, author );
     }
 
     /**
@@ -92,9 +93,9 @@ public class ReferentialService
      * 
      * @return list of levels
      */
-    public LevelSearchResponse getLevelList( ) throws IdentityStoreException
+    public LevelSearchResponse getLevelList( final String clientCode, final RequestAuthor author ) throws IdentityStoreException
     {
-        return this._transportProvider.getLevelList( );
+        return this._transportProvider.getLevelList( clientCode, author );
     }
 
 }

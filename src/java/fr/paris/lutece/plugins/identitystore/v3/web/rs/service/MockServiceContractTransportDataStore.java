@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
@@ -95,82 +96,64 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
         // do nothing;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ServiceContractsSearchResponse getServiceContractList( final String strClientCode ) throws IdentityStoreException
+    public ServiceContractsSearchResponse getServiceContractList( String strTargetClientCode, String strClientCode, RequestAuthor author )
+            throws IdentityStoreException
     {
-        _logger.debug( "[MOCK] Get service contract list of " + strClientCode );
+        _logger.debug( "[MOCK] Get service contract list of " + strTargetClientCode );
 
-        return getMockServiceContractListFromDatastore( strClientCode );
+        return getMockServiceContractListFromDatastore( strTargetClientCode );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ServiceContractsSearchResponse getAllServiceContractList( ) throws IdentityStoreException
+    public ServiceContractsSearchResponse getAllServiceContractList( String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
         _logger.debug( "[MOCK] Get all service contracts list" );
 
         return getMockServiceContractListFromDatastore( "all" );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ServiceContractSearchResponse getActiveServiceContract( final String strClientCode ) throws IdentityStoreException
+    public ServiceContractSearchResponse getActiveServiceContract( String strTargetClientCode, String strClientCode, RequestAuthor author )
+            throws IdentityStoreException
     {
-        _logger.debug( "[MOCK] Get active service contract of " + strClientCode );
+        _logger.debug( "[MOCK] Get active service contract of " + strTargetClientCode );
+
+        return getMockServiceContractFromDatastore( strTargetClientCode );
+    }
+
+    @Override
+    public ServiceContractSearchResponse getServiceContract( Integer nServiceContractId, String strClientCode, RequestAuthor author )
+            throws IdentityStoreException
+    {
+        _logger.debug( "[MOCK] Get service contract [id=" + nServiceContractId + "]" );
 
         return getMockServiceContractFromDatastore( strClientCode );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ServiceContractSearchResponse getServiceContract( final String strClientCode, final Integer nServiceContractId ) throws IdentityStoreException
-    {
-        _logger.debug( "[MOCK] Get service contract [id=" + nServiceContractId + "] of " + strClientCode );
-
-        return getMockServiceContractFromDatastore( strClientCode );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ServiceContractChangeResponse createServiceContract( final ServiceContractDto serviceContract, final String strClientCode )
+    public ServiceContractChangeResponse createServiceContract( ServiceContractDto serviceContract, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "[MOCK] Create new service contract of " + strClientCode );
+        _logger.debug( "[MOCK] Create new service contract of " + serviceContract.getClientCode( ) );
 
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ServiceContractChangeResponse updateServiceContract( final ServiceContractDto serviceContract, final Integer nServiceContractId,
-            final String strCLientCode ) throws IdentityStoreException
+    public ServiceContractChangeResponse updateServiceContract( ServiceContractDto serviceContract, Integer nServiceContractId, String strClientCode,
+            RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "[MOCK] Update service contract [id=" + nServiceContractId + "] of " + strCLientCode );
+        _logger.debug( "[MOCK] Update service contract [id=" + nServiceContractId + "] of " + serviceContract.getClientCode( ) );
 
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ServiceContractChangeResponse closeServiceContract( ServiceContractDto serviceContract, Integer nServiceContractId, String strCLientCode )
-            throws IdentityStoreException
+    public ServiceContractChangeResponse closeServiceContract( ServiceContractDto serviceContract, Integer nServiceContractId, String strClientCode,
+            RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "[MOCK] Close service contract [id=" + nServiceContractId + "] of " + strCLientCode );
+        _logger.debug( "[MOCK] Close service contract [id=" + nServiceContractId + "] of " + serviceContract.getClientCode( ) );
 
         return null;
     }

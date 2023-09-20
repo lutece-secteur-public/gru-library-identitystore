@@ -33,12 +33,8 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
@@ -47,16 +43,19 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IServiceContractTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import fr.paris.lutece.portal.service.util.AppException;
+import org.apache.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServiceContractTransportRest extends AbstractTransportRest implements IServiceContractTransportProvider
 {
 
     /** logger */
-    private static Logger _logger = Logger.getLogger( ServiceContractTransportRest.class );
+    private static final Logger _logger = Logger.getLogger( ServiceContractTransportRest.class );
 
     /** URL for identityStore REST service */
-    private String _strIdentityStoreEndPoint;
+    private final String _strIdentityStoreEndPoint;
 
     /**
      * Constructor with IHttpTransportProvider parameter
@@ -67,177 +66,130 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     public ServiceContractTransportRest( final IHttpTransportProvider httpTransport )
     {
         super( httpTransport );
-
         _strIdentityStoreEndPoint = httpTransport.getApiEndPointUrl( );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ServiceContractsSearchResponse getServiceContractList( final String strClientCode ) throws IdentityStoreException
+    public ServiceContractsSearchResponse getServiceContractList( final String strTargetClientCode, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
     {
-        _logger.debug( "Get serivce contract list of " + strClientCode );
-
-        this.checkClientCode( strClientCode );
+        _logger.debug( "Get serivce contract list of " + strTargetClientCode );
+        this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final Map<String, String> mapParams = new HashMap<>( );
-
-        final ServiceContractsSearchResponse response = _httpTransport.doGet(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH, mapParams, mapHeadersRequest,
-                ServiceContractsSearchResponse.class, _mapper );
-
-        return response;
+        final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH + "/" + strTargetClientCode;
+        return _httpTransport.doGet( url, null, mapHeadersRequest, ServiceContractsSearchResponse.class, _mapper );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ServiceContractsSearchResponse getAllServiceContractList( ) throws IdentityStoreException
+    public ServiceContractsSearchResponse getAllServiceContractList( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
         _logger.debug( "Get all serivce contract list" );
-
-        final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        final Map<String, String> mapParams = new HashMap<>( );
-
-        final ServiceContractsSearchResponse response = _httpTransport.doGet(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH, mapParams, mapHeadersRequest,
-                ServiceContractsSearchResponse.class, _mapper );
-
-        return response;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ServiceContractSearchResponse getActiveServiceContract( final String strClientCode ) throws IdentityStoreException
-    {
-        _logger.debug( "Get active serivce contract of " + strClientCode );
-
-        this.checkClientCode( strClientCode );
+        this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final Map<String, String> mapParams = new HashMap<>( );
-
-        final ServiceContractSearchResponse response = _httpTransport.doGet(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACT_PATH, mapParams, mapHeadersRequest,
-                ServiceContractSearchResponse.class, _mapper );
-
-        return response;
+        final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH;
+        return _httpTransport.doGet( url, null, mapHeadersRequest, ServiceContractsSearchResponse.class, _mapper );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ServiceContractSearchResponse getServiceContract( final String strClientCode, final Integer nServiceContractId ) throws IdentityStoreException
-    {
-        _logger.debug( "Get serivce contract [id=" + nServiceContractId + "] of " + strClientCode );
-
-        this.checkClientCode( strClientCode );
-
-        final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
-
-        final Map<String, String> mapParams = new HashMap<>( );
-
-        final ServiceContractSearchResponse response = _httpTransport.doGet(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACT_PATH + "/" + nServiceContractId, mapParams, mapHeadersRequest,
-                ServiceContractSearchResponse.class, _mapper );
-
-        return response;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ServiceContractChangeResponse createServiceContract( final ServiceContractDto serviceContract, final String strClientCode )
+    public ServiceContractSearchResponse getActiveServiceContract( final String strTargetClientCode, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Create new serivce contract of " + strClientCode );
-        _logger.debug( serviceContract );
-
-        this.checkClientCode( strClientCode );
+        _logger.debug( "Get active serivce contract of " + strTargetClientCode );
+        this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final Map<String, String> mapParams = new HashMap<>( );
-        final ServiceContractChangeResponse response = _httpTransport.doPostJSON(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACT_PATH, mapParams, mapHeadersRequest, serviceContract,
-                ServiceContractChangeResponse.class, _mapper );
-
-        return response;
+        final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.ACTIVE_SERVICE_CONTRACT_PATH + "/" + strTargetClientCode;
+        return _httpTransport.doGet( url, null, mapHeadersRequest, ServiceContractSearchResponse.class, _mapper );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public ServiceContractSearchResponse getServiceContract( final Integer nServiceContractId, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
+    {
+        _logger.debug( "Get serivce contract [id=" + nServiceContractId + "]" );
+        this.checkCommonHeaders( strClientCode, author );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACT_PATH + "/" + nServiceContractId;
+        return _httpTransport.doGet( url, null, mapHeadersRequest, ServiceContractSearchResponse.class, _mapper );
+    }
+
+    @Override
+    public ServiceContractChangeResponse createServiceContract( final ServiceContractDto serviceContract, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException
+    {
+        _logger.debug( "Create new service contract of " + serviceContract.getClientCode( ) );
+        _logger.debug( serviceContract );
+        this.checkCommonHeaders( strClientCode, author );
+        IdentityRequestValidator.instance( ).checkServiceContract( serviceContract );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACT_PATH;
+        return _httpTransport.doPostJSON( url, null, mapHeadersRequest, serviceContract, ServiceContractChangeResponse.class, _mapper );
+    }
+
     @Override
     public ServiceContractChangeResponse updateServiceContract( final ServiceContractDto serviceContract, final Integer nServiceContractId,
-            final String strCLientCode ) throws IdentityStoreException
+            final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Update serivce contract [id=" + nServiceContractId + "] of " + strCLientCode );
+        _logger.debug( "Update service contract [id=" + nServiceContractId + "] of " + serviceContract.getClientCode( ) );
         _logger.debug( serviceContract );
-
-        this.checkClientCode( strCLientCode );
+        this.checkCommonHeaders( strClientCode, author );
+        IdentityRequestValidator.instance( ).checkServiceContract( serviceContract );
+        IdentityRequestValidator.instance( ).checkContractId( nServiceContractId );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strCLientCode );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
         final Map<String, String> mapParams = new HashMap<>( );
-        final ServiceContractChangeResponse response = _httpTransport.doPutJSON(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACT_PATH + "/" + nServiceContractId, mapParams, mapHeadersRequest,
-                serviceContract, ServiceContractChangeResponse.class, _mapper );
 
-        return response;
+        final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACT_PATH + "/" + nServiceContractId;
+        return _httpTransport.doPutJSON( url, mapParams, mapHeadersRequest, serviceContract, ServiceContractChangeResponse.class, _mapper );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ServiceContractChangeResponse closeServiceContract( ServiceContractDto serviceContract, Integer nServiceContractId, String strCLientCode )
-            throws IdentityStoreException
+    public ServiceContractChangeResponse closeServiceContract( final ServiceContractDto serviceContract, final Integer nServiceContractId,
+            final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Close serivce contract [id=" + nServiceContractId + "] of " + strCLientCode );
+        _logger.debug( "Close serivce contract [id=" + nServiceContractId + "] of " + serviceContract.getClientCode( ) );
         _logger.debug( serviceContract );
-
-        this.checkClientCode( strCLientCode );
+        this.checkCommonHeaders( strClientCode, author );
+        IdentityRequestValidator.instance( ).checkServiceContract( serviceContract );
+        IdentityRequestValidator.instance( ).checkContractId( nServiceContractId );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strCLientCode );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
         final Map<String, String> mapParams = new HashMap<>( );
-        final ServiceContractChangeResponse response = _httpTransport.doPutJSON(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACT_PATH + "/" + nServiceContractId
-                        + Constants.SERVICECONTRACT_END_DATE_PATH,
-                mapParams, mapHeadersRequest, serviceContract, ServiceContractChangeResponse.class, _mapper );
 
-        return response;
-    }
-
-    /**
-     * check whether the parameters related to the identity are valid or not
-     *
-     * @param strClientCode
-     *            the strClientCode
-     * @throws AppException
-     *             if the parameters are not valid
-     */
-    public void checkClientCode( String strClientCode ) throws IdentityStoreException
-    {
-        if ( StringUtils.isBlank( strClientCode ) )
-        {
-            throw new IdentityStoreException( "Client code is mandatory." );
-        }
+        final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACT_PATH + "/" + nServiceContractId
+                + Constants.SERVICECONTRACT_END_DATE_PATH;
+        return _httpTransport.doPutJSON( url, mapParams, mapHeadersRequest, serviceContract, ServiceContractChangeResponse.class, _mapper );
     }
 }

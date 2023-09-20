@@ -33,33 +33,26 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractChangeResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractDto;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractsSearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.LevelSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.ProcessusSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IReferentialTransportProvider;
-import fr.paris.lutece.plugins.identitystore.v3.web.service.IServiceContractTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import fr.paris.lutece.portal.service.util.AppException;
+import org.apache.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReferentialTransportRest extends AbstractTransportRest implements IReferentialTransportProvider
 {
 
     /** logger */
-    private static Logger _logger = Logger.getLogger( ReferentialTransportRest.class );
+    private static final Logger _logger = Logger.getLogger( ReferentialTransportRest.class );
 
     /** URL for identityStore REST service */
-    private String _strIdentityStoreEndPoint;
+    private final String _strIdentityStoreEndPoint;
 
     /**
      * Constructor with IHttpTransportProvider parameter
@@ -75,32 +68,32 @@ public class ReferentialTransportRest extends AbstractTransportRest implements I
     }
 
     @Override
-    public ProcessusSearchResponse getProcessList( ) throws IdentityStoreException
+    public ProcessusSearchResponse getProcessList( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
         _logger.debug( "Get process list" );
+        this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        final Map<String, String> mapParams = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final ProcessusSearchResponse response = _httpTransport.doGet(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.REFERENTIAL_PATH + Constants.REFERENTIAL_PROCESSUS_PATH, mapParams,
-                mapHeadersRequest, ProcessusSearchResponse.class, _mapper );
-
-        return response;
+        final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.REFERENTIAL_PATH + Constants.REFERENTIAL_PROCESSUS_PATH;
+        return _httpTransport.doGet( url, null, mapHeadersRequest, ProcessusSearchResponse.class, _mapper );
     }
 
     @Override
-    public LevelSearchResponse getLevelList( ) throws IdentityStoreException
+    public LevelSearchResponse getLevelList( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
         _logger.debug( "Get level list" );
+        this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        final Map<String, String> mapParams = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final LevelSearchResponse response = _httpTransport.doGet(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.REFERENTIAL_PATH + Constants.REFERENTIAL_LEVEL_PATH, mapParams,
-                mapHeadersRequest, LevelSearchResponse.class, _mapper );
-
-        return response;
+        final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.REFERENTIAL_PATH + Constants.REFERENTIAL_LEVEL_PATH;
+        return _httpTransport.doGet( url, null, mapHeadersRequest, LevelSearchResponse.class, _mapper );
     }
 }

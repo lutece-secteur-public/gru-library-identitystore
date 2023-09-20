@@ -35,11 +35,7 @@ package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import fr.paris.lutece.portal.service.util.AppException;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -55,15 +51,14 @@ public abstract class AbstractTransportRest
     static
     {
         _mapper = new ObjectMapper( );
-        // _mapper.enable( DeserializationFeature.UNWRAP_ROOT_VALUE );
         _mapper.disable( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES );
-        // _mapper.enable( SerializationFeature.WRAP_ROOT_VALUE );
     }
 
     /**
      * Constructor
      * 
      * @param transportProvider
+     *            the HTTP transport provider
      */
     protected AbstractTransportRest( final IHttpTransportProvider transportProvider )
     {

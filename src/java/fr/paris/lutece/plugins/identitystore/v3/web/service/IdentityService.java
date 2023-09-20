@@ -33,9 +33,9 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
-import java.util.List;
-
 import fr.paris.lutece.plugins.identitystore.v2.business.IExternalAttributeSource;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AttributeDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
@@ -44,13 +44,13 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHisto
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AttributeDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
+
+import java.util.List;
 
 /**
  * IdentityService
@@ -107,20 +107,21 @@ public class IdentityService
      *
      * @param strConnectionId
      *            connection Id
-     * @param strApplicationCode
-     *            application code of calling application
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return identity if found
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
      * @throws IdentityStoreException
      */
-    public IdentitySearchResponse getIdentityByConnectionId( String strConnectionId, String strApplicationCode, RequestAuthor author )
+    public IdentitySearchResponse getIdentityByConnectionId( final String strConnectionId, final String strClientCode, final RequestAuthor author )
             throws AppException, IdentityStoreException
     {
         final IdentitySearchRequest request = new IdentitySearchRequest( );
-        request.setOrigin( author );
         request.setConnectionId( strConnectionId );
-        return searchIdentities( request, strApplicationCode );
+        return searchIdentities( request, strClientCode, author );
     }
 
     /**
@@ -128,17 +129,19 @@ public class IdentityService
      *
      * @param strCustomerId
      *            customer Id
-     * @param strApplicationCode
-     *            application code of calling application
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return identity if found
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
      * @throws IdentityStoreException
      */
-    public IdentitySearchResponse getIdentityByCustomerId( String strCustomerId, String strApplicationCode, RequestAuthor origin )
+    public IdentitySearchResponse getIdentityByCustomerId( final String strCustomerId, final String strClientCode, final RequestAuthor author )
             throws AppException, IdentityStoreException
     {
-        return getIdentity( strCustomerId, strApplicationCode, origin );
+        return getIdentity( strCustomerId, strClientCode, author );
     }
 
     /**
@@ -146,17 +149,19 @@ public class IdentityService
      *
      * @param strCustomerId
      *            customer Id (can be null if strConnectionId is provided)
-     * @param strApplicationCode
-     *            application code of calling application
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return identity if found
      * @throws AppException
      *             if inconsistent parameters provided, or errors occurs...
      * @throws IdentityStoreException
      */
-    public IdentitySearchResponse getIdentity( String strCustomerId, String strApplicationCode, RequestAuthor origin )
+    public IdentitySearchResponse getIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author )
             throws AppException, IdentityStoreException
     {
-        IdentitySearchResponse identitySearchResponse = _transportProvider.getIdentity( strCustomerId, strApplicationCode, origin );
+        IdentitySearchResponse identitySearchResponse = _transportProvider.getIdentity( strCustomerId, strClientCode, author );
 
         return identitySearchResponseWithAdditionnalData( identitySearchResponse );
     }
@@ -164,19 +169,23 @@ public class IdentityService
     /**
      * apply changes to an identity
      *
+     * @param customerId
+     *            the id of the customer
      * @param identityChange
      *            change to apply to identity
      * @param strClientCode
-     *            application code of calling application
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return the updated identity
      * @throws AppException
      *             if error occured while updating identity
      * @throws IdentityStoreException
      */
-    public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode )
-            throws AppException, IdentityStoreException
+    public IdentityChangeResponse updateIdentity( final String customerId, final IdentityChangeRequest identityChange, final String strClientCode,
+            final RequestAuthor author ) throws AppException, IdentityStoreException
     {
-        return _transportProvider.updateIdentity( customerId, identityChange, strClientCode );
+        return _transportProvider.updateIdentity( customerId, identityChange, strClientCode, author );
     }
 
     /**
@@ -186,14 +195,19 @@ public class IdentityService
      *
      * @param identityChange
      *            change to apply to identity
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return the created identity
      * @throws AppException
      *             if error occured while updating identity
      * @throws IdentityStoreException
      */
-    public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws AppException, IdentityStoreException
+    public IdentityChangeResponse createIdentity( final IdentityChangeRequest identityChange, final String strClientCode, final RequestAuthor author )
+            throws AppException, IdentityStoreException
     {
-        return _transportProvider.createIdentity( identityChange, strClientCode );
+        return _transportProvider.createIdentity( identityChange, strClientCode, author );
     }
 
     /**
@@ -201,15 +215,15 @@ public class IdentityService
      * 
      * @param strCustomerId
      *            the customer id
-     * @param strApplicationCode
-     *            the application code
-     * @param identityChange
-     *            : an identiyChange object to provide the RequestAuthor values
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @throws IdentityStoreException
      */
-    public void deleteIdentity( String strCustomerId, String strApplicationCode, IdentityChangeRequest identityChange ) throws IdentityStoreException
+    public void deleteIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
-        _transportProvider.deleteIdentity( strCustomerId, strApplicationCode, identityChange );
+        _transportProvider.deleteIdentity( strCustomerId, strClientCode, author );
     }
 
     /**
@@ -218,13 +232,16 @@ public class IdentityService
      * @param identitySearchRequest
      *            search request tpo perform
      * @param strClientCode
-     *            application code who requested identities
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return identity filled according to application rights for user identified by connection id
      * @throws IdentityStoreException
      */
-    public IdentitySearchResponse searchIdentities( IdentitySearchRequest identitySearchRequest, String strClientCode ) throws IdentityStoreException
+    public IdentitySearchResponse searchIdentities( final IdentitySearchRequest identitySearchRequest, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
     {
-        return _transportProvider.searchIdentities( identitySearchRequest, strClientCode );
+        return _transportProvider.searchIdentities( identitySearchRequest, strClientCode, author );
     }
 
     /**
@@ -233,13 +250,16 @@ public class IdentityService
      * @param identityChange
      *            change to apply to identity
      * @param strClientCode
-     *            application code who requested identities
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return identity filled according to application rights for user identified by connection id
      * @throws IdentityStoreException
      */
-    public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode ) throws IdentityStoreException
+    public IdentityChangeResponse importIdentity( final IdentityChangeRequest identityChange, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
     {
-        return _transportProvider.importIdentity( identityChange, strClientCode );
+        return _transportProvider.importIdentity( identityChange, strClientCode, author );
     }
 
     /**
@@ -249,12 +269,15 @@ public class IdentityService
      *            the request containing the master cuid, the secondary cuid, and a list of attribute to be taken from the secondary identity and put on the
      *            master identity.
      * @param strClientCode
-     *            the client code
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return IdentityMergeResponse
      */
-    public IdentityMergeResponse mergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException
+    public IdentityMergeResponse mergeIdentities( final IdentityMergeRequest identityMerge, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
     {
-        return _transportProvider.mergeIdentities( identityMerge, strClientCode );
+        return _transportProvider.mergeIdentities( identityMerge, strClientCode, author );
     }
 
     /**
@@ -263,12 +286,15 @@ public class IdentityService
      * @param identityMerge
      *            the request containing the master cuid, the secondary cuid
      * @param strClientCode
-     *            the client code
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return IdentityMergeResponse
      */
-    public IdentityMergeResponse unMergeIdentities( IdentityMergeRequest identityMerge, String strClientCode ) throws IdentityStoreException
+    public IdentityMergeResponse unMergeIdentities( IdentityMergeRequest identityMerge, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
     {
-        return _transportProvider.unMergeIdentities( identityMerge, strClientCode );
+        return _transportProvider.unMergeIdentities( identityMerge, strClientCode, author );
     }
 
     /**
@@ -277,12 +303,15 @@ public class IdentityService
      * @param strCustomerId
      *            customerID
      * @param strClientCode
-     *            client code
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return the history
      */
-    public IdentityHistoryGetResponse getIdentityHistory( String strCustomerId, String strClientCode ) throws IdentityStoreException
+    public IdentityHistoryGetResponse getIdentityHistory( final String strCustomerId, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
     {
-        return _transportProvider.getIdentityHistory( strCustomerId, strClientCode );
+        return _transportProvider.getIdentityHistory( strCustomerId, strClientCode, author );
     }
 
     /**
@@ -291,12 +320,15 @@ public class IdentityService
      * @param request
      *            request
      * @param strClientCode
-     *            client code
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return the history
      */
-    public IdentityHistorySearchResponse searchIdentityHistory( final IdentityHistorySearchRequest request, String strClientCode ) throws IdentityStoreException
+    public IdentityHistorySearchResponse searchIdentityHistory( final IdentityHistorySearchRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException
     {
-        return _transportProvider.searchIdentityHistory( request, strClientCode );
+        return _transportProvider.searchIdentityHistory( request, strClientCode, author );
     }
 
     /**
@@ -304,11 +336,16 @@ public class IdentityService
      * 
      * @param strDays
      *            max number of days since the last update
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return the list of identities
      */
-    public UpdatedIdentitySearchResponse getUpdatedIdentities( String strDays, String strClientCode ) throws IdentityStoreException
+    public UpdatedIdentitySearchResponse getUpdatedIdentities( final String strDays, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
     {
-        return _transportProvider.getUpdatedIdentities( strDays, strClientCode );
+        return _transportProvider.getUpdatedIdentities( strDays, strClientCode, author );
     }
 
     /**
@@ -320,23 +357,25 @@ public class IdentityService
      * @param strCustomerId
      *            the customer ID
      * @param strClientCode
-     *            the client code
-     * @param origin
-     *            the origin
+     *            client code of calling application
+     * @param author
+     *            the author of the request
      * @return IdentityChangeResponse
      */
-    IdentityChangeResponse uncertifyIdentity( String strCustomerId, String strClientCode, RequestAuthor origin ) throws IdentityStoreException
+    IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
-        return _transportProvider.uncertifyIdentity( strCustomerId, strClientCode, origin );
+        return _transportProvider.uncertifyIdentity( strCustomerId, strClientCode, author );
     }
 
     /**
      * Complete attribute list with external sources
      * 
      * @param identitySearchResponse
+     *            the search response to be completed
      * @return the IdentitySearchResponse
      */
-    private IdentitySearchResponse identitySearchResponseWithAdditionnalData( IdentitySearchResponse identitySearchResponse ) throws IdentityStoreException
+    private IdentitySearchResponse identitySearchResponseWithAdditionnalData( final IdentitySearchResponse identitySearchResponse )
+            throws IdentityStoreException
     {
         // none
         if ( _listExternalAttributesSource == null )
