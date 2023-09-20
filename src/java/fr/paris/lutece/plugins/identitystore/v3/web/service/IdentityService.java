@@ -221,9 +221,10 @@ public class IdentityService
      *            the author of the request
      * @throws IdentityStoreException
      */
-    public void deleteIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
+    public IdentityChangeResponse deleteIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
     {
-        _transportProvider.deleteIdentity( strCustomerId, strClientCode, author );
+        return _transportProvider.deleteIdentity( strCustomerId, strClientCode, author );
     }
 
     /**
@@ -362,7 +363,8 @@ public class IdentityService
      *            the author of the request
      * @return IdentityChangeResponse
      */
-    IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
+    public IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
     {
         return _transportProvider.uncertifyIdentity( strCustomerId, strClientCode, author );
     }
