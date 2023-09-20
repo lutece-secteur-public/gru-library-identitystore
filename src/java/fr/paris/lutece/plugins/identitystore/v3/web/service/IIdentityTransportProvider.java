@@ -224,6 +224,6 @@ public interface IIdentityTransportProvider
      *            the client code
      * @return IdentityChangeResponse
      */
-    IdentityChangeResponse uncertifyIdentity( String strCustomerId, String strClientCode ) throws IdentityStoreException;
+    IdentityChangeResponse uncertifyIdentity( String strCustomerId, String strClientCode, RequestAuthor origin ) throws IdentityStoreException;
 
 }

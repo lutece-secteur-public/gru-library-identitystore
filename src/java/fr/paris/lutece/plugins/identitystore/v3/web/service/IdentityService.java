@@ -321,11 +321,13 @@ public class IdentityService
      *            the customer ID
      * @param strClientCode
      *            the client code
+     * @param origin
+     *            the origin
      * @return IdentityChangeResponse
      */
-    IdentityChangeResponse uncertifyIdentity( String strCustomerId, String strClientCode ) throws IdentityStoreException
+    IdentityChangeResponse uncertifyIdentity( String strCustomerId, String strClientCode, RequestAuthor origin ) throws IdentityStoreException
     {
-        return _transportProvider.uncertifyIdentity( strCustomerId, strClientCode );
+        return _transportProvider.uncertifyIdentity( strCustomerId, strClientCode, origin );
     }
 
     /**

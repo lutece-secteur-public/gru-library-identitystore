@@ -259,7 +259,8 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     }
 
     @Override
-    public IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode ) throws IdentityStoreException
+    public IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor origin )
+            throws IdentityStoreException
     {
         // TODO Auto-generated method stub
         return null;

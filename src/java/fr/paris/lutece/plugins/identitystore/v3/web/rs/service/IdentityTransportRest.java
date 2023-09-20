@@ -351,7 +351,8 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     }
 
     @Override
-    public IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode ) throws IdentityStoreException
+    public IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor origin )
+            throws IdentityStoreException
     {
         _logger.debug( "Uncertify identity [cuid=" + strCustomerId + "]" );
         IdentityRequestValidator.instance( ).checkClientApplication( strClientCode );
@@ -359,6 +360,8 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, origin.getType( ).name( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, origin.getName( ) );
 
         final IdentityChangeResponse response = _httpTransport.doPutJSON(
                 _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.UNCERTIFY_ATTRIBUTES_PATH + "/" + strCustomerId,
