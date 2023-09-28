@@ -1,0 +1,492 @@
+<<<breadcrumb>>>
+
+{{{ page_title | Migration library-identitystore v3.0.0 vers v3.1.0 }}}
+
+<<<TOC>>>
+
+Cette version introduit un refactoring des DTO et appels des méthodes de la librairie.
+Voici la marche à suivre pour migrer de la version 3.0.0 à la version 3.0.1.
+
+Référence: [[https://github.com/lutece-secteur-public/gru-library-identitystore/compare/library-identitystore-3.0.0...library-identitystore-3.1.0|Diff 3.0.0 to 3.10]]
+
+= 1 - Modification des DTO =
+
+La librairie comportant trop de DTO représentant les identités en fonction des différents contextes (QualifiedIdentity, Identity, Identities, CertifiedAttribute, ...), celles-ci ont toutes été fusionnées dans le package common sous forme d'une seul classe **IdentityDto**.
+Cette classe comprend une liste d'**AttributeDto** ainsi qu'un objet pour chaque contexte.
+
+Dorénavant toutes les représentations d'identités dans une requête, une réponse ou dans le code des applications clientes seront des IdentityDto.
+
+Les réponses au requêtes ont également subi une transformation de leur status, qui sont dorénavant tous des **ResponseStatus**.
+
+== 1.1 - IdentityDto ==
+
+Voici le détail de la nouvelle DTO
+
+|= Propriété |= Type |= Description |
+| connectionId | String | l'identifiant de connexion de l'identité. |
+| customerId | String | l'identifiant de l'identité. |
+| externalCustomerId | String | l'identifiant de l'identité dans le système externe (utilisé pour l'import). |
+| monParisActive | boolean | Flag indiquant si l'identité est connectée. |
+| creationDate | Timestamp | Date de création de l'identité. |
+| lastUpdateDate | Timestamp | Date de dernière mise à jour de l'identité. |
+| quality | Object | Qualité de l'identité (optionnel). Cet objet est un QualityDefinition. |
+| expiration| Object | Les données d'expiration de l'identité (optionnel). Cet objet est un ExpirationDefinition. |
+| merge | Object | les données de rapprochement de l'identité (optionnel). Cet objet est un MergeDefinition. |
+| duplicateDefinition | Object | les données relatives aux doublons (optionnel). Cet objet est un IdentityDuplicateDefinition. {{{ label |warning| nouvelle feature }}} |
+| suspicious | boolean | indique si l'identité est suspectée d'être en doublon. {{{ label |warning| nouvelle feature }}}|
+| attributes | Object | les attributs de l'identité. Cet objet est une List<AttributeDto>. |
+
+=== QualityDefinition ===
+
+|= Propriété |= Type |= Description |
+| quality | Double | score de qualité de l'identité. |
+| coverage | Integer | taux de couverture des exigences du contrat de service de l'identité. |
+| scoring | Double | niveau de matching des critères de recherche de l'identité. |
+
+=== ExpirationDefinition ===
+
+|= Propriété |= Type |= Description |
+| deleted | boolean | indique si l'identité est supprimée (**true**) ou non (**false**). |
+| deletedDate | Timestamp | date de suppression de l'identité. |
+| expirationDate | Timestamp | date d'expiration de l'identité. |
+
+=== MergeDefinition ===
+
+|= Propriété |= Type |= Description |
+| merged | boolean | indique si l'identité est rapprochée d'une autre identité (**true**) ou non (**false**). |
+| masterCustomerId | String | customer ID de l'identité à laquelle cette identité est rapprochée. |
+| mergeDate | Timestamp | date de rapprochement de l'identité. |
+
+=== AttributeDto ===
+
+|= Propriété |= Type |= Description |
+| quality | Integer | score de qualité de l'identité. |
+| coverage | Integer | taux de couverture des exigences du contrat de service de l'identité. |
+| scoring | Integer | niveau de matching des critères de recherche de l'identité. |
+
+== 1.2 - ResponseStatus ==
+Les nombreux types de status existant (un par contexte) on été fusionnés dans une unique DTO, **ResponseStatus**.
+
+|= Propriété |= Type |= Description |
+| httpCode | int | le code HTTP de la réponse. Suit les recommandations [[https://www.ietf.org/rfc/rfc2616.txt]]  |
+| type | ResponseStatusType (enum) | décrit le type de status (OK, SUCCESS, ...). |
+| message | String | message décrivant le status. |
+| messageKey | String | la clé i18n du message (optionnel). {{{ label |warning| nouvelle feature }}} |
+| attributeStatuses | Object | une List<AttributeStatus> représentant le détail des status par attribut d'identité (optionnel). Cet objet n'est renseigné que lors des opérations touchant aux attributs d'une identité. |
+
+=== ResponseStatusType ===
+
+|= Status |= Description |
+| OK | le status de la réponse est OK (status renvoyé pour les requêtes de type GET et Search). |
+| SUCCESS | la réquête a été exécutée avec succès (status renvoyé pour les requêtes ayant un impact sur les données stockées en base de données). |
+| INCOMPLETE_SUCCESS | la requête a été exécutée avec succès, avec certaines demandes non traitées (non bloquantes). |
+| BAD_REQUEST | la requête n'a pas pu être exécutée car elle est incomplète ou incorrecte. |
+| UNAUTHORIZED | la requête n'a pas pu être exécutée car l'application ou l'utilisateur a l'origine de la requête n'a pas les droits nécessaires pour effectuer cette opération. |
+| FAILURE | la requête a échoué. |
+| NOT_FOUND | la ou les ressources demandées n'ont pas été trouvées. |
+| CONFLICT | la requête entre en conflit avec l'état de la ressource ou du serveur. |
+| INTERNAL_SERVER_ERROR | une erreur interne innatendue s'est produite. |
+
+=== AttributeStatus ===
+Le traitement des status d'attributs est inchangé.
+
+= 2 - Modification des signatures de la librairie =
+
+== 2.1 Author ==
+
+Les objets **origin** de type **RequestAuthor** ont été supprimés des requêtes qui en contenaient et ont été rendus obligatoires dans toutes les signatures de la librairie.
+
+== 2.2 Client code ==
+
+Dans la version précédente, le code client de l'application appelante n'était obligatoire que dans certains appels, il est maintenant obligatoire pour tous.
+
+== 2.3 Last update date ==
+
+A noter que toutes les méthodes de la librairie induisant une modification d'identités doivent dorénavant fournir, dans les requêtes, le last udpate date des identités concernées. 
+Cela implique d'avoir récupéré chaque identité à mettre à jour avant de réaliser l'appel. L'objectif est de se prémunir des accès concurrents, si le last update date ne correspond pas à celui de la ressource côté serveur, la requête est refusée avec un status correspondant.
+
+= 3 - Migration =
+
+== 3.1 - Changer de DTO ==
+
+Voici en détail le transfert de chaque ancienne DTO vers IdentityDto:
+
+|= DTO 3.0.0 |= Type |= DTO 3.1.0 |
+| fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.Identity | fusion | fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto |
+| fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.QualifiedIdentity | fusion | fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto |
+| fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.CertifiedAttribute | fusion | fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AttributeDto |
+| fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.CertifiedAttribute | fusion | fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AttributeDto |
+| fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.AttributeRequirement  | renommage | fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.AttributeRequirementDto |
+| fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.AttributeRight | renommage | fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.AttributeRightDto |
+| fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.CertificationProcessus | renommage | fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.CertificationProcessusDto |
+
+Il est nécessaire de remplacer les classes supprimées par les nouvelles classes. Voici la fonction de transfert pour chaque classe:
+
+=== fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.Identity ===
+
+|= Source (Identity) |= Destination (IdentityDto) |
+| connectionId | connectionId |
+| customerId | customerId |
+| attributes | attributes |
+
+=== fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.CertifiedAttribute ===
+
+|= Source (CertifiedAttribute) |= Destination (AttributeDto) |
+| key | key |
+| value | value |
+| certificationProcess | certifier |
+| certificationDate | certificationDate |
+
+=== fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.QualifiedIdentity ===
+|= Source (QualifiedIdentity) |= Destination (IdentityDto) |
+| quality | QualityDefinition.quality |
+| coverage | QualityDefinition.coverage |
+| scoring | QualityDefinition.scoring |
+| connectionId | connectionId |
+| customerId | customerId |
+| creationDate | creationDate |
+| lastUpdateDate | lastUpdateDate |
+| attributes | attributes |
+| merged | MergeDefinition.merged |
+
+=== fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.CertifiedAttribute ===
+|= Source (CertifiedAttribute) |= Destination (AttributeDto) |
+| key | key |
+| value | value |
+| type | type |
+| certifier | certifier |
+| certificationLevel | certificationLevel |
+| certificationDate | certificationDate |
+
+== 3.2 Changer les appels à la librairie ==
+
+=== 3.2.1 IdentityService ===
+
+==== Get Identity by Connection ID ====
+
+===== v 3.0.0 =====
+{{{ code |
+final IdentitySearchResponse response = _identityService.getIdentityByConnectionId( strConnectionId, strApplicationCode );
+if( IdentitySearchStatusType.SUCCESS == response.getStatus() )
+{
+    final QualifiedIdentity identity = response.getIdentities().get(0);
+    ...
+}
+}}}
+
+===== v 3.1.0 =====
+{{{ code |
+final RequestAuthor author = new RequestAuthor();
+author.setName("Your name");
+author.setType(AuthorType.application);
+final IdentitySearchResponse response = _identityService.getIdentityByConnectionId( strConnectionId, strClientCode, author );
+if( ResponseStatusType.OK == response.getStatus().getType() )
+{
+    final IdentityDto identity = response.getIdentities().get(0);
+    ...
+}
+}}}
+
+==== Get Identity by Customer ID ====
+===== v 3.0.0 =====
+{{{ code |
+final IdentitySearchResponse response = _identityService.getIdentity( strCustomerId, strApplicationCode );
+if( IdentitySearchStatusType.SUCCESS == response.getStatus() )
+{
+    final QualifiedIdentity identity = response.getIdentities().get(0);
+    ...
+}
+}}}
+
+===== v 3.1.0 =====
+{{{ code |
+final RequestAuthor author = new RequestAuthor();
+author.setName("Your name");
+author.setType(AuthorType.application);
+final IdentitySearchResponse response = _identityService.getIdentity( strCustomerId, strClientCode, author );
+if( ResponseStatusType.OK == response.getStatus().getType() )
+{
+    final IdentityDto identity = response.getIdentities().get(0);
+    ...
+}
+}}}
+
+==== Update Identity ====
+===== v 3.0.0 =====
+{{{ code |
+final IdentityChangeRequest identityChangeRequest = new IdentityChangeRequest();
+identityChangeRequest.setOrigin(new RequestAuthor());
+identityChangeRequest.getOrigin().setName("Application de test");
+identityChangeRequest.getOrigin().setType(AuthorType.application);
+
+identityChangeRequest.setIdentity(new Identity());
+
+final CertifiedAttribute preferredName = new CertifiedAttribute();
+preferredName.setKey("preferred_username");
+preferredName.setValue("Marouel");
+preferredName.setCertificationDate(new Date());
+preferredName.setCertificationProcess("fc");
+identityChangeRequest.getIdentity().getAttributes().add(preferredName);
+
+final CertifiedAttribute birthDate = new CertifiedAttribute();
+birthDate.setKey("birthdate");
+birthDate.setValue("11/09/1988");
+birthDate.setCertificationDate(new Date());
+birthDate.setCertificationProcess("cert_process_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(birthDate);
+
+final String customerId = "12549-cmsl54-dsd513";
+
+final IdentityChangeResponse response = _identityService.updateIdentity( customerId, identityChangeRequest, Constants.MY_APP_CODE);
+}}}
+
+===== v 3.1.0 =====
+{{{ code |
+final RequestAuthor author = new RequestAuthor();
+author.setName("Your name");
+author.setType(AuthorType.application);
+
+final String customerId = "12549-cmsl54-dsd513";
+
+final IdentitySearchResponse response = service.getIdentity( customerId, clientCode, author );
+if( !ResponseStatusType.OK.equals( response.getStatus( ).getType( ) ) || response.getIdentities( ).isEmpty( ) )
+{
+    // do whatever you need to do if no response
+}
+
+final IdentityDto searchedIdentity = response.getIdentities( ).get( 0 );
+
+final IdentityChangeRequest updateRequest = new IdentityChangeRequest( );
+final IdentityDto identity = new IdentityDto( );
+updateRequest.setIdentity( identity );
+final AttributeDto attributeDto = new AttributeDto( );
+identity.getAttributes( ).add( attributeDto );
+attributeDto.setCertifier( "fccertifier" );
+attributeDto.setCertificationDate( new Date( ) );
+attributeDto.setKey( Constants.PARAM_PREFERRED_USERNAME );
+attributeDto.setValue( "Borgia" );
+identity.setLastUpdateDate( searchedIdentity.getLastUpdateDate( ) );
+
+final IdentityChangeResponse response = _identityService.updateIdentity( customerId, identityChangeRequest, Constants.MY_APP_CODE, author );
+if( ResponseStatusType.SUCCESS == response.getStatus().getType() )
+{
+    ...
+} else if( ResponseStatusType.INCOMPLETE_SUCCESS == response.getStatus().getType() )
+{
+    ...
+}
+}}}
+
+==== Create Identity ====
+===== v 3.0.0 =====
+{{{ code |
+final IdentityChangeRequest identityChangeRequest = new IdentityChangeRequest();
+identityChangeRequest.setOrigin(new RequestAuthor());
+identityChangeRequest.getOrigin().setName("Application de test");
+identityChangeRequest.getOrigin().setType(AuthorType.application);
+
+identityChangeRequest.setIdentity(new Identity());
+
+final CertifiedAttribute familyName = new CertifiedAttribute();
+familyName.setKey("family_name");
+familyName.setValue("Dupont");
+familyName.setCertificationDate(this.currentDate);
+familyName.setCertificationProcess("cert_process_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(familyName);
+
+final CertifiedAttribute preferredName = new CertifiedAttribute();
+preferredName.setKey("preferred_username");
+preferredName.setValue("Martin");
+preferredName.setCertificationDate(this.currentDate);
+preferredName.setCertificationProcess("cert_process_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(preferredName);
+
+final CertifiedAttribute firstNames = new CertifiedAttribute();
+firstNames.setKey("first_name");
+firstNames.setValue("Didier Robert");
+firstNames.setCertificationDate(this.currentDate);
+firstNames.setCertificationProcess("cert_process_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(firstNames);
+
+final CertifiedAttribute birthDate = new CertifiedAttribute();
+birthDate.setKey("birthdate");
+birthDate.setValue("28/05/1654");
+birthDate.setCertificationDate(this.currentDate);
+birthDate.setCertificationProcess("cert_process_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(birthDate);
+
+final CertifiedAttribute email = new CertifiedAttribute();
+email.setKey("email");
+email.setValue(d.dupont@mail.com);
+email.setCertificationDate(this.currentDate);
+email.setCertificationProcess("cert_process_mail_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(email);
+
+final CertifiedAttribute gender = new CertifiedAttribute();
+gender.setKey("gender");
+gender.setValue("1");
+gender.setCertificationDate(this.currentDate);
+gender.setCertificationProcess("cert_process_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(gender);
+
+final CertifiedAttribute mobile = new CertifiedAttribute();
+mobile.setKey("mobile_phone");
+mobile.setValue("0648951365");
+mobile.setCertificationDate(this.currentDate);
+mobile.setCertificationProcess("sms");
+identityChangeRequest.getIdentity().getAttributes().add(mobile);
+
+try {
+    final IdentityChangeResponse response = _identityService.createIdentity( identityChangeRequest, Constants.MY_APP_CODE);
+    switch (response.getStatus()) {
+        case CREATE_SUCCESS:
+            // do something do something
+            break;
+        case CONFLICT:
+            // do something
+            break;
+        case FAILURE:
+            //do something
+            break;
+        default:
+            break;
+    }
+} catch (final IdentityStoreException e) {
+    // handle exception
+}
+}}}
+
+===== v 3.1.0 =====
+{{{ code |
+final RequestAuthor author = new RequestAuthor();
+author.setName("Your name");
+author.setType(AuthorType.application);
+
+final IdentityChangeRequest createRequest = new IdentityChangeRequest( );
+
+final IdentityDto identity = new IdentityDto( );
+createRequest.setIdentity(identity);
+
+final AttributeDto gender = new AttributeDto( );
+gender.setCertifier( "fccertifier" );
+gender.setCertificationDate( new Date( ) );
+gender.setKey( Constants.PARAM_GENDER );
+gender.setValue( "1" );
+identity.getAttributes( ).add( gender );
+
+final AttributeDto firstName = new AttributeDto( );
+firstName.setCertifier( "fccertifier" );
+firstName.setCertificationDate( new Date( ) );
+firstName.setKey( Constants.PARAM_FIRST_NAME );
+firstName.setValue( "Louisa" );
+identity.getAttributes( ).add( firstName );
+
+final AttributeDto lastName = new AttributeDto( );
+lastName.setCertifier( "fccertifier" );
+lastName.setCertificationDate( new Date( ) );
+lastName.setKey( Constants.PARAM_FAMILY_NAME );
+lastName.setValue( "Wheilan" );
+identity.getAttributes( ).add( lastName );
+
+final AttributeDto birthDate = new AttributeDto( );
+birthDate.setCertifier( "fccertifier" );
+birthDate.setCertificationDate( new Date( ) );
+birthDate.setKey( Constants.PARAM_BIRTH_DATE );
+birthDate.setValue( "01/01/1951" );
+identity.getAttributes( ).add( birthDate );
+return identity;
+
+try {
+    final IdentityChangeResponse createResponse = _identityService.createIdentity( createRequest, Constants.MY_APP_CODE, author );
+    switch (response.getStatus().getType()) {
+        case SUCCESS:
+        case INCOMPLETE_SUCCESS:
+            // do something do something
+            break;
+        case CONFLICT:
+            // do something
+            break;
+        case FAILURE:
+            //do something
+            break;
+        default:
+            break;
+    }
+} catch (final IdentityStoreException e) {
+    // handle exception
+}
+}}}
+
+==== Search Identity ====
+===== v 3.0.0 =====
+{{{ code |
+try {
+    final IdentitySearchRequest identitySearchRequest = new IdentitySearchRequest( );
+    identitySearchRequest.setSearch( new SearchDto( ) );
+
+    final SearchAttributeDto firstName = new SearchAttributeDto();
+    firstName.setStrict(true);
+    firstName.setKey("first_name");
+    firstName.setValue("Anthony");
+    identitySearchRequest.getSearch().getAttributes().add(firstName);
+
+    final SearchAttributeDto familyName = new SearchAttributeDto();
+    familyName.setStrict(true);
+    familyName.setKey("family_name");
+    familyName.setValue("Durand");
+    identitySearchRequest.getSearch().getAttributes().add(familyName);
+    final IdentitySearchResponse response = _identityService.searchIdentities(identitySearchRequest, Constants.MY_APP_CODE);
+
+    if(IdentitySearchStatusType.SUCCESS.equals(response.getStatus())) {
+        response.getIdentities().forEach(qualifiedIdentity -> {
+            if(qualifiedIdentity.getQuality() > 0.9) {
+                // do something
+            }
+        });
+    }
+} catch (final IdentityStoreException e) {
+    // handle Exception
+}
+}}}
+
+===== v 3.1.0 =====
+{{{ code |
+final RequestAuthor author = new RequestAuthor();
+author.setName("Your name");
+author.setType(AuthorType.application);
+
+final IdentitySearchRequest identitySearchRequest = new IdentitySearchRequest( );
+identitySearchRequest.setMax( 2 );
+
+final SearchDto search = new SearchDto( );
+search.setAttributes( new ArrayList<>( ) );
+final SearchAttribute familyNameSearchAttribute = new SearchAttribute( );
+familyNameSearchAttribute.setValue( familyName );
+familyNameSearchAttribute.setKey( Constants.PARAM_FAMILY_NAME );
+familyNameSearchAttribute.setTreatmentType( AttributeTreatmentType.APPROXIMATED );
+search.getAttributes( ).add( familyNameSearchAttribute );
+
+final SearchAttribute firstNameSearchAttribute = new SearchAttribute( );
+firstNameSearchAttribute.setValue( firstName );
+firstNameSearchAttribute.setKey( Constants.PARAM_FIRST_NAME );
+firstNameSearchAttribute.setTreatmentType( AttributeTreatmentType.APPROXIMATED );
+search.getAttributes( ).add( firstNameSearchAttribute );
+
+final SearchAttribute birthdateSearchAttribute = new SearchAttribute( );
+birthdateSearchAttribute.setValue( birthdate );
+birthdateSearchAttribute.setKey( Constants.PARAM_BIRTH_DATE );
+birthdateSearchAttribute.setTreatmentType( AttributeTreatmentType.APPROXIMATED );
+search.getAttributes( ).add( birthdateSearchAttribute );
+identitySearchRequest.setSearch( search );
+
+final IdentitySearchResponse searchResponse = _identityService.searchIdentities( identitySearchRequest, Constants.MY_APP_CODE, author );
+if(ResponseStatusType.OK.equals(searchResponse.getStatus().getType())) {
+        searchResponse.getIdentities().forEach(identity -> {
+            final QualityDefinition qualityDefinition = identitySearch.getQuality();
+            if(qualityDefinition != null && qualityDefinition.getQuality() > 0.9) {
+                // do something
+            }
+        });
+    }
+}}}
+

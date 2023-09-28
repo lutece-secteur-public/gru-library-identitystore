@@ -1,0 +1,1600 @@
+<<<breadcrumb>>>
+
+{{{ page_title | Bibliothèque library-identitystore (V3.1.0) }}}
+
+<<<TOC>>>
+
+La library-identitystore, librairie Lutece, a été développée pour faciliter l'accès au référentiel d'identités ainsi qu'aux contrats de service via l'API Manager.
+
+= 1 - Ajout de la dépendance au projet maven =
+Dans le fichier **pom.xml** du projet, rajoutez la dépendance suivante :
+{{{ code |
+<dependency>
+    <groupId>fr.paris.lutece.plugins</groupId>
+    <artifactId>library-identitystore</artifactId>
+    <version>[3.1.0,)</version>
+    <type>jar</type>
+</dependency>
+}}}
+
+= 2 - Configuration du service =
+Pour pouvoir utiliser l'API, le service doit être configuré. Il y a deux façons de configurer ce service : soit par injection de bean dans le contexte, soit directement en Java.
+
+== 2.1 - Configuration par injection de bean dans le contexte ==
+=== Via API Manager ===
+Dans le fichier de contexte du plugin, il faut rajouter les lignes suivantes :
+{{{ code |
+<!-- library identitystore -->
+<bean id="lib-identitystore.apiManagerTransport" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.IdentityTransportApiManagerRest">
+  <property name="identityStoreEndPoint">
+    <value>${url_to_API_Manager}</value>
+  </property>
+  <property name="apiManagerEndPoint">
+    <value>${url_to_Access_Manager}</value>
+  </property>
+  <property name="apiManagerCredentials">
+    <value>${private_key}</value>
+  </property>
+</bean>
+<bean id="identityService.rest" class="fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService">
+  <constructor-arg ref="lib-identitystore.apiManagerTransport"/>
+</bean>
+}}}
+
+URLS de dev :
+* Access Manager : https://gru-gravitee1-am-gateway.dev.apps.paris.mdp/gru-notifications-domain/oauth/token
+* API Manager : https://gru-gravitee1-apim-gateway.dev.apps.paris.mdp/identity/v3
+
+URLS de R7 :
+* Access Manager : https://gru-gravitee-am-gateway.rec.apps.paris.mdp/gru-notifications-domain/oauth/token
+* API Manager : https://gru-gravitee-apim-gateway.rec.apps.paris.mdp/identity/v3
+
+URLS de Prod :
+* Access Manager : https://gru-gravitee-am-gateway.apps.paris.mdp/gru-notifications-domain/oauth/token
+* API Manager : https://gru-gravitee-apim-gateway.apps.paris.mdp/identity/v3
+
+
+=== Accès direct (dev local) ===
+Dans le fichier de contexte du plugin, il faut rajouter les lignes suivantes :
+{{{ code |
+<!-- library identitystore -->
+<!-- IHttpTransportProvider declarations -->
+    <bean id="identityService.restTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.IdentityTransportRest">
+        <property name="IdentityStoreEndPoint">
+            <value>${identitydesk.identitystore.endpoint}</value>
+        </property>
+    </bean>
+
+    <!-- IdentityService impl -->
+    <bean id="identityService.rest" class="fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService">
+        <constructor-arg ref="identityService.restTransport.httpAccess"/>
+    </bean>
+}}}
+
+dans lequel :
+* la valeur de **${identitydesk.identitystore.endpoint}** est l'url locale de l'API identitystore, ex: http://localhost:8080/rest/identitystore
+
+=== Récupération dans l'application ===
+Le bean //identityService.rest// est alors disponible dans le contexte du plugin. C'est ce bean qui permet d'interagir avec le référentiel d'identités.
+Dans la suite, on appelera ce bean //identityService// pour plus de clarté.
+
+Une référence à ce bean peut être récupérée simplement ainsi :
+{{{ code |
+    import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
+    ...
+    private IdentityService _identityService = SpringContextService.getBean( "identityService.rest" );
+}}}
+== 2.2 - Configuration en Java ==
+Cette section présente un exemple de configuration du service en Java (exemple en utilisant Lutèce).
+{{{ info | Dans cette section, 'myplugin' doit être remplacé par une valeur de votre choix. }}}
+
+=== Via API manager ===
+Dans un fichier **.properties**, ajoutez les clés suivantes :
+{{{ code |
+    myplugin.gru.endpoint.identitystore=<url_to_API_Manager>/identity/v3
+    myplugin.gru.endpoint.token=<url_to_API_Manager>/token
+    myplugin.gru.apimanager.credentials=<private_key>
+}}}
+
+dans lequel :
+* la valeur de **<url_to_API_Manager>** correspond à l'url vers l'API Manager Identity (voir la partie **Les valeurs à paramétrer** dans [[gru_identity]]).
+* la valeur de **<private_key>** correspond à la clé privée de votre application pour l'API Manager Identity.
+
+Dans le code Java, ajoutez les lignes suivantes :
+{{{ code |
+    ...
+    private static final String PROPERTY_GRU_ENDPOINT_IDENTITYSTORE = "myplugin.gru.endpoint.identitystore";
+    private static final String PROPERTY_GRU_ENDPOINT_TOKEN = "myplugin.gru.endpoint.token";
+    private static final String PROPERTY_GRU_APIMANAGER_CREDENTIALS = "myplugin.gru.apimanager.credentials";
+    ...
+    IdentityTransportApiManagerRest apiManagerTransport = new IdentityTransportApiManagerRest(  );
+    apiManagerTransport.setIdentityStoreEndPoint( AppPropertiesService.getProperty( PROPERTY_GRU_ENDPOINT_IDENTITYSTORE ) );
+    apiManagerTransport.setApiManagerEndPoint( AppPropertiesService.getProperty( PROPERTY_GRU_ENDPOINT_TOKEN ) );
+    apiManagerTransport.setApiManagerCredentials( AppPropertiesService.getProperty( PROPERTY_GRU_APIMANAGER_CREDENTIALS ) );
+
+    final IdentityService identityService = new IdentityService( apiManagerTransport );
+    ...
+}}}
+
+=== Sans API manager ===
+Dans un fichier **.properties**, ajoutez les clés suivantes :
+{{{ code |
+myplugin.gru.endpoint.identitystore=<url_to_API_ids>
+}}}
+
+dans lequel :
+* la valeur de **<url_to_API_ids>** correspond à l'url vers l'API Identity, ex: http://localhost:8080/rest/identitystore.
+
+Dans le code Java, ajoutez les lignes suivantes :
+{{{ code |
+    ...
+    private static final String PROPERTY_GRU_ENDPOINT_IDENTITYSTORE = "myplugin.gru.endpoint.identitystore";
+    ...
+    IdentityTransportRest transportProvider = new IdentityTransportRest();
+    apiManagerTransport.setIdentityStoreEndPoint( AppPropertiesService.getProperty( PROPERTY_GRU_ENDPOINT_IDENTITYSTORE ) );
+
+    final IdentityService identityService = new IdentityService( transportProvider );
+    ...
+}}}
+
+Le service //identityService// est alors disponible.
+
+== 2.3 - Autres services ==
+
+La librairie Identitystore contient également deux autres services :
+* //ServiceContractService// : Il s'agit du service facilitant l'accès et la manipulation des contrats de service.
+* //ReferentialService// : Il s'agit du service facilitant l'accès et la manipulation des données statiques du référentiel (processus de certification, niveaux de certification, ...).
+
+La configuration de ces services est analogue à celle de //IdentityService//, détaillée précédemment.
+
+= 3 - Utilisation des services  =
+Le service //IdentityService// permet aux applications de manipuler le référentiel d'identités. Pour cela il propose les opérations suivantes:
+* CRUD: Création, Recherche, Update et Delete d'une identité
+* Récupération d'une identité
+* Import d'une identité
+* Rapprochement de deux identités
+* Annulation de rapprochement de deux identités
+* Récupération de l'historique d'une identité
+* Recherche dans l'historique des identités
+* Récupération des identités mises à jour récemment
+* Dé-certification d'une identité
+
+Le service //ServiceContractService// permet aux applications de manipuler le référentiel des contrats de service. Pour cela il propose les opérations suivantes:
+* Création d'un contrat de service
+* Récupération d'un ou plusieurs contrat(s) de service
+* Mise à jour d'un contrat de service
+* Cloture d'un contrat de service
+
+Le service //ReferentialService// permet aux applications de manipuler les données statiques du référentiel. Pour cela il propose les opérations suivantes:
+* Récupération des processus de certification
+* Récupération des niveaux de certification
+
+
+== 3.1 - Le modèle ==
+Il existe plusieurs objets en fonction des groupes de méthodes utilisés.
+
+Pour //IdentityService// :
+* Pour les opérations de type Création, Modification et Import, la librairie acceptera en entrée un //IdentityChangeRequest// et retournera un //IdentityChangeResponse//.
+* Pour les opérations de type Recherche, la librairie acceptera en entrée un //IdentitySearchRequest// et retournera un //IdentitySearchResponse//.
+* Pour les opérations de type Récupération d'une identité, la librairie acceptera en entrée des paramètres qui seront définis par la suite et retournera un //IdentitySearchResponse//.
+* Pour les opérations de type Rapprochement, la librairie acceptera en entrée un //IdentityMergeRequest// et retournera un //IdentityMergeResponse//.
+* Pour les opérations de type Historique, la librairie acceptera en entrée un //IdentityHistorySearchRequest// et retournera un //IdentityHistorySearchResponse//.
+
+Pour //ServiceContractService// :
+* Pour les opérations de type Création, Modification et Cloture, la librairie acceptera en entrée un //ServiceContractDto// et retournera un //ServiceContractChangeResponse//.
+* Pour les opérations de type Récupération, la librairie acceptera en entrée des paramètres qui seront définis par la suite et retournera un //ServiceContractSearchResponse// ou un //ServiceContractsSearchResponse//.
+
+Pour //ReferentialService// :
+* La récupération des processus de certification retournera un //ProcessusSearchResponse//.
+* La récupération des niveaux de certification retournera un //LevelSearchResponse//.
+
+=== Les différents objets de requête ===
+
+==== //IdentityChangeRequest// ====
+La création, la modification et l'import d'une identité dans le référentiel nécessite l'utilisation d'un objet //IdentityChangeRequest//.
+Cet objet est composé de l'attribut suivant :
+* **identity** : cet objet //IdentityDto// représente l'identité en tant que telle.
+
+L'objet //IdentityDto// est composé des attributs suivants :
+* **connectionId** : l'identifiant de connexion de l'identité.
+* **customerId** : l'identifiant de l'identité.
+* **externalCustomerId** : l'identifiant de l'identité dans le système externe (utilisé pour l'import).
+* **monParisActive** : Flag indiquant si l'identité est connectée.
+* **creationDate** : Date de création de l'identité.
+* **lastUpdateDate** : Date de dernière mise à jour de l'identité.
+* **quality** : Qualité de l'identité. Cet objet est un //QualityDefinition//.
+* **expiration** : Les données d'expiration de l'identité. Cet objet est un //ExpirationDefinition//.
+* **merge** : les données de rapprochement de l'identité. Cet objet est un //MergeDefinition//.
+* **duplicateDefinition** : les données relatives aux doublons. Cet objet est un //IdentityDuplicateDefinition//.
+* **suspicious** : indique si l'identité est suspectée d'être en doublon.
+* **attributes** : les attributs de l'identité. Cet objet est une //List<AttributeDto>//.
+
+L'objet //QualityDefinition// est composé des attributs suivants :
+* **quality** : score de qualité de l'identité
+* **coverage** : niveau de couverture de l'identité
+* **scoring** : scoring de l'identité
+
+L'objet //ExpirationDefinition// est composé des attributs suivants :
+* **deleted** : indique si l'identité est supprimée (**true**) ou non (*false**)
+* **deletedDate** : date de suppression de l'identité
+* **expirationDate** : date d'expiration de l'identité
+
+L'objet //MergeDefinition// est composé des attributs suivants :
+* **merged** : indique si l'identité est rapprochée d'une autre identité (**true**) ou non (*false**)
+* **mergeDate** : date de rapprochement de l'identité
+* **masterCustomerId** : customer ID de l'identité à laquelle cette identité est rapprochée
+
+L'objet //IdentityDuplicateDefinition// est composé des attributs suivants :
+* **duplicateExclusions** : une //List<IdentityDuplicateExclusion>// contenant les données d'exclusion de suspicion de l'identité
+* **duplicateSuspicion** : un //IdentityDuplicateSuspicion// contenant les informations concernant une éventuelle suspicion de doublon sur cette identité
+
+L'objet //IdentityDuplicateExclusion// est composé des attributs suivants :
+* **excludedCustomerId** : le Customer ID de l'identité exclue
+* **exclusionDate** : date de l'exclusion
+* **authorName** : nom de l'auteur de l'exclusion
+* **authorType** : type de l'auteur de l'exclusion
+
+L'objet //IdentityDuplicateSuspicion// est composé des attributs suivants :
+* **duplicateRuleCode** : code de la règle de détection de doublon ayant détecté cette identité comme doublon potentiel
+* **creationDate** : date de détection
+
+L'objet //AttributeDto// est composé des attributs suivants :
+* **key** : le code de l'attribut
+* **value** : la valeur de l'attribut
+* **type** : le type de l'attribut
+* **certificationLevel** : le niveau de certification de l'attribut
+* **certifier** : le code du processus de certification de l'attribut.
+* **certificationDate** : la date de certification de l'attribut.
+* **lastUpdateDate** : date de dernière mise à jour de l'attribut.
+* **lastUpdateClientCode** : code client ayant réalisé la dernière mise à jour de l'attribut.
+
+
+==== //IdentitySearchRequest// ====
+La recherche d'une identité dans le référentiel nécessite un objet //IdentitySearchRequest// qui contient les critères de recherche.
+Cet objet est composé des attributs suivants :
+* **max** : nombre max de résultats devant être retournés
+* **connected** : l'identité doit-elle être connectée (**true**) ou non (**false**)
+* **connectionId** : le GUID de l'identité recherchée
+* **search** : un //SearchDto// qui définit les attributs utilisés pour la recherche
+
+L'objet //SearchDto// est composé des attributs suivants :
+* **attributes** : une //List<SearchAttribute>//
+
+L'objet //SearchAttribute// est composé des attributs suivants :
+* **key** : la clé de l'attribut
+* **value** : la valeur recherchée de l'attribut
+* **treatmentType** : enum //AttributeTreatmentType// permettant de définir le type de matching désiré pour l'attribut :
+** DIFFERENT : match uniquement sur des valeurs différentes 
+** APPROXIMATED : match sur des valeurs égales ou légèrement différentes (approximation)
+** STRICTLY_APPROXIMATED : match uniquement sur des valeurs légèrement différentes (approximation)
+** STRICT : match uniquement sur des valeurs égales
+** ABSENT : martch uniquement si l'attribut est absent
+
+
+==== //IdentityMergeRequest// ====
+Le rapprochement ou l'annulation de rapprochement de deux identités dans le référentiel nécessite un objet //IdentityMergeRequest// qui contient les informations nécessaires.
+Cet objet est composé des attributs suivants :
+* **primaryCuid** : Customer ID de l'identité principale
+* **primaryLastUpdateDate** : date de dernière mise à jour de l'identité principale
+* **secondaryCuid** : Customer ID de l'identité secondaire
+* **secondaryLastUpdateDate** : date de dernière mise à jour de l'identité secondaire
+* **duplicateRuleCode** : code de la règle de détection de doublons ayant servie à identifier les identités ci-dessus comme doublons potentiels
+* **identity** : un objet //IdentityDto// contenant les informations à mettre à jour sur l'identité principale. L'objet est décrit précédemment dans le paragraphe IdentityChangeRequest
+
+
+==== //IdentityHistorySearchRequest// ====
+La recherche d'historique d'identité dans le référentiel nécessite un objet //IdentityHistorySearchRequest// qui contient les critères de recherche.
+Cet objet est composé des attributs suivants :
+* **clientCode** : le code de l'application cliente
+* **authorName** : nom de l'agent à l'origine des actions à rechercher
+* **customerId** : Customer ID de l'identité
+* **metadata** : map de clé-valeur permettant de filtrer sur les méta-données
+* **nbDaysFrom** : nombre de jours max à remonter par rapport à la date présente
+* **identityChangeType** : enum //IdentityChangeType// permettant de filtrer sur le type d'évènement :
+** CREATE : création de l'identité
+** UPDATE : mise à jour de l'identité
+** DELETE : suppression de l'identité
+** MERGED : cette identité a été rapprochée d'une identité principale
+** CONSOLIDATED : cette identité a été consolidée avec une identité secondaire
+** MERGE_CANCELLED : le rapprochement de cette identité secondaire a été annulé
+** CONSOLIDATION_CANCELLED : la consolidation de cette identité principale a été annulée
+** EXCLUDED : cette identité a été exclue d'une suspicion de doublon
+** EXCLUSION_CANCELLED : annulation de l'exclusion d'une suspicion de doublon visant cette identité
+** MARKED_SUSPICIOUS : cette identité a été marquée comme étant un doublon potentiel
+** READ : cette identité a été consultée
+
+
+==== //ServiceContractDto// ====
+La Création, Modification et Cloture d'un contrat de service nécessite un objet //ServiceContractDto// qui contient les informations nécessaires.
+Cet objet est composé des attributs suivants :
+* **name** : le nom du contrat de service
+* **clientCode** : le code de l'application cliente
+* **moaEntityName** : le nom de l'entité MOA
+* **moeEntityName** : le nom de l'entité MOE
+* **moeResponsibleName** : le responsable MOE du contrat de service
+* **moaContactName** : le moyen de contact du responsable MOA
+* **serviceType** : le type de service couvert par le contrat
+* **startingDate** : la date de début du contrat de service
+* **endingDate** : la date de fin du contrat de service
+* **authorizedCreation** : l'application est autorisée (**true**) à créer une identité ou non (**false**)
+* **authorizedUpdate** :  l'application est autorisée (**true**) à mettre à jour une identité ou non (**false**)
+* **authorizedSearch** : l'application est autorisée (**true**) à rechercher des identités ou non (**false**)
+* **authorizedMerge** : l'application est autorisée (**true**) à rapprocher deux identités ou non (**false**)
+* **authorizedAccountUpdate** :  l'application est autorisée (**true**) à mettre à jour une identité connectée (c'est à dire ayant un GUID) ou non (**false**)
+* **authorizedDeletion** :  l'application est autorisée (**true**) à supprimer une identité ou non (**false**)
+* **authorizedImport** :  l'application est autorisée (**true**) à importer une identité ou non (**false**)
+* **authorizedExport** :  l'application est autorisée (**true**) à exporter une identité ou non (**false**)
+* **authorizedDecertification** : l'application est autorisée (**true**) à dé-certifier une identité ou non (**false**)
+* **authorizedAgentHistoryRead** : l'application est autorisée (**true**) à consulter l'historique de type READ des identités ou non (**false**)
+* **dataRetentionPeriodInMonths** : la période de conservation des données exprimée en mois
+* **attributeDefinitions** : une //List<AttributeDefinitionDto>//
+
+L'objet //AttributeDefinitionDto// est composé des attributs suivants :
+* **name** : nom de l'attribut
+* **keyName** : clé de l'attribut
+* **description** : description de l'attribut
+* **keyType** : type de l'attribut
+* **certifiable** : l'attribut est certifiable (**true**) ou non (**false**)
+* **pivot** : l'attribut est-il un attribut pivot  (**true**) ou non (**false**)
+* **keyWeight** : le poid de l'attribut, utilisé dans les calculs de qualité et de scoring des identités recherchées
+* **attributeRequirement** : l'exigence de niveau de certification minimum de l'application pour l'attribut. Cet objet est un //AttributeRequirementDto//.
+* **attributeRight** : les droits de l'application associés à cet attribut. Cet objet est une //AttributeRightDto//.
+* **attributeCertifications** : les processus de certification de l'attribut utilisables par l'application. Cet objet est une //List<CertificationProcessusDto>//.
+
+L'objet //AttributeRequirementDto// est composé des attributs suivants :
+* **level** : valeur du niveau de certification
+* **name** : nom du niveau de certification
+* **description** : description du niveau de certification
+
+L'objet //AttributeRightDto// est composé des attributs suivants :
+* **mandatory** : l'attribut est obligatoire
+* **searchable** : l'attribut est utilisable pour la recherche
+* **readable** : l'attribut est disponible en lecture
+* **writable** : l'attribut est disponible en écriture
+
+L'objet //CertificationProcessusDto// est composé des attributs suivants :
+* **label** : le label du processus de certification
+* **code** : le code du processus de certification
+* **level** : le niveau du processus de certification
+
+
+=== Les différents objets de réponse ===
+
+==== Les éléments communs ====
+Tous les différents objets de réponse contiennent cet élément commun :
+* **status** : objet //ResponseStatus// contenant les informations concernant l'éxécution de la requête
+
+L'objet //ResponseStatus// est composé des attributs suivants :
+* **httpCode** : le code HTTP de la réponse
+* **message** : message décrivant le status
+* **messageKey** : la clé i18n du message
+* **status** : enum //ResponseStatusType// décrivant le type de status :
+** OK : le status de la réponse est OK (status renvoyé pour les requêtes de type GET et Search)
+** SUCCESS : la réquête a été exécutée avec succès (status renvoyé pour les requêtes ayant un impact sur les données stockées en base de données)
+** INCOMPLETE_SUCCESS : la requête a été exécutée avec succès, avec certaines demandes non traitées (non bloquantes)
+** BAD_REQUEST : la requête n'a pas pu être exécutée car elle est incomplète ou incorrecte
+** UNAUTHORIZED : la requête n'a pas pu être exécutée car l'application ou l'utilisateur a l'origine de la requête n'a pas les droits nécessaires pour effectuer cette opération
+** FAILURE : la requête a échoué
+** NOT_FOUND : la ou les ressources demandées n'ont pas été trouvées
+** CONFLICT : la requête entre en conflit avec l'état de la ressource ou du serveur
+** INTERNAL_SERVER_ERROR : une erreur interne innatendue s'est produite
+* **attributeStatuses** : une //List<AttributeStatus>// représentant le détail des status par attribut d'identité.Cet objet n'est renseigné que lors des opérations touchant aux attributs d'une identité.
+
+L'objet //AttributeStatus// est composé des attributs suivants :
+* **key** : le code de l'attribut
+* **message** : message décrivant le status
+* **messageKey** : la clé i18n du message
+* **status** : enum **AttributeChangeStatus** représentant le status du traitement unitaire de l'attribut. Le status peut-être :
+** CREATED = lors d'une création ou d'un update (si l'attribut n'existe pas il est créé), si l'attribut a été correctement créé
+** NOT_CREATED = lors d'une création ou d'un update si l'attribut n'a pas été créé à cause d'une valeur incorrecte
+** UPDATED = lors d'un update, si l'attribut a été correctement mis à jour
+** NOT_UPDATED = lors d'un update, si l'attribut n'a pas été mis à jour car celui du référentiel existe avec la même valeur et la même certification
+** REMOVED = lors d'un update, si l'attribut a été correctement supprimé
+** NOT_REMOVED = lors d'un update, si l'attribut n'a pas été supprimé car il est obligatoire
+** NOT_FOUND = la key de l'attribut n'existe pas dans le référentiel
+** INSUFFICIENT_CERTIFICATION_LEVEL = Lors d'un update l'attribut ne peut pas être mis à jour car la certification spécifiée dans la requête est inférieure à celle existante
+** INSUFFICIENT_RIGHTS = Le contrat de service n'autorise pas l'écriture de cet attribut avec la certification spécifiée dans la requête
+** UNAUTHORIZED = Le contrat de service n'autorise pas l'écriture de cet attribut
+** UNKNOWN_GEOCODES_CODE = le code Geocodes fourni est inconnu du référentiel
+** UNKNOWN_GEOCODES_LABEL = le label Geocodes fourni est inconnu du référentiel
+** MULTIPLE_GEOCODES_RESULTS_FOR_LABEL = le Label Geocodes fourni correspond à plusieurs résultats dans le référentiel Géocodes
+** OVERRIDDEN_GEOCODES_LABEL = le label fourni ne correspond pas au code Geocodes fourni, et a été remplacé par le label Geocodes correct
+** INVALID_VALUE : la valeur fournie ne passe pas son pattern de validation
+** FORMATTED_VALUE : la valeur fournie a été formattée avant traitement
+** UNCERTIFIED : l'attribut a bien été décertifié 
+
+
+==== //IdentityChangeResponse// ====
+La création, la modification, la suppression, l'import et la décertification d'une identité dans le référentiel renvoient un objet //IdentityChangeResponse// qui contient les informations d'exécution de la requête.
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **connectionId** : l'identifiant de connexion de l'identité
+* **customerId** : l'identifiant de l'identité
+* **lastUpdateDate** : la date de la dernière modification de l'identité.
+* **creationDate** : la date de création de l'identité.
+
+
+==== //IdentitySearchResponse// ====
+La recherche d'une identité dans le référentiel renvoie un objet //IdentitySearchResponse// qui contient les résultats de la recherche.
+
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **identities** : une //List<IdentityDto>// contenant les résultats de la recherche. L'objet est décrit précédemment dans le paragraphe IdentityChangeRequest
+* **alerts** : une //List<IdentitySearchMessage>// contenant des messages décrivant d'éventuelles erreurs
+
+L'objet //IdentitySearchMessage// est composé des attributs suivants :
+* **attributeName** : la clé de l'attribut
+* **message** : le message décrivant l'alerte remontée pour la clé d'attribut associée
+
+
+==== //IdentityMergeResponse// ====
+Le rapprochement ou l'annulation de rapprochement de deux identités dans le référentiel renvoie un objet //IdentityMergeResponse//. 
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **connectionId** : l'identifiant de connexion de l'identité
+* **customerId** : l'identifiant de l'identité
+* **lastUpdateDate** : la date de la dernière modification de l'identité.
+
+
+==== //UpdatedIdentitySearchResponse// ====
+La recherche d'identités mise à jour récemment renvoie un objet //UpdatedIdentitySearchResponse//.
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **updatedIdentityList** : une //List<UpdatedIdentityDto>// contenant les résultats de recherche
+
+L'objet //UpdatedIdentityDto// est composé des attributs suivants :
+* **customerId** : l'identifiant de l'identité
+* **modificationDate** : date de modification de l'identité
+
+
+==== //IdentityHistoryGetResponse// ====
+La récupération d'un historique d'identité renvoie une objet //IdentityHistoryGetResponse//.
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **history** : un //IdentityHistory//
+
+L'objet //IdentityHistory// est composé des attributs suivants :
+* **connectionId** : l'identifiant de connexion de l'identité
+* **customerId** : l'identifiant de l'identité
+* **identityChanges** : une //List<IdentityChange>// contenant les modifications effectuées sur l'identité
+* **attributeHistories** : une //List<AttributeHistory>// contenant les modifications effectuées sur les attributs de l'identité
+
+L'objet //IdentityChange// est composé des attributs suivants :
+* **metadata** : une map clé-valeur contenant des méta-données
+* **identityChangeType** : le type d'énènement. L'enum a été décrite dans le paragraphe sur l'objet //IdentityHistorySearchRequest//
+* **author** : un //RequestAuthor//. L'auteur à l'origine de l'évènement
+* **changeStatus** : le status correspondant à l'évènement
+* **changeMessage** : le message décrivant l'évènement
+* **clientCode** : le code de l'application cliente
+* **customerId** : l'identifiant de l'identité
+* **connectionId** : l'identifiant de connexion de l'identité
+* **creationDate** : date de création de l'identité
+* **lastUpdateDate** : date de dernière mise à jour de l'identité
+* **modificationDate** : date de l'évènement
+* **isMonParisActive** : si l'identité est connectée ou non
+* **isDeleted** : si l'identité est supprimée ou non
+* **expirationDate** : date d'expiration de l'identité
+* **masterCustomerId** : l'identifiant de l'identité principale associée à cette identité
+* **isMerged** : si l'identité a été rapprochée ou consolidée
+* **mergeDate** : date de rapprochement ou consolidation de l'identité
+
+L'objet //RequestAuthor// est composé des attributs suivants :
+* **name** : le nom de l'auteur
+* **type** : enum //AuthorType// représentant le type d'auteur :
+** owner
+** agent
+** admin
+** application
+
+L'objet //AttributeHistory// est composé des attributs suivants :
+* **attributeKey** : clé de l'attribut
+* **attributeChanges** : une //List<AttributeChange>// contenant les modifications effectuées sur l'attribut
+
+L'objet //AttributeChange// est composé des attributs suivants :
+* **metadata** : une map clé-valeur contenant des méta-données
+* **changeType** : enum //AttributeChangeType// représentant le type d'énènement :
+** CREATE : l'attribut a été créé
+** UPDATE : l'attribut a été mis à jour
+** DELETE : l'attribut a été supprimé
+* **changeStatus** : le status correspondant à l'évènement
+* **changeMessage** : le message décrivant l'évènement
+* **authorType** : enum //AuthorType// représentant le type d'auteur à l'origine de l'évènement. L'enum est décrite précédemment.
+* **authorName** : le nom de l'auteur à l'origine de l'évènement
+* **clientCode** : le code de l'application cliente
+* **idIdentity** : ID technique de l'identité
+* **attributeKey** : clé de l'attribut
+* **attributeValue** : valeur de l'attribut
+* **certificationProcessus** : code du processus de certification de l'attribut
+* **certificationDate** : date de certification
+* **modificationDate** : date de l'évènement
+
+
+==== //IdentityHistorySearchResponse// ====
+La recherche d'historique d'identité renvoie une objet //IdentityHistorySearchResponse//.
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **histories** : une //List<IdentityHistory>//. L'objet //IdentityHistory// est décrit précédemment.
+
+
+==== //ServiceContractSearchResponse// ====
+La récupération d'un contrat de service dans le référentiel renvoie un objet //ServiceContractSearchResponse// qui contient sa définition.
+
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **serviceContract** : un //ServiceContractDto// décrivant le contrat de service. Cet objet a été décrit précédemment
+
+
+==== //ServiceContractsSearchResponse// ====
+La récupération de plusieurs contrats de service dans le référentiel renvoie un objet //ServiceContractsSearchResponse//.
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **serviceContracts** : une //List<ServiceContractDto>// contenant les contrats de service. L'objet //ServiceContractDto// a été décrit précédemment
+
+
+==== //ServiceContractChangeResponse// ====
+La création, mise à jour et cloture d'un contrat de service renvoie un objet //ServiceContractChangeResponse//.
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **serviceContract** : un //ServiceContractDto// décrivant le contrat de service mis à jour. Cet objet a été décrit précédemment
+
+
+==== //ProcessusSearchResponse// ====
+La récupération des processus de certification renvoie un objet //ProcessusSearchResponse//.
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **processus** : une //List<AttributeCertificationProcessusDto>// contenant les processus de certification
+
+L'objet //AttributeCertificationProcessusDto// est composé des attributs suivants :
+* **label** : le libellé du processus
+* **code** : le code du processus
+* **attributeCertificationLevels** : une //List<AttributeCertificationLevelDto>// contenant les niveaux de certification d'attributs possibles pour ce processus
+
+L'objet //AttributeCertificationLevelDto// est composé des attributs suivants :
+* **attributeKey** : la clé de l'attribut
+* **level** : un //LevelDto// représentant un niveau de certification
+
+L'objet //LevelDto// est composé des attributs suivants :
+* **name** : le nom du niveau de certification
+* **description** : la description du niveau de certification
+* **level** : le niveau de certification
+
+
+==== //LevelSearchResponse// ====
+La récupération des niveaux de certification renvoie un objet //LevelSearchResponse//.
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **levels** : une //List<LevelDto>// contenant les niveaux de certification. L'objet //LevelDto// est décrit précédemment
+
+
+== 3.2 - Les opérations ==
+{{{ warning |
+    Toutes les opérations nécessitent de fournir le code de l'application appelante dans le but de valider que les requêtes respectent le contrat de service de celle-ci.
+    Par exemple, si lors d'une demande de création d'identité, l'application n'a pas l'autorisation d'écrire un des attributs spécifiés dans la requête, la demande est rejetée avec un statut retraçant ce défaut. Si ce paramètre n'est pas spécifié dans les appels la librairie retourne une //IdentityStoreException//. Si aucun contrat de service n'est trouvé pour l'application, la librairie renvoie une //IdentityStoreException//.
+}}}
+
+=== Récupérer une identité ===
+Il y a deux méthodes pour récupérer une identité.
+
+{{{ code |
+  final IdentitySearchResponse response = identityService.getIdentityByCustomerId( customerId, clientCode, author );
+}}}
+
+Cette méthode possède 3 paramètres :
+* **customerId** : l'identifiant de l'identité
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //IdentitySearchResponse//.
+Si le référentiel ne trouve pas l'identité correspondante, **response** aura un status **ResponseStatusType.NOT_FOUND** (404).
+
+Il est également possible de récupérer une identité par son **identifiant de connexion** à l'aide du code suivant :
+{{{ code |
+    final IdentitySearchResponse response = identityService.getIdentityByConnectionId( connectionId, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **connectionId** : l'identifiant de connexion de l'usager
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //IdentitySearchResponse//.
+
+Si le référentiel ne trouve pas l'identité correspondante, **response** aura un status **ResponseStatusType.NOT_FOUND** (404).
+
+Dans tous les cas, si le référentiel trouve une identité, celle ci sera accessible, par exemple, comme suit:
+{{{ code |
+    if(  !ResponseStatusType.NOT_FOUND.equals( response.getStatus( ).getType( ) ) )
+    {
+        final IdentityDto identity = response.getIdentities( ).get( 0 );
+    }
+}}}
+
+==== Pré-remplissage des formulaires ====
+L'identité récupérée contient une liste de //AttributeDto//. Utilisez la méthode getValue( ) de l'objet pour récupérer la valeur d'un attribut de l'identité et injectez-la dans le champ du formulaire à pré-remplir.
+
+=== Modifier une identité ===
+La modification d'une identité dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final IdentityChangeResponse response = identityService.updateIdentity( customerId, identityChange, clientCode, author );
+}}}
+Cette méthode possède 4 paramètres :
+* **customerId** : le CUID de l'identité à modifier
+* **identityChange** : cet objet //IdentityChangeRequest// permet la modification de l'identité dans le référentiel
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //IdentityChangeResponse//.
+
+==== Validation de la requête ====
+Si l'objet //IdentityDto// n'est pas présent dans l'objet //IdentityChangeRequest//, la modification est refusée, la librairie retourne une //IdentityStoreException//.
+
+Si l'objet //IdentityDto// n'a pas d'attributs, la modification est refusée, la librairie retourne une //IdentityStoreException//.
+
+Si **customerId** n'est pas renseigné, la modification est refusée, la librairie retourne une //IdentityStoreException//.
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la mise à jour à travers des statuts et des messages. Il y a un statut pour l'identité, et un statut par attribut (en fonction des scénarii).
+
+|= Scénario |= Status |= Code |= Message |
+| La requête ne respecte pas la définition du contrat de service de l'application, la modification est refusée | ResponseStatusType.FAILURE | 403 | The request violates service contract definition |
+| Certaines valeurs d'attributs ne respectent pas le format attendu, la modification est refusée | ResponseStatusType.FAILURE | 403 | Some attribute values are not passing validation. Please check in the attribute statuses for details. |
+| La modification requise est susceptible d'entraîner la création d'un doublon, la modification est refusée | ResponseStatusType.CONFLICT | 409 | Description de la règle de suspicion de doublon ayant sanctionné la requête |
+| L'identité a été mise à jour par quelqu'un d'autre entre le moment de la récupération de l'identité et l'envoi de la requête, la mise à jour est refusée | ResponseStatusType.CONFLICT | 409 | This identity has been updated recently, please load the latest data before updating. |
+| Une autre identité possède déjà ce Connection ID | ResponseStatusType.CONFLICT | 409 | An identity already exists with the given connection ID. The customer ID of that identity is provided in the response. |
+| La modification requise porte sur une identitée supprimée, la modification est refusée | ResponseStatusType.CONFLICT | 409 | Cannot update a deleted Identity. |
+| La modification requise porte sur une identitée rapprochée, la modification est refusée | ResponseStatusType.CONFLICT | 409 | Cannot update a merged Identity. Master identity customerId is provided in the response. |
+| La modification requise porte sur une identitée connectée et l'application n'a pas le droit de modification associé dans le contrat de service, la modification est refusée | ResponseStatusType.CONFLICT | 409 | The client application is not authorized to update a connected identity. |
+| Le référentiel ne trouve pas l'identité correspondante, la modification est refusée | ResponseStatusType.NOT_FOUND | 404 | No matching identity could be found |
+| Tentative de mettre à jour un attribut non 'pivot' sur une identité connectée, la mise à jour est refusée | ResponseStatusType.UNAUTHORIZED | 401 | Identity is connected, updating non 'pivot' attributes is forbidden. |
+| Tentative d'ajout d'un attribut 'pivot' avec une certification de niveau auto-déclaratif sur une identité connectée, la mise à jour est refusée | ResponseStatusType.UNAUTHORIZED | 401 | Identity is connected, adding 'pivot' attributes with self-declarative certification level is forbidden. |
+| Tentative de mise à jour d'un attribut 'pivot' avec une certification de niveau inférieur à l'existant sur une identité connectée, la mise à jour est refusée | ResponseStatusType.UNAUTHORIZED | 401 | Identity is connected, updating existing 'pivot' attributes with lesser certification level is forbidden. |
+| Tentative de mise à jour ou création d'un attribut 'pivot' avec une certification de niveau inférieur au niveau minimum défini en configuration sur une identité connectée ayant au moins un attribut pivot certifié au dessus de ce niveau minimum, la mise à jour est refusée | ResponseStatusType.UNAUTHORIZED | 401 | Identity is connected, and at least one 'pivot' attribute is, or has been requested to be, certified above level 'threshold'. In that case, all 'pivot' attributes must be set, and certified with level greater or equal to 'threshold'. |
+| La modification est acceptée et réalisée sans erreur | ResponseStatusType.SUCCESS | 201 | N/A |
+| La modification est acceptée et réalisée partiellement | ResponseStatusType.INCOMPLETE_SUCCESS | 201 | N/A |
+
+Un statuts est fourni pour chaque attribut, décrivant son traitement:
+
+|= Scénario |= Status |= Message |
+| L'attribut n'existait pas dans le référentiel, il a été créé | AttributeChangeStatus.CREATED | N/A |
+| L'attribut n'existait pas dans le référentiel, mais n'a pas été créé à cause d'une valeur incorrecte | AttributeChangeStatus.NOT_CREATED | This attribute was not created because of an invalid provided value. |
+| L'attribut existe dans le référentiel et a été correctement mis à jour | AttributeChangeStatus.UPDATED | N/A |
+| L'attribut existe dans le référentiel et a exactement la même valeur et le même niveau de certification | AttributeChangeStatus.NOT_UPDATED | "This attribute already exists with the same value and certificate." |
+| L'attribut existe dans le référentiel et a été correctement supprimé | AttributeChangeStatus.REMOVED | N/A |
+| L'attribut existe dans le référentiel mais n'a pas été supprimé car il est obligatoire | AttributeChangeStatus.NOT_REMOVED | "This mandatory attribute cannot be removed" |
+| La clef d'attribut spécifié n'existe pas dans le référentiel | AttributeChangeStatus.NOT_FOUND | This attribute does not exist in the repository. |
+| Le référentiel n'autorise pas à écrire cet attribut car le certificat existant est de niveau supérieur à celui spécifié dans la requête | AttributeChangeStatus.INSUFFICIENT_CERTIFICATION_LEVEL | This attribute cannot be updated because the existing certification level is higher than in the service contract definition for the process provided in the request. |
+| Le contrat de service n'autorise pas l'application à certifier l'attribut avec le processus spécifié dans la requête | AttributeChangeStatus.INSUFFICIENT_RIGHTS | This attribute cannot be written because the associated process in the request does not match the contract definition. |
+| Le contrat de service n'autorise pas l'application à créer ou modifier l'attribut | AttributeChangeStatus.UNAUTHORIZED | This attribute is not writable in service contract definition |
+| Le code Geocodes envoyé n'existe pas dans le référentiel | AttributeChangeStatus.UNKNOWN_GEOCODES_CODE | The provided code was not found in the Geocodes repository |
+| Le libellé Geocodes envoyé n'existe pas dans le référentiel | AttributeChangeStatus.UNKNOWN_GEOCODES_LABEL | The provided label was not found in the Geocodes repository |
+| Le libellé Geocodes envoyé correspond à plusieurs codes dans le référentiel | AttributeChangeStatus.MULTIPLE_GEOCODES_RESULTS_FOR_LABEL | The provided label correspond to multiple results in Geocodes. Please specify by providing the code. |
+| Le libellé Geocodes envoyé ne correspond pas au code Geocodes envoyé, il a été remplacé par le bon libellé | AttributeChangeStatus.OVERRIDDEN_GEOCODES_LABEL | The provided label was not corresponding to the provided code, and has been overridden with the correct Geocodes label. |
+| La valeur envoyée ne passe pas le pattern de validation de l'attribut | AttributeChangeStatus.INVALID_VALUE | This attribute value doesn't match its validation pattern. |
+| la valeur fournie a été formattée avant traitement | AttributeChangeStatus.FORMATTED_VALUE | This attribute value has been formatted before treatment. |
+
+==== Exemple de création et d'envoi d'une requête pour modifier la date de naissance d'une identité ====
+
+{{{ code |
+    final IdentitySearchResponse getResponse = service.getIdentity( cuid, clientCode, requestAuthor );
+    assert ResponseStatusType.OK.equals( getResponse.getStatus( ).getType( ) ) && !getResponse.getIdentities( ).isEmpty( );
+    final IdentityDto searchedIdentity = getResponse.getIdentities( ).get( 0 );
+
+    final IdentityChangeRequest updateRequest = new IdentityChangeRequest( );
+    final IdentityDto identity = new IdentityDto( );
+    updateRequest.setIdentity( identity );
+    final AttributeDto attributeDto = new AttributeDto( );
+    identity.getAttributes( ).add( attributeDto );
+
+    attributeDto.setCertifier( "fccertifier" );
+    attributeDto.setCertificationDate( new Date( ) );
+    attributeDto.setKey( Constants.PARAM_BIRTH_DATE );
+    attributeDto.setValue( "11/09/1988" );
+
+    identity.setLastUpdateDate( searchedIdentity.getLastUpdateDate( ) );
+
+    assert identityChangeResponse.getStatus( ).getHttpCode( ) == 201; // equivalent to status == SUCCESS or status == INCOMPLETE_SUCCESS
+
+    try {
+        final IdentityChangeResponse identityChangeResponse = service.updateIdentity( searchedIdentity.getCustomerId( ), updateRequest, clientCode, requestAuthor );
+        switch ( identityChangeResponse.getStatus( ).getType( ) ) {
+            case SUCCESS:
+                // do something
+                break;
+            case INCOMPLETE_SUCCESS:
+                identityChangeResponse.getStatus( ).getAttributeStatuses( ).forEach( attributeStatus -> {
+                                switch ( attributeStatus.getStatus( ) ) {
+                                    case NOT_UPDATED:
+                                    case UNAUTHORIZED:
+                                    case INSUFFICIENT_RIGHTS:
+                                    case INSUFFICIENT_CERTIFICATION_LEVEL:
+                                    case NOT_FOUND:
+                                        //do something according to status
+                                        break;
+                                    /** ... **/
+                                }
+                            });
+                break;
+            case NOT_FOUND:
+                // do something
+                break;
+            case CONFLICT:
+                // do something
+                break;
+            case FAILURE:
+                //do something
+                break;
+            /** ... **/
+            default:
+                break;
+        }
+    } catch (final IdentityStoreException e) {
+        // handle exception
+    }
+}}}
+
+=== Créer une identité ===
+La création d'une identité dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final IdentityChangeResponse response = identityService.createIdentity( identityChange, clientCode, author );
+}}}
+Cette méthode possède 2 paramètres :
+* **identityChange** : cet objet //IdentityChangeRequest// permet la création de l'identité dans le référentiel
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+==== Validation de la requête ====
+Si l'objet //IdentityDto// n'est pas présent dans l'objet //IdentityChangeRequest//, la modification est refusée, la librairie retourne une //IdentityStoreException//.
+
+Si l'objet //IdentityDto// n'a pas d'attributs, la création est refusée, la librairie retourne une //IdentityStoreException//.
+
+Si l'identifiant de l'identité est fourni, la librairie retourne une //IdentityStoreException//.
+
+Si aucun identifiant n'est fourni, alors le référentiel crée une identité à partir des attributs fournis et la librairie retourne cette identité.
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la création à travers des statuts et des messages. Il y a un statut pour l'identité, et un status par attribut (en fonction des scénarii).
+
+|= Scénario |= Status |= Code |= Message |
+| La requête ne respecte pas la définition du contrat de service de l'application, la création est refusée | ResponseStatusType.FAILURE | 403 | The request violates service contract definition |
+| La création requise est susceptible d'entraîner la création d'un doublon, la création est refusée | ResponseStatusType.CONFLICT | 409 | Description de la règle de suspicion de doublon ayant sanctionné la requête |
+| Tous les attributs obligatoires n'ont pas été fournis, la création est refusée | ResponseStatusType.FAILURE | 403 | All mandatory attributes must be provided |
+| La création est acceptée et réalisée sans erreur | ResponseStatusType.SUCCESS | 201 | N/A |
+| La création est acceptée et réalisée partiellement | ResponseStatusType.INCOMPLETE_SUCCESS | 201 | N/A |
+
+Un statut est fourni pour chaque attribut, décrivant son traitement:
+
+|= Scénario |= Status |= Message |
+| L'attribut n'existait pas dans le référentiel, il a été créé | AttributeChangeStatus.CREATED | N/A |
+| L'attribut n'existait pas dans le référentiel, mais n'a pas été créé à cause d'une valeur incorrecte | AttributeChangeStatus.NOT_CREATED | This attribute was not created because of an invalid provided value. |
+| La clef d'attribut spécifié n'existe pas dans le référentiel | AttributeChangeStatus.NOT_FOUND | This attribute does not exist in the repository. |
+| Le contrat de service n'autorise pas l'application à certifier l'attribut avec le processus spécifié dans la requête | AttributeChangeStatus.INSUFFICIENT_RIGHTS | This attribute cannot be written because the associated process in the request does not match the contract definition. |
+| Le contrat de service n'autorise pas l'application à créer ou modifier l'attribut | AttributeChangeStatus.UNAUTHORIZED | This attribute is not writable in service contract definition |
+| Le code Geocodes envoyé n'existe pas dans le référentiel | AttributeChangeStatus.UNKNOWN_GEOCODES_CODE | The provided code was not found in the Geocodes repository |
+| Le libellé Geocodes envoyé n'existe pas dans le référentiel | AttributeChangeStatus.UNKNOWN_GEOCODES_LABEL | The provided label was not found in the Geocodes repository |
+| Le libellé Geocodes envoyé correspond à plusieurs codes dans le référentiel | AttributeChangeStatus.MULTIPLE_GEOCODES_RESULTS_FOR_LABEL | The provided label correspond to multiple results in Geocodes. Please specify by providing the code. |
+| Le libellé Geocodes envoyé ne correspond pas au code Geocodes envoyé, il a été remplacé par le bon libellé | AttributeChangeStatus.OVERRIDDEN_GEOCODES_LABEL | The provided label was not corresponding to the provided code, and has been overridden with the correct Geocodes label. |
+| La valeur envoyée ne passe pas le pattern de validation de l'attribut | AttributeChangeStatus.INVALID_VALUE | This attribute value doesn't match its validation pattern. |
+| la valeur fournie a été formattée avant traitement | AttributeChangeStatus.FORMATTED_VALUE | This attribute value has been formatted before treatment. |
+
+
+==== Exemple de création et d'envoi d'une requête pour créer une nouvelle identité ====
+
+{{{ code |
+    final IdentityDto newIdentity = new IdentityDto( );
+    final AttributeDto gender = new AttributeDto( );
+    gender.setCertifier( "fccertifier" );
+    gender.setCertificationDate( new Date( ) );
+    gender.setKey( Constants.PARAM_GENDER );
+    gender.setValue( "1" );
+    newIdentity.getAttributes( ).add( gender );
+
+    final AttributeDto firstName = new AttributeDto( );
+    firstName.setCertifier( "fccertifier" );
+    firstName.setCertificationDate( new Date( ) );
+    firstName.setKey( Constants.PARAM_FIRST_NAME );
+    firstName.setValue( "Toto" );
+    newIdentity.getAttributes( ).add( firstName );
+
+    final AttributeDto lastName = new AttributeDto( );
+    lastName.setCertifier( "fccertifier" );
+    lastName.setCertificationDate( new Date( ) );
+    lastName.setKey( Constants.PARAM_FAMILY_NAME );
+    lastName.setValue( "Toto" );
+    newIdentity.getAttributes( ).add( lastName );
+
+    final AttributeDto birthDate = new AttributeDto( );
+    birthDate.setCertifier( "fccertifier" );
+    birthDate.setCertificationDate( new Date( ) );
+    birthDate.setKey( Constants.PARAM_BIRTH_DATE );
+    birthDate.setValue( "01/01/1901" );
+    newIdentity.getAttributes( ).add( birthDate );
+
+    final AttributeDto email = new AttributeDto( );
+    email.setCertifier( "MAIL" );
+    email.setCertificationDate( new Date( ) );
+    email.setKey( Constants.PARAM_EMAIL );
+    email.setValue( "692433.xxxxx48@xxxxaxx.xx" );
+    newIdentity.getAttributes( ).add( email );
+
+    final IdentityChangeRequest createRequest = new IdentityChangeRequest( );
+    createRequest.setIdentity( newIdentity );
+
+    try {
+        final IdentityChangeResponse response = identityService.createIdentity( createRequest, clientCode, author );
+        switch (response.getStatus().getType()) {
+            case SUCCESS:
+                // do something
+                break;
+            case CONFLICT:
+                // do something
+                break;
+            case FAILURE:
+                //do something
+                break;
+            /** ... **/
+            default:
+                break;
+        }
+    } catch (final IdentityStoreException e) {
+        // handle exception
+    }
+ }}}
+
+
+=== Rechercher une identité ===
+La recherche d'une identité dans le référentiel peut se faire de deux façons.
+* avec un **connectionId**
+* avec un //SearchDto// (une liste de clefs d'attributs + valeur recherchée)
+
+Ces deux modes sont exclusifs. Si la requête contient les deux informations, la recherche est refusée.
+
+{{{ code |
+    final IdentitySearchResponse response = identityService.searchIdentities( identitySearch, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **identitySearch** : cet objet //IdentitySearchRequest// permet de spécifier les paramètres de la recherche
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //IdentitySearchResponse//.
+
+
+==== Validation de la requête ====
+Si le paramètre **customerId** et l'objet //search// sont renseignés , la recherche est refusée, la librairie retourne une //IdentityStoreException//.
+
+Si l'objet //search// n'a pas d'attributs, la recherche est refusée, la librairie retourne une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la recherche à travers des status et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| La requête ne respecte pas la définition du contrat de service de l'application, la recherche est refusée. La réponse contiendra une liste d'alertes décrivant les raisons du refus.  | ResponseStatusType.FAILURE | 403 | The request violates service contract definition |
+| La recherche ne renvoie aucun résultat. | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| La recherche renvoie un ou plusieurs résultats | ResponseStatusType.OK | 200 | N/A |
+
+==== Exemple de recherche ====
+
+{{{ code |
+    final IdentitySearchRequest identitySearchRequest = new IdentitySearchRequest( );
+    identitySearchRequest.setMax( 2 );
+
+    final SearchDto search = new SearchDto( );
+    search.setAttributes( new ArrayList<>( ) );
+    
+    final SearchAttribute familyNameSearchAttribute = new SearchAttribute( );
+    familyNameSearchAttribute.setValue( familyName );
+    familyNameSearchAttribute.setKey( Constants.PARAM_FAMILY_NAME );
+    familyNameSearchAttribute.setTreatmentType( AttributeTreatmentType.APPROXIMATED );
+    search.getAttributes( ).add( familyNameSearchAttribute );
+
+    final SearchAttribute firstNameSearchAttribute = new SearchAttribute( );
+    firstNameSearchAttribute.setValue( firstName );
+    firstNameSearchAttribute.setKey( Constants.PARAM_FIRST_NAME );
+    firstNameSearchAttribute.setTreatmentType( AttributeTreatmentType.APPROXIMATED );
+    search.getAttributes( ).add( firstNameSearchAttribute );
+
+    final SearchAttribute birthdateSearchAttribute = new SearchAttribute( );
+    birthdateSearchAttribute.setValue( birthdate );
+    birthdateSearchAttribute.setKey( Constants.PARAM_BIRTH_DATE );
+    birthdateSearchAttribute.setTreatmentType( AttributeTreatmentType.APPROXIMATED );
+    search.getAttributes( ).add( birthdateSearchAttribute );
+
+    identitySearchRequest.setSearch( search );
+    assert Objects.equals( searchResponse.getStatus( ).getType( ), ResponseStatusType.OK );
+
+    try {
+
+        final IdentitySearchResponse searchResponse = service.searchIdentities( identitySearchRequest, clientCode, author );
+
+        if ( ResponseStatusType.OK.equals( response.getStatus( ).getType( ) ) ) {
+            response.getIdentities( ).forEach( identity -> {
+                if ( identity.getQuality( ).getQuality( ) > 0.9 ) {
+                    // do something
+                } else {
+                    // do something
+                }
+            } );
+        }
+    } catch (final IdentityStoreException e) {
+        // handle Exception
+    }
+}}}
+
+
+=== Rapprocher deux identités ===
+Le rapprochement de deux identités dans le référentiel est réalisé à l'aide du code suivant :
+{{{ code |
+    final IdentityMergeResponse identityMergeResponse = identityService.mergeIdentities( mergeRequest, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **identityMerge** : cet objet //IdentityMergeRequest// permet de spécifier les paramètres nécessaires au rapprochement
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //IdentityMergeResponse//.
+
+
+==== Validation de la requête ====
+Si au moins un des champs **primaryCuid**, **secondaryCuid**, **primaryLastUpdateDate** ou **secondaryLastUpdateDate** de l'objet //identityMerge// est vide, le merge est refusé, la librairie retourne une //IdentityStoreException//.
+
+Si l'objet //identity// est renseigné mais n'a pas d'attributs, le merge est refusé, la librairie retourne une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement du rapprochement à travers des statuts et des messages. Il y a un statut pour l'identité, et un statut par attribut (en fonction des scénarii).
+
+|= Scénario |= Status |= Code |= Message |
+| La requête ne respecte pas la définition du contrat de service de l'application, le rapprochement est refusée | ResponseStatusType.FAILURE | 403 | The client application is not authorized to merge identities |
+| Certaines valeurs d'attributs ne respectent pas le format attendu, le rapprochement est refusé | ResponseStatusType.FAILURE | 403 | Some attribute values are not passing validation. Please check in the attribute statuses for details. |
+| L'identité a été mise à jour par quelqu'un d'autre entre le moment de la récupération de l'identité et l'envoi de la requête, le rapprochement est refusé | ResponseStatusType.CONFLICT | 409 | This identity has been updated recently, please load the latest data before merge. |
+| Le rapprochement porte sur une identitée supprimée, le rapprochement est refusé | ResponseStatusType.CONFLICT | 409 | Cannot merge a deleted Identity. |
+| La rapprochement porte sur une identitée déjà rapprochée, le rapprochement est refusé | ResponseStatusType.CONFLICT | 409 | Cannot merge an already merged Identity |
+| La modification requise porte sur une identitée connectée et l'application n'a pas le droit de modification associé dans le contrat de service, le rapprochement est refusé | ResponseStatusType.CONFLICT | 409 | The client application is not authorized to update a connected identity. |
+| Le référentiel ne trouve pas l'identité correspondante, le rapprochement est refusé | ResponseStatusType.NOT_FOUND | 404 | No matching identity could be found |
+| Tentative de mettre à jour un attribut non 'pivot' sur une identité connectée, le rapprochement est refusé | ResponseStatusType.UNAUTHORIZED | 401 | Identity is connected, updating non 'pivot' attributes is forbidden. |
+| Tentative d'ajout d'un attribut 'pivot' avec une certification de niveau auto-déclaratif sur une identité connectée, le rapprochement est refusé | ResponseStatusType.UNAUTHORIZED | 401 | Identity is connected, adding 'pivot' attributes with self-declarative certification level is forbidden. |
+| Tentative de mise à jour d'un attribut 'pivot' avec une certification de niveau inférieur à l'existant sur une identité connectée, le rapprochement est refusé | ResponseStatusType.UNAUTHORIZED | 401 | Identity is connected, updating existing 'pivot' attributes with lesser certification level is forbidden. |
+| Tentative de mise à jour ou création d'un attribut 'pivot' avec une certification de niveau inférieur au niveau minimum défini en configuration sur une identité connectée ayant au moins un attribut pivot certifié au dessus de ce niveau minimum, le rapprochement est refusé | ResponseStatusType.UNAUTHORIZED | 401 | Identity is connected, and at least one 'pivot' attribute is, or has been requested to be, certified above level 'threshold'. In that case, all 'pivot' attributes must be set, and certified with level greater or equal to 'threshold'. |
+| le rapprochement est accepté et réalisé sans erreur | ResponseStatusType.SUCCESS | 201 | N/A |
+| le rapprochement est accepté et réalisé partiellement | ResponseStatusType.INCOMPLETE_SUCCESS | 201 | N/A |
+
+Un statuts est fourni pour chaque attribut, décrivant son traitement:
+
+|= Scénario |= Status |= Message |
+| L'attribut n'existait pas dans le référentiel, il a été créé | AttributeChangeStatus.CREATED | N/A |
+| L'attribut n'existait pas dans le référentiel, mais n'a pas été créé à cause d'une valeur incorrecte | AttributeChangeStatus.NOT_CREATED | This attribute was not created because of an invalid provided value. |
+| L'attribut existe dans le référentiel et a été correctement mis à jour | AttributeChangeStatus.UPDATED | N/A |
+| L'attribut existe dans le référentiel et a exactement la même valeur et le même niveau de certification | AttributeChangeStatus.NOT_UPDATED | "This attribute already exists with the same value and certificate." |
+| La clef d'attribut spécifié n'existe pas dans le référentiel | AttributeChangeStatus.NOT_FOUND | This attribute does not exist in the repository. |
+| Le référentiel n'autorise pas à écrire cet attribut car le certificat existant est de niveau supérieur à celui spécifié dans la requête | AttributeChangeStatus.INSUFFICIENT_CERTIFICATION_LEVEL | This attribute cannot be updated because the existing certification level is higher than in the service contract definition for the process provided in the request. |
+| Le contrat de service n'autorise pas l'application à certifier l'attribut avec le processus spécifié dans la requête | AttributeChangeStatus.INSUFFICIENT_RIGHTS | This attribute cannot be written because the associated process in the request does not match the contract definition. |
+| Le contrat de service n'autorise pas l'application à créer ou modifier l'attribut | AttributeChangeStatus.UNAUTHORIZED | This attribute is not writable in service contract definition |
+| Le code Geocodes envoyé n'existe pas dans le référentiel | AttributeChangeStatus.UNKNOWN_GEOCODES_CODE | The provided code was not found in the Geocodes repository |
+| Le libellé Geocodes envoyé n'existe pas dans le référentiel | AttributeChangeStatus.UNKNOWN_GEOCODES_LABEL | The provided label was not found in the Geocodes repository |
+| Le libellé Geocodes envoyé correspond à plusieurs codes dans le référentiel | AttributeChangeStatus.MULTIPLE_GEOCODES_RESULTS_FOR_LABEL | The provided label correspond to multiple results in Geocodes. Please specify by providing the code. |
+| Le libellé Geocodes envoyé ne correspond pas au code Geocodes envoyé, il a été remplacé par le bon libellé | AttributeChangeStatus.OVERRIDDEN_GEOCODES_LABEL | The provided label was not corresponding to the provided code, and has been overridden with the correct Geocodes label. |
+| La valeur envoyée ne passe pas le pattern de validation de l'attribut | AttributeChangeStatus.INVALID_VALUE | This attribute value doesn't match its validation pattern. |
+| la valeur fournie a été formattée avant traitement | AttributeChangeStatus.FORMATTED_VALUE | This attribute value has been formatted before treatment. |
+
+
+==== Exemple de rapprochement ====
+
+{{{ code |
+    final IdentitySearchResponse firstSearchResponse = identityService.getIdentity( cuid1, clientCode, author );
+    assert ResponseStatusType.OK.equals( firstSearchResponse.getStatus( ).getType( ) ) && !firstSearchResponse.getIdentities( ).isEmpty( );
+    final IdentityDto firstidentity = firstSearchResponse.getIdentities( ).get( 0 );
+
+    final IdentitySearchResponse secondSearchResponse = identityService.getIdentity( cuid2, clientCode, author );
+    assert ResponseStatusType.OK.equals( secondSearchResponse.getStatus( ).getType( ) ) && !secondSearchResponse.getIdentities( ).isEmpty( );
+    final IdentityDto secondIdentity = secondSearchResponse.getIdentities( ).get( 0 );
+
+    final IdentityMergeRequest mergeRequest = new IdentityMergeRequest( );
+    mergeRequest.setPrimaryCuid( firstidentity.getCustomerId( ) );
+    mergeRequest.setSecondaryCuid( secondIdentity.getCustomerId( ) );
+
+    mergeRequest.setPrimaryLastUpdateDate( firstidentity.getLastUpdateDate( ) );
+    mergeRequest.setSecondaryLastUpdateDate( secondIdentity.getLastUpdateDate( ) );
+
+    try {
+        final IdentityMergeResponse response = identityService.mergeIdentities( mergeRequest, clientCode, author );
+        switch (response.getStatus().getType()) {
+            case SUCCESS:
+                // do something
+                break;
+            case CONFLICT:
+                // do something
+                break;
+            case FAILURE:
+                //do something
+                break;
+            /** ... **/
+            default:
+                break;
+        }
+    } catch (final IdentityStoreException e) {
+        // handle exception
+    }
+}}}
+
+
+=== Annuler le rapprochement de deux identités ===
+L'annulation de rapprochement de deux identités dans le référentiel est réalisé à l'aide du code suivant :
+{{{ code |
+    final IdentityMergeResponse unmergeResponse = identityService.unMergeIdentities( unMergeRequest, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **identityMerge** : cet objet //IdentityMergeRequest// permet de spécifier les paramètres nécessaires à l'annulation du rapprochement
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //IdentityMergeResponse//.
+
+
+==== Validation de la requête ====
+Si au moins un des champs **primaryCuid**, **secondaryCuid**, **primaryLastUpdateDate** ou **secondaryLastUpdateDate** de l'objet //identityMerge// est vide, le merge est refusé, la librairie retourne une //IdentityStoreException//.
+
+Si l'objet //identity// est renseigné, le merge est refusé, la librairie retourne une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de l'annulation du rapprochement à travers des statuts et des messages. Il y a un statut pour l'identité (en fonction des scénarii).
+
+|= Scénario |= Status |= Code |= Message |
+| La requête ne respecte pas la définition du contrat de service de l'application, l'annulation du rapprochement est refusée | ResponseStatusType.FAILURE | 403 | The client application is not authorized to merge identities |
+| L'identité a été mise à jour par quelqu'un d'autre entre le moment de la récupération de l'identité et l'envoi de la requête, l'annulation du rapprochement est refusée | ResponseStatusType.CONFLICT | 409 | This identity has been updated recently, please load the latest data before merge. |
+| Les deux identités spécifiées dans la requêtes ne sont pas rapprochées ensemble, l'annulation du rapprochement est refusée | ResponseStatusType.CONFLICT | 409 | Secondary identity found with secondaryCuid is not merged to Primary identity found with primaryCuid |
+| Le référentiel ne trouve pas l'identité correspondante, l'annulation du rapprochement est refusée | ResponseStatusType.NOT_FOUND | 404 | No matching identity could be found |
+| l'annulation du rapprochement est acceptée et réalisée sans erreur | ResponseStatusType.SUCCESS | 201 | N/A |
+
+
+==== Exemple d'annulation de rapprochement ====
+
+{{{ code |
+    final IdentitySearchResponse firstSearchResponse = identityService.getIdentity( cuid1, clientCode, author );
+    assert ResponseStatusType.OK.equals( firstSearchResponse.getStatus( ).getType( ) ) && !firstSearchResponse.getIdentities( ).isEmpty( );
+    final IdentityDto firstidentity = firstSearchResponse.getIdentities( ).get( 0 );
+
+    final IdentitySearchResponse secondSearchResponse = identityService.getIdentity( cuid2, clientCode, author );
+    assert ResponseStatusType.OK.equals( secondSearchResponse.getStatus( ).getType( ) ) && !secondSearchResponse.getIdentities( ).isEmpty( );
+    final IdentityDto secondIdentity = secondSearchResponse.getIdentities( ).get( 0 );
+
+    final IdentityMergeRequest mergeRequest = new IdentityMergeRequest( );
+    mergeRequest.setPrimaryCuid( firstidentity.getCustomerId( ) );
+    mergeRequest.setSecondaryCuid( secondIdentity.getCustomerId( ) );
+
+    mergeRequest.setPrimaryLastUpdateDate( firstidentity.getLastUpdateDate( ) );
+    mergeRequest.setSecondaryLastUpdateDate( secondIdentity.getLastUpdateDate( ) );
+
+    try {
+        final IdentityMergeResponse response = identityService.unMergeIdentities( mergeRequest, clientCode, author );
+        switch (response.getStatus().getType()) {
+            case SUCCESS:
+                // do something
+                break;
+            case CONFLICT:
+                // do something
+                break;
+            case FAILURE:
+                //do something
+                break;
+            /** ... **/
+            default:
+                break;
+        }
+    } catch (final IdentityStoreException e) {
+        // handle exception
+    }
+}}}
+
+
+=== Dé-certifier une identité ===
+La dé-certification d'une identité dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final IdentityChangeResponse response = identityService.uncertifyIdentity( cuid, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **customerId** : le CUID de l'identité à dé-certifier
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //IdentityChangeResponse//.
+
+==== Validation de la requête ====
+Si **customerId** n'est pas renseigné, la dé-certification est refusée, la librairie retourne une //IdentityStoreException//.
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la dé-certification à travers des statuts et des messages. Il y a un statut pour l'identité, et un statut par attribut (en fonction des scénarii).
+
+|= Scénario |= Status |= Code |= Message |
+| La requête ne respecte pas la définition du contrat de service de l'application, la dé-certification est refusée | ResponseStatusType.FAILURE | 403 | Unauthorized operation. |
+| Le référentiel ne trouve pas l'identité correspondante, la dé-certification est refusée | ResponseStatusType.NOT_FOUND | 404 | No identity found |
+| La dé-certification est acceptée et réalisée sans erreur | ResponseStatusType.SUCCESS | 201 | N/A |
+
+Un statuts est fourni pour chaque attribut, décrivant son traitement:
+
+|= Scénario |= Status |= Message |
+| L'attribut a été correctement dé-certifié | AttributeChangeStatus.UNCERTIFIED | N/A |
+
+==== Exemple de dé-certification ====
+
+{{{ code |
+    final IdentityChangeResponse identityChangeResponse = service.uncertifyIdentity( cuid, clientCode, author );
+    assert identityChangeResponse.getStatus( ).getType( ) == ResponseStatusType.SUCCESS;
+
+    final IdentitySearchResponse getUncertifiedIdentity = service.getIdentity( cuid, clientCode, author );
+    assert getUncertifiedIdentity.getStatus( ).getType( ) == ResponseStatusType.OK 
+        && !getUncertifiedIdentity.getIdentities( ).isEmpty( ) 
+        && getUncertifiedIdentity.getIdentities( ).get( 0 ).getAttributes( ).stream( ).allMatch( a -> a.getCertifier( ) != null && a.getCertifier( ).equals( "DEC" ) );
+}}}
+
+
+=== Supprimer une identité ===
+La suppression d'une identité dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final IdentityChangeResponse response = service.deleteIdentity( cuid, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **customerId** : le CUID de l'identité à dé-certifier
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //IdentityChangeResponse//.
+
+==== Validation de la requête ====
+Si **customerId** n'est pas renseigné, la suppression est refusée, la librairie retourne une //IdentityStoreException//.
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la suppression à travers des statuts et des messages. Il y a un statut pour l'identité (en fonction des scénarii).
+
+|= Scénario |= Status |= Code |= Message |
+| La requête ne respecte pas la définition du contrat de service de l'application, la suppression est refusée | ResponseStatusType.FAILURE | 403 | The client application is not authorized to request the deletion of an identity. |
+| L'identité est déjà à l'état supprimé, la suppression est refusée | ResponseStatusType.FAILURE | 403 | Identity allready in deleted state. |
+| L'identité est rapprochée, la suppression est refusée | ResponseStatusType.FAILURE | 403 | Identity in merged state can not be deleted. |
+| Le référentiel ne trouve pas l'identité correspondante, la suppression est refusée | ResponseStatusType.NOT_FOUND | 404 | Identity not found |
+| La suppression est acceptée et réalisée sans erreur | ResponseStatusType.SUCCESS | 201 | N/A |
+
+
+==== Exemple de suppression ====
+
+{{{ code |
+    final IdentityChangeResponse identityChangeResponse = service.deleteIdentity( cuid, clientCode, author );
+    assert Objects.equals( identityChangeResponse.getStatus( ).getType( ), ResponseStatusType.SUCCESS );
+
+    final IdentitySearchResponse deletedIdentity = service.getIdentity( cuid, clientCode, author );
+    assert Objects.equals( deletedIdentity.getStatus( ).getType( ), ResponseStatusType.OK )
+        && !deletedIdentity.getIdentities( ).isEmpty( )
+        && deletedIdentity.getIdentities( ).get( 0 ).getExpiration( ).isDeleted( );
+}}}
+
+
+=== Récupération de l'historique d'une identité ===
+La récupération de l'historique d'une identité dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final IdentityHistoryGetResponse response = service.getIdentityHistory( cuid, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **customerId** : le CUID de l'identité à dé-certifier
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //IdentityHistoryGetResponse//.
+
+==== Validation de la requête ====
+Si **customerId** n'est pas renseigné, la récupération est refusée, la librairie retourne une //IdentityStoreException//.
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la récupération de l'historique à travers des statuts et des messages. Il y a un statut pour l'identité (en fonction des scénarii).
+
+|= Scénario |= Status |= Code |= Message |
+| Le référentiel ne trouve pas l'identité correspondante | ResponseStatusType.NOT_FOUND | 404 | Identity not found |
+| La recherche est acceptée et réalisée sans erreur | ResponseStatusType.OK | 200 | N/A |
+
+
+==== Exemple de récupération de l'historique d'une identité ====
+
+{{{ code |
+    final IdentityHistoryGetResponse response = identityService.getIdentityHistory( cuid, clientCode, author );
+    assert Objects.equals( response.getStatus( ).getType( ), ResponseStatusType.OK ) 
+        && response.getHistory( ) != null
+        && !response.getHistory( ).getAttributeHistories( ).isEmpty( );
+}}}
+
+
+=== Recherche dans l'historique des identités ===
+La recherche dans l'historique des identités dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final IdentityHistorySearchResponse response = identityService.searchIdentityHistory( searchRequest, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **searchRequest** : un //IdentityHistorySearchRequest// contenant les informations nécessaires à la recherche
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //IdentityHistorySearchResponse//.
+
+==== Validation de la requête ====
+Si **searchRequest** est null ou qu'aucun critère de recherche n'est renseigné, la recherche est refusée, la librairie retourne une //IdentityStoreException//.
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la recherche dans l'historique des identités à travers des statuts et des messages. Il y a un statut pour l'identité (en fonction des scénarii).
+
+|= Scénario |= Status |= Code |= Message |
+| Le référentiel ne trouve aucun historique correspondant aux critères de recherche | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| La recherche est acceptée et réalisée sans erreur | ResponseStatusType.OK | 200 | N/A |
+
+
+==== Exemple de recherche dans l'historique des identités ====
+
+{{{ code |
+    final IdentityHistorySearchRequest requestByAuthor = new IdentityHistorySearchRequest( );
+    requestByAuthor.setAuthorName( "teSt@gmail.fr" );
+    final IdentityHistorySearchResponse response = service.searchIdentityHistory( requestByAuthor, clientCode, author );
+    assert Objects.equals( responseByAuthor.getStatus( ).getType( ), ResponseStatusType.OK );
+}}}
+
+
+=== Récupération des identités mises à jour récemment ===
+La récupération des identités mises à jour récemment dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final UpdatedIdentitySearchResponse response = identityService.getUpdatedIdentities( days, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **days** : le nombre de jours max à remonter par rapport au moment de la requête
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //UpdatedIdentitySearchResponse//.
+
+==== Validation de la requête ====
+Si **days** n'est pas renseigné ou n'est pas un nombre, la recherche est refusée, la librairie retourne une //IdentityStoreException//.
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la récupération des identités mises à jour récemment à travers des statuts et des messages. Il y a un statut pour la recherche (en fonction des scénarii).
+
+|= Scénario |= Status |= Code |= Message |
+| Le référentiel ne trouve aucune identité correspondant aux critères de recherche | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| La recherche est acceptée et réalisée sans erreur | ResponseStatusType.OK | 200 | N/A |
+
+
+==== Exemple de récupération des identités mises à jour récemment (10 jours max) ====
+
+{{{ code |
+    final UpdatedIdentitySearchResponse response = identityService.getUpdatedIdentities( "10", clientCode, author );
+    assert Objects.equals( response.getStatus( ).getType( ), ResponseStatusType.OK ) 
+        && !response.getUpdatedIdentityList( ).isEmpty( );
+}}}
+
+
+=== Récupérer tous les contrats de service ===
+La récupération de tous les contrats de service dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final ServiceContractsSearchResponse response = serviceContractService.getAllServiceContractList( clientCode, author );
+}}}
+Cette méthode possède 2 paramètres :
+* **clientCode** : le code de l'application cliente dans l'identitystore effectuant l'appel
+* **author** : l'auteur de la requête
+
+Et retourne un objet //ServiceContractsSearchResponse//.
+
+
+==== Validation de la requête ====
+Aucune validation particulière.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la récupération à travers des status et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Aucun contrat de service n'a été' trouvé dans le référentiel | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| Un ou plusieurs contrats de service ont été trouvés dans le référentiel | ResponseStatusType.OK | 200 | N/A |
+
+
+==== Exemple de récupération de tous les contrats de service ====
+
+{{{ code |
+    final ServiceContractsSearchResponse response = serviceContractService.getAllServiceContractList( clientCode, author );
+    assert Objects.equals( response.getStatus( ).getType( ), ResponseStatusType.OK );
+    assert !response.getServiceContracts( ).isEmpty( );
+}}}
+
+
+=== Récupérer les contrats de service d'une application cliente ===
+La récupération des contrats de service d'une application cliente dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final ServiceContractsSearchResponse serviceContractList = serviceContractService.getServiceContractList( targetClientCode, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **targetClientCode** : le code de l'application cliente  dans l'identitystore pour laquelle on veut récupérer les contrats de service
+* **clientCode** : le code de l'application cliente dans l'identitystore effectuant l'appel
+* **author** : l'auteur de la requête
+
+Et retourne un objet //ServiceContractsSearchResponse//.
+
+
+==== Validation de la requête ====
+Si le paramètre **targetClientCode** n'est pas présent ou s'il est vide, la librairie renvoie une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la récupération à travers des status et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Aucun contrat de service n'a été' trouvé pour le code client fourni. | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| Un ou plusieurs contrats de service sont trouvés pour le code application fourni | ResponseStatusType.OK | 200 | N/A |
+
+
+==== Exemple de récupération des contrats de service d'une application cliente ====
+
+{{{ code |
+    final ServiceContractsSearchResponse response = serviceContractService.getServiceContractList( targetClientCode, callerClientCode, author );
+    assert Objects.equals( response.getStatus( ).getType( ), ResponseStatusType.OK );
+    assert !response.getServiceContracts( ).isEmpty( );
+}}}
+
+
+=== Récupérer le contrat de service actif d'une application cliente ===
+La récupération du contrat de service actif d'une application cliente dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final ServiceContractSearchResponse response = serviceContractService.getActiveServiceContract( targetClientCode, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **targetClientCode** : le code de l'application cliente  dans l'identitystore pour laquelle on veut récupérer les contrats de service
+* **clientCode** : le code de l'application cliente dans l'identitystore effectuant l'appel
+* **author** : l'auteur de la requête
+
+Et retourne un objet //ServiceContractSearchResponse//.
+
+
+==== Validation de la requête ====
+Si le paramètre **targetClientCode** n'est pas présent ou s'il est vide, la librairie renvoie une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la récupération à travers des status et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Aucun contrat de service actif n'a été trouvé pour le code client fourni. | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| Un contrat de service actif a été trouvé pour le code client fourni | ResponseStatusType.OK | 200 | N/A |
+
+
+==== Exemple de récupération du contrat de service actif d'une application cliente ====
+
+{{{ code |
+    final ServiceContractSearchResponse response = serviceContractService.getActiveServiceContract( clientCode, clientCode, getRequestAuthor( ) );
+    assert Objects.equals( response.getStatus( ).getType( ), ResponseStatusType.OK );
+    assert response.getServiceContract( ) != null;
+}}}
+
+
+=== Création d'un contrat de service ===
+La création d'un contrat de service dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final ServiceContractChangeResponse createResponse = serviceContractService.createServiceContract( serviceContract, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **serviceContract** : un //ServiceContractDto// représentant le contrat de service à créer
+* **clientCode** : le code de l'application cliente dans l'identitystore effectuant l'appel
+* **author** : l'auteur de la requête
+
+Et retourne un objet //ServiceContractChangeResponse//.
+
+
+==== Validation de la requête ====
+Si le paramètre **serviceContract** n'est pas présent, ou si son attribut **clientCode** n'est pas renseigné, ou si son attribut **startingDate** n'est pas renseigné, la librairie renvoie une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la création à travers des status et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Aucune application cliente n'a été trouvée dans le référentiel pour le code client fourni. | ResponseStatusType.NOT_FOUND | 404 | No application could be found |
+| La création est acceptée et se déroule correctement | ResponseStatusType.SUCCESS | 201 | N/A |
+
+
+==== Exemple de création d'un contrat de service ====
+
+{{{ code |
+    final ServiceContractDto serviceContract = new ServiceContractDto( );
+    serviceContract.setClientCode( clientCode );
+    serviceContract.setName( name );
+    serviceContract.setServiceType( "TEST_TYPE" );
+    serviceContract.setAuthorizedCreation( true );
+    serviceContract.setAuthorizedUpdate( true );
+    serviceContract.setAuthorizedAccountUpdate( false );
+    serviceContract.setAuthorizedDeletion( true );
+    serviceContract.setAuthorizedExport( true );
+    serviceContract.setAuthorizedMerge( true );
+    serviceContract.setAuthorizedImport( true );
+    serviceContract.setAuthorizedSearch( true );
+    serviceContract.setAuthorizedDecertification( true );
+    serviceContract.setAuthorizedAgentHistoryRead( true );
+    serviceContract.setDataRetentionPeriodInMonths( 24 );
+    serviceContract.setMoaContactName( "moa_contact" );
+    serviceContract.setMoaEntityName( "MOA" );
+    serviceContract.setMoeResponsibleName( "moe_responsible" );
+    serviceContract.setMoeEntityName( "MOE" );
+    serviceContract.setStartingDate( new Date( ) );
+    if ( !Objects.isNull( endDate ) )
+    {
+        serviceContract.setEndingDate( Date.valueOf( endDate ) );
+    }
+
+    final List<AttributeDefinitionDto> attributeDefinitions = Arrays.stream( keys ).map( key -> {
+        final AttributeDefinitionDto attributeDefinitionDto = new AttributeDefinitionDto( );
+        attributeDefinitionDto.setCertifiable( true );
+        attributeDefinitionDto.setName( key );
+        attributeDefinitionDto.setKeyName( key );
+        final AttributeRequirementDto attributeRequirement = new AttributeRequirementDto( );
+        attributeRequirement.setLevel( certificationLevel );
+        attributeDefinitionDto.setAttributeRequirement( attributeRequirement );
+        final AttributeRightDto attributeRight = new AttributeRightDto( );
+        attributeRight.setMandatory( true );
+        attributeRight.setReadable( true );
+        attributeRight.setSearchable( true );
+        attributeRight.setWritable( true );
+        attributeDefinitionDto.setAttributeRight( attributeRight );
+        final List<CertificationProcessusDto> attributeCertifications = new ArrayList<>( );
+        final CertificationProcessusDto certificationProcessus = new CertificationProcessusDto( );
+        certificationProcessus.setCode( certificationCode );
+        attributeCertifications.add( certificationProcessus );
+        attributeDefinitionDto.setAttributeCertifications( attributeCertifications );
+        return attributeDefinitionDto;
+    } ).collect( Collectors.toList( ) );
+    serviceContract.setAttributeDefinitions( attributeDefinitions );
+
+    final ServiceContractChangeResponse createResponse = serviceContractService.createServiceContract( serviceContract, clientCode, author );
+    assert Objects.equals( createResponse.getStatus( ).getType( ), ResponseStatusType.SUCCESS );
+}}}
+
+
+=== Modification d'un contrat de service ===
+La modification d'un contrat de service dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final ServiceContractChangeResponse response = serviceContractService.updateServiceContract( serviceContract, serviceContract.getId( ), clientCode, author );
+}}}
+Cette méthode possède 4 paramètres :
+* **serviceContract** : un //ServiceContractDto// contenant les modifications à apporter au contrat de service
+* **serviceContractId** : l'ID du contrat de service à modifier
+* **clientCode** : le code de l'application cliente dans l'identitystore effectuant l'appel
+* **author** : l'auteur de la requête
+
+Et retourne un objet //ServiceContractChangeResponse//.
+
+
+==== Validation de la requête ====
+Si le paramètre **serviceContract** n'est pas présent, ou si son attribut **clientCode** n'est pas renseigné, ou si son attribut **startingDate** n'est pas renseigné, la librairie renvoie une //IdentityStoreException//.
+
+Si le paramètre **serviceContractId** n'est pas présent la librairie renvoie une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la modification à travers des status et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Aucun contrat de service n'a été trouvé dans le référentiel pour l'ID fourni. | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| Aucune application cliente n'a été trouvée dans le référentiel pour le code client fourni. | ResponseStatusType.NOT_FOUND | 404 | No application could be found |
+| La modification est acceptée et se déroule correctement | ResponseStatusType.SUCCESS | 201 | N/A |
+
+
+==== Exemple de modification d'un contrat de service ====
+
+{{{ code |
+    final ServiceContractDto createdServiceContract = createResponse.getServiceContract( );
+    createdServiceContract.setAuthorizedAccountUpdate( true );
+    final ServiceContractChangeResponse updateResponse = serviceContractService.updateServiceContract( createdServiceContract, createdServiceContract.getId( ), clientCode, author );
+    assert Objects.equals( updateResponse.getStatus( ).getType( ), ResponseStatusType.SUCCESS );
+}}}
+
+
+=== Cloture d'un contrat de service ===
+La cloture d'un contrat de service dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final ServiceContractChangeResponse response = serviceContractService.closeServiceContract( serviceContract, serviceContractId, clientCode, author );
+}}}
+Cette méthode possède 4 paramètres :
+* **serviceContract** : un //ServiceContractDto// contenant la date de fin du contrat de service
+* **serviceContractId** : l'ID du contrat de service à cloturer
+* **clientCode** : le code de l'application cliente dans l'identitystore effectuant l'appel
+* **author** : l'auteur de la requête
+
+Et retourne un objet //ServiceContractChangeResponse//.
+
+
+==== Validation de la requête ====
+Si le paramètre **serviceContract** n'est pas présent, ou si son attribut **endingDate** n'est pas renseigné, la librairie renvoie une //IdentityStoreException//.
+
+Si le paramètre **serviceContractId** n'est pas présent la librairie renvoie une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la cloture à travers des status et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Aucun contrat de service n'a été trouvé dans le référentiel pour l'ID fourni. | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| Aucune application cliente n'a été trouvée dans le référentiel pour le code client fourni. | ResponseStatusType.NOT_FOUND | 404 | No application could be found |
+| La cloture est acceptée et se déroule correctement | ResponseStatusType.SUCCESS | 201 | N/A |
+
+
+==== Exemple de cloture d'un contrat de service ====
+
+{{{ code |
+    final ServiceContractDto updatedServiceContract = updateResponse.getServiceContract( );
+    updatedServiceContract.setEndingDate( Date.valueOf( "2024-01-01" ) );
+    final ServiceContractChangeResponse closeReponse = service.closeServiceContract( updatedServiceContract, updatedServiceContract.getId( ), clientCode, author );
+    assert Objects.equals( closeReponse.getStatus( ).getType( ), ResponseStatusType.SUCCESS );
+}}}
+
+
+=== Récupération des processus de certification ===
+La récupération des processus de certification dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final ProcessusSearchResponse response = referentialService.getProcessList( clientCode, author );
+}}}
+Cette méthode possède 2 paramètres :
+* **clientCode** : le code de l'application cliente dans l'identitystore effectuant l'appel
+* **author** : l'auteur de la requête
+
+Et retourne un objet //ProcessusSearchResponse//.
+
+
+==== Validation de la requête ====
+Aucune validation particulière
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la récupération à travers des status et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Aucun processus de certification n'a été trouvé dans le référentiel. | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| La cloture est acceptée et se déroule correctement | ResponseStatusType.OK | 200 | N/A |
+
+
+==== Exemple de récupération des processus de certification ====
+
+{{{ code |
+    final ProcessusSearchResponse response = referentialService.getProcessList( clientCode, author );
+    assert Objects.equals( response.getStatus( ).getType( ), ResponseStatusType.OK );
+    assert response.getProcessus( ) != null && !response.getProcessus( ).isEmpty( );
+}}}
+
+
+=== Récupération des niveaux de certification ===
+La récupération des niveaux de certification dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+    final LevelSearchResponse response = referentialService.getLevelList( clientCode, author );
+}}}
+Cette méthode possède 2 paramètres :
+* **clientCode** : le code de l'application cliente dans l'identitystore effectuant l'appel
+* **author** : l'auteur de la requête
+
+Et retourne un objet //LevelSearchResponse//.
+
+
+==== Validation de la requête ====
+Aucune validation particulière
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la récupération à travers des status et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Aucun niveau de certification n'a été trouvé dans le référentiel. | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| La cloture est acceptée et se déroule correctement | ResponseStatusType.OK | 200 | N/A |
+
+
+==== Exemple de récupération des niveaux de certification ====
+
+{{{ code |
+    final LevelSearchResponse response = referentialService.getLevelList( clientCode, getRequestAuthor( ) );
+    assert Objects.equals( response.getStatus( ).getType( ), ResponseStatusType.OK );
+    assert response.getLevels( ) != null && !response.getLevels( ).isEmpty( );
+}}}
+
+= 4 - Annexes =
+== 4.1 - Versions précédentes == 
+
+* [[library_identitystore_3_0_0]]
+
+== 4.2 - Guides de migration == 
+
+* [[library_identitystore_migration_guide_3_0_0_3_0_1]]

@@ -1,0 +1,733 @@
+<<<breadcrumb>>>
+
+{{{ page_title | Bibliothèque library-identitystore (V3.0.0) }}}
+
+<<<TOC>>>
+
+La library-identitystore, librairie Lutece, a été développée pour faciliter l'accès au référentiel d'identités via l'API Manager.
+
+= 1 - Ajout de la dépendance au projet maven =
+Dans le fichier **pom.xml** du projet, rajoutez la dépendance suivante :
+{{{ code |
+<dependency>
+    <groupId>fr.paris.lutece.plugins</groupId>
+    <artifactId>library-identitystore</artifactId>
+    <version>[3.0.1,)</version>
+    <type>jar</type>
+</dependency>
+}}}
+
+
+
+
+= 2 - Configuration du service =
+Pour pouvoir utiliser l'API, le service doit être configuré. Il y a deux façons de configurer ce service : soit par injection de bean dans le contexte, soit directement en Java.
+
+== 2.1 - Configuration par injection de bean dans le contexte ==
+=== Via API Manager ===
+Dans le fichier de contexte du plugin, il faut rajouter les lignes suivantes :
+{{{ code | 
+<!-- library identitystore -->
+<bean id="lib-identitystore.apiManagerTransport" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.IdentityTransportApiManagerRest">
+  <property name="identityStoreEndPoint">
+    <value>${url_to_API_Manager}</value>
+  </property>
+  <property name="apiManagerEndPoint">
+    <value>${url_to_Access_Manager}</value>
+  </property>
+  <property name="apiManagerCredentials">
+    <value>${private_key}</value>
+  </property>
+</bean>
+<bean id="identityService.rest" class="fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService">
+  <constructor-arg ref="lib-identitystore.apiManagerTransport"/>
+</bean>
+}}}
+
+URLS de dev : 
+* Access Manager : https://gru-gravitee1-am-gateway.dev.apps.paris.mdp/gru-notifications-domain/oauth/token
+* API Manager : https://gru-gravitee1-apim-gateway.dev.apps.paris.mdp/identity/v3
+
+URLS de R7 : 
+* Access Manager : https://gru-gravitee-am-gateway.rec.apps.paris.mdp/gru-notifications-domain/oauth/token
+* API Manager : https://gru-gravitee-apim-gateway.rec.apps.paris.mdp/identity/v3
+
+URLS de Prod : 
+* Access Manager : https://gru-gravitee-am-gateway.apps.paris.mdp/gru-notifications-domain/oauth/token
+* API Manager : https://gru-gravitee-apim-gateway.apps.paris.mdp/identity/v3
+
+
+=== Accès direct (dev local) ===
+Dans le fichier de contexte du plugin, il faut rajouter les lignes suivantes :
+{{{ code | 
+<!-- library identitystore -->
+<!-- IHttpTransportProvider declarations -->
+    <bean id="identityService.restTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.IdentityTransportRest">
+        <property name="IdentityStoreEndPoint">
+            <value>${identitydesk.identitystore.endpoint}</value>
+        </property>
+    </bean>
+
+    <!-- IdentityService impl -->
+    <bean id="identityService.rest" class="fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService">
+        <constructor-arg ref="identityService.restTransport.httpAccess"/>
+    </bean>
+}}}
+
+dans lequel :
+* la valeur de **${identitydesk.identitystore.endpoint}** est l'url locale de l'API identitystore, ex: http://localhost:8080/rest/identitystore
+
+=== Récupération dans l'application ===
+Le bean //identityService.rest// est alors disponible dans le contexte du plugin. C'est ce bean qui permet d'interagir avec le référentiel d'identités.
+Dans la suite, on appelera ce bean //identityService// pour plus de clarté.
+
+Une référence à ce bean peut être récupérée simplement ainsi : 
+{{{ code | 
+    import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
+...
+    private IdentityService _identityService = SpringContextService.getBean( "identityService.rest" );
+}}}
+== 2.2 - Configuration en Java ==
+Cette section présente un exemple de configuration du service en Java (exemple en utilisant Lutèce).
+{{{ info | Dans cette section, 'myplugin' doit être remplacé par une valeur de votre choix. }}}
+
+=== Via API manager ===
+Dans un fichier **.properties**, ajoutez les clés suivantes : 
+{{{ code |
+myplugin.gru.endpoint.identitystore=<url_to_API_Manager>/identity/v3
+myplugin.gru.endpoint.token=<url_to_API_Manager>/token
+myplugin.gru.apimanager.credentials=<private_key>
+}}}
+
+dans lequel :
+* la valeur de **<url_to_API_Manager>** correspond à l'url vers l'API Manager Identity (voir la partie **Les valeurs à paramétrer** dans [[gru_identity]]).
+* la valeur de **<private_key>** correspond à la clé privée de votre application pour l'API Manager Identity.
+
+Dans le code Java, ajoutez les lignes suivantes :
+{{{ code | 
+...
+private static final String PROPERTY_GRU_ENDPOINT_IDENTITYSTORE = "myplugin.gru.endpoint.identitystore";
+private static final String PROPERTY_GRU_ENDPOINT_TOKEN = "myplugin.gru.endpoint.token";
+private static final String PROPERTY_GRU_APIMANAGER_CREDENTIALS = "myplugin.gru.apimanager.credentials";
+...
+IdentityTransportApiManagerRest apiManagerTransport = new IdentityTransportApiManagerRest(  );
+apiManagerTransport.setIdentityStoreEndPoint( AppPropertiesService.getProperty( PROPERTY_GRU_ENDPOINT_IDENTITYSTORE ) );
+apiManagerTransport.setApiManagerEndPoint( AppPropertiesService.getProperty( PROPERTY_GRU_ENDPOINT_TOKEN ) );
+apiManagerTransport.setApiManagerCredentials( AppPropertiesService.getProperty( PROPERTY_GRU_APIMANAGER_CREDENTIALS ) );
+
+final IdentityService identityService = new IdentityService( apiManagerTransport );
+...
+}}}
+
+=== Sans API manager ===
+Dans un fichier **.properties**, ajoutez les clés suivantes : 
+{{{ code |
+myplugin.gru.endpoint.identitystore=<url_to_API_ids>
+}}}
+
+dans lequel :
+* la valeur de **<url_to_API_ids>** correspond à l'url vers l'API Identity, ex: http://localhost:8080/rest/identitystore.
+
+Dans le code Java, ajoutez les lignes suivantes :
+{{{ code | 
+...
+private static final String PROPERTY_GRU_ENDPOINT_IDENTITYSTORE = "myplugin.gru.endpoint.identitystore";
+...
+IdentityTransportRest transportProvider = new IdentityTransportRest();
+apiManagerTransport.setIdentityStoreEndPoint( AppPropertiesService.getProperty( PROPERTY_GRU_ENDPOINT_IDENTITYSTORE ) );
+
+final IdentityService identityService = new IdentityService( transportProvider );
+...
+}}}
+
+Le service //identityService// est alors disponible. 
+
+= 3 - Utilisation du service //identityService//  =
+Le service //identityService// permet aux applications de manipuler le référentiel d'identités. Pour cela il propose les opérations suivantes:
+  * CRUD: Création, Recherche, Update et Delete d'une identité
+  * Récupération d'une identité (Get)
+  * Récupération d'un contrat de service (Get)
+
+
+== 3.1 - Le modèle ==
+Il existe plusieurs objets en fonction des groupes de méthodes utilisés:
+  * Pour les opérations de type Création et Modification, la librairie acceptera en entrée un //IdentityChangeRequest// et retournera un //IdentityChangeResponse//.
+  * Pour les opérations de type Recherche, la librairie acceptera en entrée un //IdentitySearchRequest// et retournera un //IdentitySearchResponse//.
+  * Pour les opérations de type Get, la librairie acceptera en entrée des paramètres qui seront définis par la suite et retournera un //IdentitySearchResponse// pour les identités et un //ServiceContractSearchResponse// pour les contrats de service.
+
+=== //IdentityChangeRequest// ===
+La création et la modification d'une identité dans le référentiel nécessite l'utilisation d'un objet //IdentityChangeRequest//.
+Cet objet est composé des attributs suivants :
+  * **identity** : cet objet //Identity// représente l'identité en tant que telle.
+  * **origin** : cet objet //RequestAuthor// représente l'auteur de la création / modification.
+
+L'objet //Identity// est composé des attributs suivants :
+  * **connectionId** : l'identifiant de connexion de l'usager
+  * **customerId** : l'identifiant de l'identité
+  * **attributes** : les attributs de l'identité. Cet objet est une //List<CertifiedAttribute>//.
+
+L'objet //CertifiedAttribute// est composé des attributs suivants :
+  * **key** : le code de l'attribut
+  * **value** : la valeur de l'attribut
+  * **certificationProcess** : est le code du processus de certification de l'attribut. Peut être vide (null)
+  * **certificationDate** : est la date de certification de l'attribut. Peut-être vide (null)
+
+L'objet //RequestAuthor// est composé des attributs suivants :
+  * **name** : nom de l'auteur à l'origine de la création / modification
+  * **type** : L'enumeration **AuthorType** représente ce type. L'auteur peut être d'origines diverses : 
+    ** application = Application, Batch automatique
+    ** owner = Usager correspondant à l'identité
+    ** admin = Agent BO
+
+=== //IdentityChangeResponse// ===
+La création et la modification d'une identité dans le référentiel renvoie un objet //IdentityChangeRequest// qui contient les informations d'exécution de la requête.
+Cet objet est composé des attributs suivants :
+  * **connectionId** : l'identifiant de connexion de l'usager
+  * **customerId** : l'identifiant de l'identité
+  * **creationDate** : la date de création de l'identité.
+  * **lastUpdateDate** : la date de la dernière modification de l'identité.
+  * **identity** : une //Identity// retournée en cas d'update incomplet (identique à l'objet décrit dans //IdentityChangeRequest// ). Cet objet représente l'état de l'identité après mis à jour dans le référentiel (en écart avec la requête).
+  * **attributeStatuses** : une //List<AttributeStatus>// renseignée en cas d'échec de validation du contrat de service ou d'impossibilité de mise à jour d'un attribut. 
+  * **status** : L'enum **IdentityChangeStatus** représente le statut d'exécution de la requête. Le statut peut-être : 
+    ** CREATE_SUCCESS= code 201
+    ** UPDATE_SUCCESS = code 200
+    ** UPDATE_INCOMPLETE_SUCCESS = code 200 (avec param identity renseigné)
+    ** CONFLICT = code 409, l'action entre en conflit avec l'état de la ressource ou du serveur
+    ** NOT_FOUND = code 404
+    ** FAILURE = code 403, l'action n'est pas autorisée (en général par le contrat de service de l'application appelante)
+  * **message** : un message de retour qui contient généralement la raison d'un statut autre que SUCCESS.
+
+L'objet //AttributeStatus// est composé des attributs suivants :
+  * **key** : le code de l'attribut
+  * **status** : L'enum **AttributeChangeStatus** représente le status du traitement unitaire de l'attribut. Le status peut-être : 
+    ** CREATED = lors d'une création ou d'un update (si l'attribut n'existe pas il est créé)
+    ** UPDATED = lors d'un update
+    ** NOT_UPDATED = lors d'un update l'attribut n'est pas mis à jour si celui du référentiel existe avec la même valeur et la même certification
+    ** NOT_FOUND = la key de l'attribut n'existe pas dans le référentiel
+    ** INSUFFICIENT_CERTIFICATION_LEVEL = Lors d'un update l'attribut ne peut pas être mis à jour car la certification spécifiée dans la requête est inférieure à celle existante
+    ** INSUFFICIENT_RIGHTS = Le contrat de service n'autorise pas l'écriture de cet attribut avec la certification spécifiée dans la requête
+    ** UNAUTHORIZED = Le contrat de service n'autorise pas l'écriture de cet attribut
+
+=== //IdentitySearchRequest// ===
+La recherche d'une identité dans le référentiel nécessite un objet //IdentitySearchRequest// qui contient les critères de recherche.
+Cet objet est composé des attributs suivants :
+  * **connected** : l'identité doit-être connectée (**true**) ou non (**false**)  
+  * **connectionId** : le GUID de l'identité recherchée
+  * **search** : un //SearchDto// qui définit les attributs utilisés pour la recherche
+
+L'objet //SearchDto// est composé des attributs suivants :
+  * **attributes** : une //List<SearchAttributeDto>//
+
+L'objet //SearchAttributeDto// est composé des attributs suivants :
+  * **key** : la clé de l'attribut
+  * **value** : la valeur recherchée de l'attribut
+  * **strict** : définit si la recherche doit être stricte (**true**) ou approchante (**false**)
+
+=== //IdentitySearchResponse// ===
+La recherche d'une identité dans le référentiel renvoie un objet //IdentitySearchResponse// qui contient les résultats de la recherche.
+
+Cet objet est composé des attributs suivants :
+  * **status** : L'enum **IdentityChangeStatus** représente le statut d'exécution de la requête. Le statut peut être : 
+    ** SUCCESS= code 200
+    ** NOT_FOUND = code 404
+    ** FAILURE = code 403, l'action n'est pas autorisée (en général par le contrat de service de l'application appelante)
+  * **identities** : une //List<QualifiedIdentity>// contenant les résultats de la recherche
+  * **alerts** : une //List<IdentitySearchMessage>// contenant des messages décrivant d'éventuelles erreurs
+
+L'objet //QualifiedIdentity// est composé des attributs suivants :
+  * **quality** : le niveau de qualité de l'identité
+  * **coverage** : le taux de couverture du contrat de service
+  * **scoring** : le score de matching de l'attribut
+  * **connectionId** : l'identifiant de connexion de l'usager
+  * **customerId** : l'identifiant de l'identité
+  * **creationDate** : date de création de l'identité
+  * **lastUpdateDate** : date de la dernière mise à jour de l'identité
+  * **attributes** : un //List<CertifiedAttribute>// qui contient les attributs de l'identité
+
+L'objet //CertifiedAttribute// est composé des attributs suivants :
+  * **key** : la clé de l'attribut
+  * **value** : la valeur de l'attribut
+  * **type** : type de l'attribut
+  * **certificationLevel** : le niveau du processus de certification de l'attribut
+  * **certifier** : code du process de certification de l'attribut
+  * **certificationDate** : date de certification de l'attribut
+
+L'objet //IdentitySearchMessage// est composé des attributs suivants :
+  * **attributeName** : la clé de l'attribut
+  * **message** : le message décrivant l'alerte remontée pour la clé d'attribut associée
+
+=== //ServiceContractSearchResponse// ===
+La récupération d'un contrat de service dans le référentiel renvoie un objet //ServiceContractSearchResponse// qui contient sa définition.
+
+Cet objet est composé des attributs suivants :
+  * **status** : L'enum **ServiceContractSearchStatusType** représente le statut d'exécution de la requête. Le statut peut-être : 
+    ** SUCCESS= code 200
+    ** NOT_FOUND = code 404
+    ** FAILURE = code 403, l'action n'est pas autorisée (en général par le contrat de service de l'application appelante)
+  * **serviceContract** : un //ServiceContractDto// contenant le contrat de service requis 
+
+L'objet //ServiceContractDto// est composé des attributs suivants :
+  * **name** : le nom du contrat de service
+  * **organizationalEntity** : l'entité pour laquelle le contrat de service est défini
+  * **responsibleName** : le responsable du contrat de service
+  * **contactName** : le moyen de contact de ce responsable
+  * **serviceType** : le type de service couvert par le contrat
+  * **authorizedMerge** : l'application est autorisée (**true**) à rapprocher deux identités ou non (**false**)
+  * **authorizedAccountUpdate** :  l'application est autorisée (**true**) à mettre à jour une identité connectée (c'est à dire ayant un GUID) ou non (**false**)
+  * **authorizedDeletion** :  l'application est autorisée (**true**) à supprimer une identité ou non (**false**) 
+  * **authorizedImport** :  l'application est autorisée (**true**) à importer une identité ou non (**false**)
+  * **authorizedExport** :  l'application est autorisée (**true**) à exporter une identité ou non (**false**) 
+  * **authorizedDeleteValue** : //deprecated//
+  * **authorizedDeleteCertificate** :  //deprecated//
+  * **attributeDefinitions** : une //List<AttributeDefinitionDto>//
+
+L'objet //AttributeDefinitionDto// est composé des attributs suivants :
+  * **name** : nom de l'attribut
+  * **keyName** : clé de l'attribut
+  * **description** : description de l'attribut
+  * **keyType** : type de l'attribut
+  * **certifiable** : l'attribut est certifiable (**true**) ou non (**false**)
+  * **pivot** : l'attribut est-il un attribut pivot  (**true**) ou non (**false**)
+  * **keyWeight** : le poid de l'attribut, utilisé dans les calculs de qualité et de scoring des identités recherchées
+  * **attributeRequirement** : l'exigence de niveau de certification minimum de l'application pour l'attribut. Cet objet est un //AttributeRequirement//.
+  * **attributeRight** : les droits de l'application associés à cet attribut. Cet objet est une //AttributeRight//.
+  * **attributeCertifications** : les processus de certification de l'attribut utilisables par l'application. Cet objet est une //List<CertificationProcessus>//.
+
+L'objet //AttributeRequirement// est composé des attributs suivants :
+  * **level** : valeur du niveau de certification
+  * **name** : nom du niveau de certification
+  * **description** : description du niveau de certification
+
+L'objet //AttributeRight// est composé des attributs suivants :
+  * **searchable** : l'atribut est utilisable pour la recherche
+  * **readable** : l'attribut est disponible en lecture
+  * **writable** : l'attribut est disponible en écriture
+
+L'objet //CertificationProcessus// est composé des attributs suivants :
+  * **label** : le label du processus de certification
+  * **code** : le code du processus de certification
+  * **level** : le niveau du processus de certification
+
+== 3.2 - Les opérations ==
+Le service possède à l'heure actuelle 5 opérations principales servant à interagir avec le référentiel d'identités.
+{{{ warning |
+Toutes les opérations nécessitent de fournir le code de l'application appelante dans le but de valider que les requêtes respectent le contrat de service de celle-ci.
+Par exemple, si lors d'une demande de création d'identité, l'application n'a pas l'autorisation d'écrire un des attributs spécifiés dans la requête, la demande est rejetée avec un statut retraçant ce défaut. Si ce paramètre n'est pas spécifié dans les appels la librairie retourne une //IdentityStoreException//. Si aucun contrat de service n'est trouvé pour l'application, la librairie renvoie une //IdentityStoreException//.
+}}}
+
+=== Récupérer une identité ===
+Il y a deux méthodes pour récupérer une identité.
+
+{{{ code | 
+final IdentitySearchResponse response = identityService.getIdentity( customerId, applicationCode );
+}}}
+
+Cette méthode possède 2 paramètres :
+  * **customerId** : l'identifiant de l'identité
+  * **applicationCode** : le code de l'application dans l'identitystore
+
+Et retourne un objet //IdentitySearchResponse//.
+Si le référentiel ne trouve pas l'identité correspondante, **response** aura un status **IdentitySearchStatusType.NOT_FOUND** (404).
+
+Il est également possible de récupérer une identité à par son **identifiant de connexion** à l'aide du code suivant :
+{{{ code | 
+final IdentitySearchResponse response = identityService.getIdentityByConnectionId( connectionId, applicationCode );
+}}}
+Cette méthode possède 2 paramètres :
+  * **connectionId** : l'identifiant de connexion de l'usager
+  * **applicationCode** : le code de l'application dans l'identitystore
+
+Et retourne un objet //IdentitySearchResponse//.
+  
+Si le référentiel ne trouve pas l'identité correspondante, **response** aura un status **IdentitySearchStatusType.NOT_FOUND** (404).
+
+Dans tous les cas, si le référentiel trouve une identité, celle ci sera accessible, par exemple, comme suit:
+{{{ code | 
+if(  !IdentitySearchStatusType.NOT_FOUND.equals( response.getStatus() ) )
+{
+    final QualifiedIdentity identity = response.getIdentities( ).get( 0 );
+}
+}}}
+
+==== Pré-remplissage des formulaires ====
+L'identité récupérée contient une liste de //CertifiedAttribute//. Utilisez la méthode getValue( ) de l'objet pour récupérer la valeur d'un attribut de l'identité et injectez-la dans le champ du formulaire à pré-remplir.
+
+=== Modifier une identité ===
+La modification d'une identité dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code | 
+final IdentityChangeResponse response = identityService.updateIdentity( customerId, identityChange, applicationCode );
+}}}
+Cette méthode possède 2 paramètres :
+  * **customerId** : le CUID de l'identité à modifier
+  * **identityChange** : cet objet //IdentityChangeRequest// permet la modification de l'identité dans le référentiel
+  * **applicationCode** : le code de l'application dans l'identitystore
+
+Et retourne un objet //IdentityChangeResponse//.
+
+==== Validation de la requête ====
+Si l'objet //Identity// ou l'objet //RequestAuthor// n'est pas présent dans l'objet //IdentityChangeRequest//, la modification est refusée, la librairie retourne une //IdentityStoreException//.\\
+Si l'objet //Identity// n'a pas d'attributs, la modification est refusée, la librairie retourne une //IdentityStoreException//.\\
+Si  **customerId** n'est pas renseigné, la modification est refusée, la librairie retourne une //IdentityStoreException//.\\
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la mise à jour à travers des statuts et des messages. Il y a un statut pour l'identité, et un statut par attribut (en fonction des scénarii).
+
+|= Scénario |= Status |= Code |= Message |
+| La requête ne respecte pas la définition du contrat de service de l'application, la modification est refusée | IdentityChangeStatusType.FAILURE | 403 | The request violates service contract definition |
+| La modification requise est susceptible d'entraîner la création d'un doublon, la modification est refusée | IdentityChangeStatusType.CONFLICT | 409 | Description de la règle de suspicion de doublon ayant sanctionné la requête |
+| La modification requise porte sur une identitée supprimée, la modification est refusée | IdentityChangeStatusType.CONFLICT | 409 | Cannot update a deleted Identity. |
+| La modification requise porte sur une identitée rapprochée, la modification est refusée | IdentityChangeStatusType.CONFLICT | 409 | Cannot update a merged Identity. Master identity customerId is provided in the response. |
+| La modification requise porte sur une identitée connectée et l'application n'a pas le droit de modification associé dans le contrat de service, la modification est refusée | IdentityChangeStatusType.CONFLICT | 409 | The client application is not authorized to update a connected identity. |
+| Le référentiel ne trouve pas l'identité correspondante, la modification est refusée | IdentityChangeStatusType.NOT_FOUND | 404 | No matching identity could be found |
+| La modification est acceptée et réalisée sans erreur | IdentityChangeStatusType.UPDATE_SUCCESS | 200 | N/A |
+| La modification est acceptée et réalisée partiellement | IdentityChangeStatusType.UPDATE_INCOMPLETE_SUCCESS | 200 | N/A |
+
+Un statuts est fourni pour chaque attribut, décrivant son traitement:
+
+|= Scénario |= Status |= Message |
+| L'attribut n'existe pas dans le référentiel, il est créé | AttributeChangeStatus.CREATED | N/A |
+| L'attribut existe dans le référentiel et est correctement mis à jour | AttributeChangeStatus.UPDATED | N/A |
+| L'attribut existe dans le référentiel et a exactement la même valeur et le même niveau de certification | AttributeChangeStatus.NOT_UPDATE | "This attribute already exists with the same value and certificate." |
+| La clef d'attribut spécifié n'existe pas dans le référentiel | AttributeChangeStatus.NOT_FOUND | This attribute does not exist in the repository. |
+| Le référentiel n'autorise pas à écrire cet attribut car le certificat existant est de niveau supérieur à celui spécifié dans la requête | AttributeChangeStatus.INSUFFICIENT_CERTIFICATION_LEVEL | This attribute cannot be updated because the existing certification level is higher than in the service contract definition for the process provided in the request. |
+| Le contrat de service n'autorise pas l'application à certifier l'attribut avec le processus spécifié dans la requête | AttributeChangeStatus.INSUFFICIENT_RIGHTS | This attribute cannot be written because the associated process in the request does not match the contract definition. |
+| Le contrat de service n'autorise pas l'application à créer ou modifier l'attribut | AttributeChangeStatus.UNAUTHORIZED | This attribute is not writable in service contract definition |
+
+==== Exemple de création et d'envoi d'une requête pour modifier la date de naissance et le nom d'usage d'une identité ====
+
+{{{ code | 
+final IdentityChangeRequest identityChangeRequest = new IdentityChangeRequest();
+identityChangeRequest.setOrigin(new RequestAuthor());
+identityChangeRequest.getOrigin().setName("Application de test");
+identityChangeRequest.getOrigin().setType(AuthorType.application);
+
+identityChangeRequest.setIdentity(new Identity());
+identityChangeRequest.getIdentity().setCustomerId("12549-cmsl54-dsd513");
+
+final CertifiedAttribute preferredName = new CertifiedAttribute();
+preferredName.setKey("preferred_username");
+preferredName.setValue("Marouel");
+preferredName.setCertificationDate(new Date());
+preferredName.setCertificationProcess("fc");
+identityChangeRequest.getIdentity().getAttributes().add(preferredName);
+
+final CertifiedAttribute birthDate = new CertifiedAttribute();
+birthDate.setKey("birthdate");
+birthDate.setValue("11/09/1988");
+birthDate.setCertificationDate(new Date());
+birthDate.setCertificationProcess("cert_process_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(birthDate);
+
+try {
+    final IdentityChangeResponse response = identityService.updateIdentity( identityChangeRequest, Constants.MY_APP_CODE);
+    switch (response.getStatus()) {
+        case UPDATE_SUCCESS:
+            // do something do something
+            break;
+        case UPDATE_INCOMPLETE_SUCCESS:
+            response.getAttributeStatuses().forEach(attributeStatus -> {
+                            switch (attributeStatus.getStatus()) {
+                                case NOT_UPDATED:
+                                case UNAUTHORIZED:
+                                case INSUFFICIENT_RIGHTS:
+                                case INSUFFICIENT_CERTIFICATION_LEVEL:
+                                case NOT_FOUND:
+                                    //do something according to status
+                                    break;
+                            }
+                        });
+            break;
+        case NOT_FOUND:
+            // do something
+            break;
+        case CONFLICT:
+            // do something
+            break;
+        case FAILURE:
+            //do something
+            break;
+        default:
+            break;
+    }
+} catch (final IdentityStoreException e) {
+    // handle exception
+}
+
+ }}}
+
+=== Créer une identité ===
+La création d'une identité dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code | 
+final IdentityChangeResponse response = identityService.createIdentity( identityChange, applicationCode );
+}}}
+Cette méthode possède 2 paramètres :
+  * **identityChange** : cet objet //IdentityChangeRequest// permet la création de l'identité dans le référentiel
+  * **applicationCode** : le code de l'application dans l'identitystore
+ 
+==== Validation de la requête ====
+Si l'objet //Identity// ou l'objet //RequestAuthor// n'est pas présent dans l'objet //IdentityChangeRequest//, la modification est refusée, la librairie retourne une //IdentityStoreException//.\\
+Si l'objet //Identity// n'a pas d'attributs, la création est refusée, la librairie retourne une //IdentityStoreException//.\\
+Si l'identifiant de l'identité est fourni, la librairie retourne une //IdentityStoreException//.\\
+Si aucun identifiant n'est fourni, alors le référentiel crée une identité à partir des attributs fournis et la librairie retourne cette identité.
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la création à travers des statuts et des messages. Il y a un statut pour l'identité, et un status par attribut (en fonction des scénarii).
+
+|= Scénario |= Status |= Code |= Message |
+| La requête ne respecte pas la définition du contrat de service de l'application, la création est refusée | IdentityChangeStatusType.FAILURE | 403 | The request violates service contract definition |
+| La création requise est susceptible d'entraîner la création d'un doublon, la modification est refusée | IdentityChangeStatusType.CONFLICT | 409 | Description de la règle de suspicion de doublon ayant sanctionné la requête |
+| La création est acceptée et réalisée sans erreur | IdentityChangeStatusType.CREATE_SUCCESS | 201 | N/A |
+
+Un statut est fourni pour chaque attribut, décrivant son traitement:
+
+|= Scénario |= Status |= Message |
+| L'attribut est correctement créé | AttributeChangeStatus.CREATED | N/A |
+| La clef d'attribut spécifié n'existe pas dans le référentiel | AttributeChangeStatus.NOT_FOUND | This attribute does not exist in the repository. |
+| Le contrat de service n'autorise pas l'application à certifier l'attribut avec le processus spécifié dans la requête | AttributeChangeStatus.INSUFFICIENT_RIGHTS | This attribute cannot be written because the associated process in the request does not match the contract definition. |
+| Le contrat de service n'autorise pas l'application à créer ou modifier l'attribut | AttributeChangeStatus.UNAUTHORIZED | This attribute is not writable in service contract definition |
+
+
+==== Exemple de création et d'envoi d'une requête pour créer une nouvelle identité ====
+
+{{{ code | 
+final IdentityChangeRequest identityChangeRequest = new IdentityChangeRequest();
+identityChangeRequest.setOrigin(new RequestAuthor());
+identityChangeRequest.getOrigin().setName("Application de test");
+identityChangeRequest.getOrigin().setType(AuthorType.application);
+
+identityChangeRequest.setIdentity(new Identity());
+
+final CertifiedAttribute familyName = new CertifiedAttribute();
+familyName.setKey("family_name");
+familyName.setValue("Dupont");
+familyName.setCertificationDate(this.currentDate);
+familyName.setCertificationProcess("cert_process_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(familyName);
+
+final CertifiedAttribute preferredName = new CertifiedAttribute();
+preferredName.setKey("preferred_username");
+preferredName.setValue("Martin");
+preferredName.setCertificationDate(this.currentDate);
+preferredName.setCertificationProcess("cert_process_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(preferredName);
+
+final CertifiedAttribute firstNames = new CertifiedAttribute();
+firstNames.setKey("first_name");
+firstNames.setValue("Didier Robert");
+firstNames.setCertificationDate(this.currentDate);
+firstNames.setCertificationProcess("cert_process_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(firstNames);
+
+final CertifiedAttribute birthDate = new CertifiedAttribute();
+birthDate.setKey("birthdate");
+birthDate.setValue("28/05/1654");
+birthDate.setCertificationDate(this.currentDate);
+birthDate.setCertificationProcess("cert_process_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(birthDate);
+
+final CertifiedAttribute email = new CertifiedAttribute();
+email.setKey("email");
+email.setValue(d.dupont@mail.com);
+email.setCertificationDate(this.currentDate);
+email.setCertificationProcess("cert_process_mail_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(email);
+
+final CertifiedAttribute gender = new CertifiedAttribute();
+gender.setKey("gender");
+gender.setValue("1");
+gender.setCertificationDate(this.currentDate);
+gender.setCertificationProcess("cert_process_TEST");
+identityChangeRequest.getIdentity().getAttributes().add(gender);
+
+final CertifiedAttribute mobile = new CertifiedAttribute();
+mobile.setKey("mobile_phone");
+mobile.setValue("0648951365");
+mobile.setCertificationDate(this.currentDate);
+mobile.setCertificationProcess("sms");
+identityChangeRequest.getIdentity().getAttributes().add(mobile);
+
+
+try {
+    final IdentityChangeResponse response = identityService.createIdentity( identityChangeRequest, Constants.MY_APP_CODE);
+    switch (response.getStatus()) {
+        case CREATE_SUCCESS:
+            // do something do something
+            break;
+        case CONFLICT:
+            // do something
+            break;
+        case FAILURE:
+            //do something
+            break;
+        default:
+            break;
+    }
+} catch (final IdentityStoreException e) {
+    // handle exception
+}
+
+ }}}
+
+
+
+=== Rechercher une identité ===
+La recherche d'une identité dans le référentiel peut se faire de deux façons.
+ * avec un **connectionId**
+ * avec un //Search// (une liste de clefs d'attributs + valeur recherchée)
+
+Ces deux modes sont exclusifs. Si la requête contient les deux informations, elle est rejetée.
+
+{{{ code | 
+final IdentitySearchResponse response = identityService.searchIdentities( identitySearch, applicationCode );
+}}}
+Cette méthode possède 2 paramètres :
+  * **identitySearch** : cet objet //IdentitySearchRequest// permet de spécifier les paramètres de la recherche
+  * **applicationCode** : le code de l'application dans l'identitystore
+
+Et retourne un objet //IdentitySearchResponse//.
+
+==== Validation de la requête ====
+Si le paramètre **customerId** et l'objet //search// sont renseignés , la recherche est refusée, la librairie retourne une //IdentityStoreException//.\\
+Si l'objet //search// n'a pas d'attributs, la recherche est refusée, la librairie retourne une //IdentityStoreException//.\\
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la recherche à travers des status et des messages. 
+
+|= Scénario |= Status |= Code |= Message |
+| La requête ne respecte pas la définition du contrat de service de l'application, la recherche est refusée. La réponse contiendra une liste d'alertes décrivant les raisons du refus.  | IdentitySearchStatusType.FAILURE | 403 | The request violates service contract definition |
+| La recherche ne renvoie aucun résultat. | IdentitySearchStatusType.NOT_FOUND | 404 | N/A |
+| La recherche renvoie un ou plusieurs résultats | IdentitySearchStatusType.SUCCESS | 200 | N/A |
+
+==== Exemple de recherche ====
+
+{{{ code | 
+try {
+    final IdentitySearchRequest identitySearchRequest = new IdentitySearchRequest( );
+    identitySearchRequest.setSearch( new SearchDto( ) );
+
+    final SearchAttributeDto firstName = new SearchAttributeDto();
+    firstName.setStrict(true);
+    firstName.setKey("first_name");
+    firstName.setValue("Anthony");
+    identitySearchRequest.getSearch().getAttributes().add(firstName);
+
+    final SearchAttributeDto familyName = new SearchAttributeDto();
+    familyName.setStrict(true);
+    familyName.setKey("family_name");
+    familyName.setValue("Durand");
+    identitySearchRequest.getSearch().getAttributes().add(familyName);
+    final IdentitySearchResponse response = identityServiceTesting.searchIdentities(identitySearchRequest, author.getName());
+
+    if(IdentitySearchStatusType.SUCCESS.equals(response.getStatus())) {
+        response.getIdentities().forEach(qualifiedIdentity -> {
+            if(qualifiedIdentity.getQuality() > 0.9) {
+                // do something
+            }
+        });
+    }
+} catch (final IdentityStoreException e) {
+    // handle Exception
+}
+}}}
+
+=== Récupérer le contrat de service ===
+La recherche d'une identité dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code | 
+final ServiceContractSearchResponse response = identityService.getServiceContract(applicationCode);
+}}}
+Cette méthode possède 1 paramètre :
+  * **applicationCode** : le code de l'application dans l'identitystore
+
+Et retourne un objet //ServiceContractSearchResponse//.
+
+==== Validation de la requête ====
+Si le paramètre **applicationCode** n'est pas présent ou s'il est vide, la librairie renvoie une //IdentityStoreException//.\\
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la recherche à travers des status et des messages. 
+
+|= Scénario |= Status |= Code |= Message |
+| Aucun contrat de service actif n'est trouvé pour le code application fourni. | ServiceContractSearchStatusType.NOT_FOUND | 404 | N/A |
+| Un contrat de service actif est trouvé pour le code application fourni | ServiceContractSearchStatusType.SUCCESS | 200 | N/A |
+
+==== Exemple d'utilisation du contrat de service ====
+
+Dans le cadre, par exemple, du développement d'un template de création d'identité 
+
+Jsp bean:
+{{{ code | 
+/**
+     * Returns the form to create a identity
+     *
+     * @param request
+     *            The Http request
+     * @return the html code of the identity form
+     */
+    @View( VIEW_CREATE_IDENTITY )
+    public String getCreateIdentity( HttpServletRequest request )
+    {
+        _identity = initNewIdentity( request );
+        try
+        {
+            final ServiceContractSearchResponse response = _identityService.getServiceContract( getClientCode( request ) );
+            _serviceContract = response.getServiceContract( );
+        }
+        catch( IdentityStoreException e )
+        {
+            addError( "Erreur lors de la récupération du contrat de service" );
+            return getManageIdentitys( request );
+        }
+
+        Map<String, Object> model = getModel( );
+        model.put( MARK_IDENTITY, _identity );
+        model.put( MARK_SERVICE_CONTRACT, _serviceContract );
+        model.put( MARK_AUTOCOMPLETE_CITY_ENDPOINT, _autocompleteCityEndpoint );
+        model.put( MARK_AUTOCOMPLETE_COUNTRY_ENDPOINT, _autocompleteCountryEndpoint );
+        markReturnUrl( request, model );
+
+        return getPage( PROPERTY_PAGE_TITLE_CREATE_IDENTITY, TEMPLATE_CREATE_IDENTITY, model );
+    }
+
+}}}
+
+Template:
+
+{{{ code | 
+
+    <form class="form-horizontal" method="post" name="create_identity" action="jsp/admin/plugins/identitydesk/ManageIdentities.jsp">
+        <@messages infos=infos />
+        <@messages errors=errors />
+        <@messages warnings=warnings />
+        <input type="hidden" name="return_url" value="${(return_url)!''}">
+
+        <#list service_contract.attributeDefinitions?filter(a -> a.attributeRight.writable) as writableAttr>
+            <#if writableAttr.keyName == 'insee_birthplace_code' || writableAttr.keyName == 'insee_birthcountry_code'>
+                <input type="hidden" name="${writableAttr.keyName}" value="<#list identity.attributes?filter(a -> a.key == writableAttr.keyName) as attr>${attr.value}</#list>" />
+            <#else>
+                <#assign labelId = "${writableAttr.keyName}-input">
+                <@formGroup labelKey=writableAttr.name labelFor=labelId mandatory=writableAttr.attributeRequirement?? >
+                    <div class="d-flex">
+                        <input id="${labelId}" class="form-control" type="text" name="${writableAttr.keyName}" placeholder="${writableAttr.description}"
+                               value="<#list identity.attributes?filter(a -> a.key == writableAttr.keyName) as attr>${attr.value}</#list>" />
+                        <select class="form-control w-auto" name="${writableAttr.keyName}-certif">
+                            <option hidden disabled selected value> -- Choissez un niveau de certification -- </option>
+                            <#if writableAttr.attributeRequirement??>
+                                <#list writableAttr.attributeCertifications?filter(c -> (c.level?number >= writableAttr.attributeRequirement.level?number)) as attrCert>
+                                    <option value="${attrCert.code}">${attrCert.label}</option>
+                                </#list>
+                            <#else>
+                                <#list writableAttr.attributeCertifications as attrCert>
+                                    <option value="${attrCert.code}">${attrCert.label}</option>
+                                </#list>
+                            </#if>
+                        </select>
+                    </div>
+                </@formGroup>
+            </#if>
+        </#list>
+
+        <@actionButtons button1Name="action_createIdentity" button2Name="view_manageIdentitys"/>
+    </form>
+
+}}}
+
