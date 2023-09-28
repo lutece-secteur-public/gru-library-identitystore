@@ -1,0 +1,663 @@
+<<<breadcrumb>>>
+
+{{{ page_title | Bibliothèque library-identityquality (V1.0.0) }}}
+
+<<<TOC>>>
+
+La library-identityquality, librairie Lutece, a été développée pour faciliter la gestion des doublons d'identités du référentiel via l'API Manager.
+
+= 1 - Ajout de la dépendance au projet maven =
+Dans le fichier **pom.xml** du projet, rajoutez la dépendance suivante :
+{{{ code |
+<dependency>
+    <groupId>fr.paris.lutece.plugins</groupId>
+    <artifactId>library-identityquality</artifactId>
+    <version>[1.0.0,)</version>
+    <type>jar</type>
+</dependency>
+}}}
+
+= 2 - Configuration du service =
+Pour pouvoir utiliser l'API, le service doit être configuré. Il y a deux façons de configurer ce service : soit par injection de bean dans le contexte, soit directement en Java.
+
+== 2.1 - Configuration par injection de bean dans le contexte ==
+=== Via API Manager ===
+Dans le fichier de contexte du plugin, il faut rajouter les lignes suivantes :
+{{{ code |
+<!-- library identityquality -->
+<bean id="lib-identityquality.apiManagerTransport" class="fr.paris.lutece.plugins.identityquality.v3.web.rs.service.IdentityTransportApiManagerRest">
+  <property name="identityStoreEndPoint">
+    <value>${url_to_API_Manager}</value>
+  </property>
+  <property name="apiManagerEndPoint">
+    <value>${url_to_Access_Manager}</value>
+  </property>
+  <property name="apiManagerCredentials">
+    <value>${private_key}</value>
+  </property>
+</bean>
+<bean id="identityQualityService.rest" class="fr.paris.lutece.plugins.identityquality.v3.web.service.IdentityQualityService">
+  <constructor-arg ref="lib-identityquality.apiManagerTransport"/>
+</bean>
+}}}
+
+URLS de dev :
+* Access Manager : https://gru-gravitee1-am-gateway.dev.apps.paris.mdp/gru-notifications-domain/oauth/token
+* API Manager : https://gru-gravitee1-apim-gateway.dev.apps.paris.mdp/quality/v3
+
+URLS de R7 :
+* Access Manager : https://gru-gravitee-am-gateway.rec.apps.paris.mdp/gru-notifications-domain/oauth/token
+* API Manager : https://gru-gravitee-apim-gateway.rec.apps.paris.mdp/quality/v3
+
+URLS de Prod :
+* Access Manager : https://gru-gravitee-am-gateway.apps.paris.mdp/gru-notifications-domain/oauth/token
+* API Manager : https://gru-gravitee-apim-gateway.apps.paris.mdp/quality/v3
+
+
+=== Accès direct (dev local) ===
+Dans le fichier de contexte du plugin, il faut rajouter les lignes suivantes :
+{{{ code |
+<!-- library identityquality -->
+<!-- IHttpTransportProvider declarations -->
+<bean id="identityQualityService.restTransport.httpAccess" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.IdentityQualityTransportRest">
+    <property name="IdentityStoreQualityEndPoint">
+        <value>${identitymediation.identityquality.endpoint}</value>
+    </property>
+</bean>
+
+<!-- IdentityQualityService impl -->
+<bean id="identityQualityService.rest" class="fr.paris.lutece.plugins.identityquality.v3.web.service.IdentityQualityService">
+    <constructor-arg ref="identityQualityService.restTransport.httpAccess"/>
+</bean>
+}}}
+
+dans lequel :
+* la valeur de **${identitymediation.identityquality.endpoint}** est l'url locale de l'API identityquality, ex: http://localhost:8080/rest/identityquality
+
+=== Récupération dans l'application ===
+Le bean //identityQualityService.rest// est alors disponible dans le contexte du plugin. C'est ce bean qui permet d'interagir avec le référentiel des doublons d'identités.
+Dans la suite, on appelera ce bean //identityQualityService// pour plus de clarté.
+
+Une référence à ce bean peut être récupérée simplement ainsi :
+{{{ code |
+import fr.paris.lutece.plugins.identityquality.v3.web.service.IdentityQualityService;
+...
+private final IdentityQualityService _serviceQuality = SpringContextService.getBean( "identityQualityService.rest" );
+}}}
+== 2.2 - Configuration en Java ==
+Cette section présente un exemple de configuration du service en Java (exemple en utilisant Lutèce).
+{{{ info | Dans cette section, 'myplugin' doit être remplacé par une valeur de votre choix. }}}
+
+=== Via API manager ===
+Dans un fichier **.properties**, ajoutez les clés suivantes :
+{{{ code |
+    myplugin.gru.endpoint.identityquality=<url_to_API_Manager>/identity/v3
+    myplugin.gru.endpoint.token=<url_to_API_Manager>/token
+    myplugin.gru.apimanager.credentials=<private_key>
+}}}
+
+dans lequel :
+* la valeur de **<url_to_API_Manager>** correspond à l'url vers l'API Manager Quality (voir la partie **Les valeurs à paramétrer** dans [[gru_identity]]).
+* la valeur de **<private_key>** correspond à la clé privée de votre application pour l'API Manager Quality.
+
+Dans le code Java, ajoutez les lignes suivantes :
+{{{ code |
+...
+private static final String PROPERTY_GRU_ENDPOINT_IDENTITYQUALITY = "myplugin.gru.endpoint.identityquality";
+private static final String PROPERTY_GRU_ENDPOINT_TOKEN = "myplugin.gru.endpoint.token";
+private static final String PROPERTY_GRU_APIMANAGER_CREDENTIALS = "myplugin.gru.apimanager.credentials";
+...
+IdentityTransportApiManagerRest apiManagerTransport = new IdentityTransportApiManagerRest(  );
+apiManagerTransport.setIdentityStoreEndPoint( AppPropertiesService.getProperty( PROPERTY_GRU_ENDPOINT_IDENTITYQUALITY ) );
+apiManagerTransport.setApiManagerEndPoint( AppPropertiesService.getProperty( PROPERTY_GRU_ENDPOINT_TOKEN ) );
+apiManagerTransport.setApiManagerCredentials( AppPropertiesService.getProperty( PROPERTY_GRU_APIMANAGER_CREDENTIALS ) );
+
+final IdentityQualityService identityService = new IdentityQualityService( apiManagerTransport );
+...
+}}}
+
+=== Sans API manager ===
+Dans un fichier **.properties**, ajoutez les clés suivantes :
+{{{ code |
+myplugin.gru.endpoint.identityquality=<url_to_API>
+}}}
+
+dans lequel :
+* la valeur de **<url_to_API>** correspond à l'url vers l'API Quality, ex: http://localhost:8080/rest/identityquality.
+
+Dans le code Java, ajoutez les lignes suivantes :
+{{{ code |
+...
+private static final String PROPERTY_GRU_ENDPOINT_IDENTITYQUALITY = "myplugin.gru.endpoint.identityquality";
+...
+IdentityQualityTransportRest transportProvider = new IdentityQualityTransportRest();
+transportProvider.setIdentityStoreEndPoint( AppPropertiesService.getProperty( PROPERTY_GRU_ENDPOINT_IDENTITYQUALITY ) );
+
+final IdentityQualityService identityQualityService = new IdentityQualityService( transportProvider );
+...
+}}}
+
+Le service //identityQualityService// est alors disponible.
+
+
+= 3 - Utilisation du service  =
+Le service //identityQualityService// permet aux applications de gérer les doublons d'identités du référentiel. Pour cela il propose les opérations suivantes:
+* Création d'une suspicion de doublon
+* Récupération de toutes les règles de détection de doublons
+* Recherche dans les suspicions de doublon
+* Récupération des doublons potentiels d'une identité
+* Marquage comme non-doublons de deux identités suspectés d'être en doublon (aussi appellé **exclusion**)
+* Annulation d'exclusion
+* Vérouillage et dévérouillage d'une suspicion de doublon
+
+
+== 3.1 - Le modèle ==
+Il existe plusieurs objets en fonction des groupes de méthodes utilisés :
+* Pour les opérations de type Création de suspicion, la librairie acceptera en entrée un //SuspiciousIdentityChangeRequest// et retournera un //SuspiciousIdentityChangeResponse//.
+* Pour les opérations de type Recherche de suspicion, la librairie acceptera en entrée un //SuspiciousIdentitySearchRequest// et retournera un //SuspiciousIdentitySearchResponse//.
+* Pour les opérations de type Exclusion, la librairie acceptera en entrée un //SuspiciousIdentityExcludeRequest// et retournera un //SuspiciousIdentityExcludeResponse//.
+* Pour les opérations de type Vérouillage, la librairie acceptera en entrée un //SuspiciousIdentityLockRequest// et retournera un //SuspiciousIdentityLockResponse//.
+* Pour les opérations de type Récupération des règles de détection, la librairie acceptera en entrée des paramètres qui seront détaillés plus tard, et retournera un //DuplicateRuleSummarySearchResponse//.
+* Pour les opérations de type Récupération des doublons potentiels d'une identité, la librairie acceptera en entrée des paramètres qui seront détaillés plus tard, et retournera un //DuplicateSearchResponse//.
+
+
+=== Les différents objets de requête ===
+
+==== //SuspiciousIdentityChangeRequest// ====
+La création d'une suspicion de doublon dans le référentiel nécessite l'utilisation d'un objet //SuspiciousIdentityChangeRequest//.
+Cet objet est composé de l'attribut suivant :
+* **suspiciousIdentity** : cet objet //SuspiciousIdentityDto// représente une identité suspectée d'être en doublon.
+
+L'objet //SuspiciousIdentityDto// est composé des attributs suivants :
+* **duplicationRuleCode** : le code de la règle de détection à l'origine de l'identification de cette suspicion de doublon
+* **customerId** : l'identifiant de l'identité.
+* **creationDate** : Date de création de la suspicion de doublon
+* **lastUpdateDate** : Date de dernière mise à jour de l'identité.
+* **lock** : un //SuspiciousIdentityLockDto// décrivant l'état de vérouillage de la suspicion
+* **metadata** : une map de clé-valeur contenant des méta-données
+
+L'objet //SuspiciousIdentityLockDto// est composé des attributs suivants :
+* **locked** : flag indiquant si la suspicion est vérouillée (**true**) ou non (**false**)
+* **lockEndDate** : date d'expiration du vérouillage
+* **author** : un //RequestAuthor// représentant l'auteur du vérouillage
+
+L'objet //RequestAuthor// est composé des attributs suivants :
+* **name** : le nom de l'auteur
+* **type** : enum //AuthorType// représentant le type d'auteur :
+** owner
+** agent
+** admin
+** application
+
+
+==== //SuspiciousIdentitySearchRequest// ====
+La recherche de suspicions de doublon dans le référentiel nécessite un objet //SuspiciousIdentitySearchRequest// qui contient les critères de recherche.
+Cet objet est composé des attributs suivants :
+* **ruleCode** : le code de la règle de détection à l'origine de l'identification de la suspicion de doublon
+* **rulePriority** : niveau de priorité de la règle de détection à l'origine de l'identification de la suspicion de doublon
+* **size** : nombre de résultats souhaité par page
+* **page** : le numéro de la page de résultats souhaitée
+* **max** : nombre maximum de résultats souhaité
+* **attributes** : une //List<SearchAttribute>// permettant de filtrer par attribut
+
+L'objet //SearchAttribute// est composé des attributs suivants :
+* **key** : la clé de l'attribut
+* **value** : la valeur recherchée de l'attribut
+* **treatmentType** : enum //AttributeTreatmentType// permettant de définir le type de matching désiré pour l'attribut :
+** DIFFERENT : match uniquement sur des valeurs différentes 
+** APPROXIMATED : match sur des valeurs égales ou légèrement différentes (approximation)
+** STRICTLY_APPROXIMATED : match uniquement sur des valeurs légèrement différentes (approximation)
+** STRICT : match uniquement sur des valeurs égales
+** ABSENT : martch uniquement si l'attribut est absent
+
+
+==== //SuspiciousIdentityExcludeRequest// ====
+L'exclusion de deux identités dans le référentiel nécessite un objet //SuspiciousIdentityExcludeRequest// qui contient les informations nécessaires.
+Cet objet est composé des attributs suivants :
+* **identityCuid1** : Customer ID de la première identité
+* **identityCuid2** : Customer ID de la deuxième identité
+
+
+==== //SuspiciousIdentityLockRequest// ====
+Le vérouillage ou dévérouillage de suspicion dans le référentiel nécessite un objet //SuspiciousIdentityLockRequest// qui contient les informations nécessaires.
+Cet objet est composé des attributs suivants :
+* **customerId** : Customer ID de l'identité
+* **locked** : flag indiquant si la suspicion doit être vérouillée (**true**) ou dévérouillée (**false**)
+
+
+=== Les différents objets de réponse ===
+
+==== Les éléments communs ====
+Tous les différents objets de réponse contiennent cet élément commun :
+* **status** : objet //ResponseStatus// contenant les informations concernant l'éxécution de la requête
+
+L'objet //ResponseStatus// est composé des attributs suivants :
+* **httpCode** : le code HTTP de la réponse
+* **message** : message décrivant le status
+* **messageKey** : la clé i18n du message
+* **status** : enum //ResponseStatusType// décrivant le type de status :
+** OK : le status de la réponse est OK (status renvoyé pour les requêtes de type GET et Search)
+** SUCCESS : la réquête a été exécutée avec succès (status renvoyé pour les requêtes ayant un impact sur les données stockées en base de données)
+** INCOMPLETE_SUCCESS : la requête a été exécutée avec succès, avec certaines demandes non traitées (non bloquantes)
+** BAD_REQUEST : la requête n'a pas pu être exécutée car elle est incomplète ou incorrecte
+** UNAUTHORIZED : la requête n'a pas pu être exécutée car l'application ou l'utilisateur a l'origine de la requête n'a pas les droits nécessaires pour effectuer cette opération
+** FAILURE : la requête a échoué
+** NOT_FOUND : la ou les ressources demandées n'ont pas été trouvées
+** CONFLICT : la requête entre en conflit avec l'état de la ressource ou du serveur
+** INTERNAL_SERVER_ERROR : une erreur interne innatendue s'est produite
+* **attributeStatuses** : une //List<AttributeStatus>// représentant le détail des status par attribut d'identité. Cet objet n'est renseigné que lors des opérations touchant aux attributs d'une identité.
+
+L'objet //AttributeStatus// est composé des attributs suivants :
+* **key** : le code de l'attribut
+* **message** : message décrivant le status
+* **messageKey** : la clé i18n du message
+* **status** : enum **AttributeChangeStatus** représentant le status du traitement unitaire de l'attribut. Le status peut-être :
+** CREATED = lors d'une création ou d'un update (si l'attribut n'existe pas il est créé), si l'attribut a été correctement créé
+** NOT_CREATED = lors d'une création ou d'un update si l'attribut n'a pas été créé à cause d'une valeur incorrecte
+** UPDATED = lors d'un update, si l'attribut a été correctement mis à jour
+** NOT_UPDATED = lors d'un update, si l'attribut n'a pas été mis à jour car celui du référentiel existe avec la même valeur et la même certification
+** REMOVED = lors d'un update, si l'attribut a été correctement supprimé
+** NOT_REMOVED = lors d'un update, si l'attribut n'a pas été supprimé car il est obligatoire
+** NOT_FOUND = la key de l'attribut n'existe pas dans le référentiel
+** INSUFFICIENT_CERTIFICATION_LEVEL = Lors d'un update l'attribut ne peut pas être mis à jour car la certification spécifiée dans la requête est inférieure à celle existante
+** INSUFFICIENT_RIGHTS = Le contrat de service n'autorise pas l'écriture de cet attribut avec la certification spécifiée dans la requête
+** UNAUTHORIZED = Le contrat de service n'autorise pas l'écriture de cet attribut
+** UNKNOWN_GEOCODES_CODE = le code Geocodes fourni est inconnu du référentiel
+** UNKNOWN_GEOCODES_LABEL = le label Geocodes fourni est inconnu du référentiel
+** MULTIPLE_GEOCODES_RESULTS_FOR_LABEL = le Label Geocodes fourni correspond à plusieurs résultats dans le référentiel Géocodes
+** OVERRIDDEN_GEOCODES_LABEL = le label fourni ne correspond pas au code Geocodes fourni, et a été remplacé par le label Geocodes correct
+** INVALID_VALUE : la valeur fournie ne passe pas son pattern de validation
+** FORMATTED_VALUE : la valeur fournie a été formattée avant traitement
+** UNCERTIFIED : l'attribut a bien été décertifié 
+
+
+==== //SuspiciousIdentityChangeResponse// ====
+La création d'une suspicion de doublon dans le référentiel renvoit un objet //SuspiciousIdentityChangeResponse// qui contient les informations d'exécution de la requête.
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **suspiciousIdentity** : un //SuspiciousIdentityDto// représentant la suspicion de doublon nouvellement créée. L'objet //SuspiciousIdentityDto// a déjà été décrit précédemment.
+
+
+==== //SuspiciousIdentitySearchResponse// ====
+La recherche de suspicions de doublon dans le référentiel renvoie un objet //SuspiciousIdentitySearchResponse// qui contient les résultats de la recherche.
+
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **suspiciousIdentities** : une //List<SuspiciousIdentityDto>// contenant les résultats de la recherche. L'objet //SuspiciousIdentityDto// a déjà été décrit précédemment.
+* **pagination** : un //Page// contenant les informations de pagination des résultats
+
+L'objet //Page// est composé des attributs suivants :
+* **totalRecords** : nombre total de résultats
+* **currentPage** : le numéro de la page actuelle
+* **totalPages** : le nombre total de pages 
+* **nextPage** : le numéro de la page siuvante 
+* **previousPage** : le numéro de la page précédente
+
+
+==== //SuspiciousIdentityExcludeResponse// ====
+L'exclusion de deux identités dans le référentiel renvoie un objet //SuspiciousIdentityExcludeResponse//. 
+Cet objet est composé de l'attribut suivant :
+* **status** : objet //ResponseStatus// expliqué précédemment
+
+
+==== //SuspiciousIdentityLockResponse// ====
+Le vérouillage ou dévérouillage de suspicion dans le référentiel renvoie un objet //SuspiciousIdentityLockResponse//.
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **customerId** : le Customer ID de l'identité
+* **locked** : flag indiquant si la suspicion est vérouillée (**true**) ou non (**false**) après l'éxécution de la requête
+
+
+==== //DuplicateRuleSummarySearchResponse// ====
+La récupération des règle de détection de doublons dans le référentiel renvoie une objet //DuplicateRuleSummarySearchResponse//.
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **duplicateRuleSummaries** : une //List<DuplicateRuleSummaryDto>// contenant les résultats
+
+L'objet //DuplicateRuleSummaryDto// est composé des attributs suivants :
+* **id** : l'ID technique de la règle
+* **name** : le nom de la règle
+* **code** : le code de la règle
+* **description** : la description de la règle
+* **priority** : le niveau de priorité de la règle
+* **duplicateCount** : le nombre de suspicions de doublons encore à traiter qui ont été détectées avec cette règle
+* **daemonLastExecDate** : la date de dernière exécution du démon de détection de doublons avec cette règle
+
+
+==== //DuplicateSearchResponse// ====
+La recherche de doublons pour une identité dans le référentiel renvoie une objet //DuplicateSearchResponse//.
+Cet objet est composé des attributs suivants :
+* **status** : objet //ResponseStatus// expliqué précédemment
+* **metadata** : une map clé-valeur contenant des méta-données
+* **identities** : une //List<IdentityDto>// contenant les doublons potentiels
+
+L'objet //IdentityDto// est composé des attributs suivants :
+* **connectionId** : l'identifiant de connexion de l'identité.
+* **customerId** : l'identifiant de l'identité.
+* **externalCustomerId** : l'identifiant de l'identité dans le système externe (utilisé pour l'import).
+* **monParisActive** : Flag indiquant si l'identité est connectée.
+* **creationDate** : Date de création de l'identité.
+* **lastUpdateDate** : Date de dernière mise à jour de l'identité.
+* **quality** : Qualité de l'identité. Cet objet est un //QualityDefinition//.
+* **expiration** : Les données d'expiration de l'identité. Cet objet est un //ExpirationDefinition//.
+* **merge** : les données de rapprochement de l'identité. Cet objet est un //MergeDefinition//.
+* **duplicateDefinition** : les données relatives aux doublons. Cet objet est un //IdentityDuplicateDefinition//.
+* **suspicious** : indique si l'identité est suspectée d'être en doublon.
+* **attributes** : les attributs de l'identité. Cet objet est une //List<AttributeDto>//.
+
+L'objet //QualityDefinition// est composé des attributs suivants :
+* **quality** : score de qualité de l'identité
+* **coverage** : niveau de couverture de l'identité
+* **scoring** : scoring de l'identité
+
+L'objet //ExpirationDefinition// est composé des attributs suivants :
+* **deleted** : indique si l'identité est supprimée (**true**) ou non (*false**)
+* **deletedDate** : date de suppression de l'identité
+* **expirationDate** : date d'expiration de l'identité
+
+L'objet //MergeDefinition// est composé des attributs suivants :
+* **merged** : indique si l'identité est rapprochée d'une autre identité (**true**) ou non (*false**)
+* **mergeDate** : date de rapprochement de l'identité
+* **masterCustomerId** : customer ID de l'identité à laquelle cette identité est rapprochée
+
+L'objet //IdentityDuplicateDefinition// est composé des attributs suivants :
+* **duplicateExclusions** : une //List<IdentityDuplicateExclusion>// contenant les données d'exclusion de suspicion de l'identité
+* **duplicateSuspicion** : un //IdentityDuplicateSuspicion// contenant les informations concernant une éventuelle suspicion de doublon sur cette identité
+
+L'objet //IdentityDuplicateExclusion// est composé des attributs suivants :
+* **excludedCustomerId** : le Customer ID de l'identité exclue
+* **exclusionDate** : date de l'exclusion
+* **authorName** : nom de l'auteur de l'exclusion
+* **authorType** : type de l'auteur de l'exclusion
+
+L'objet //IdentityDuplicateSuspicion// est composé des attributs suivants :
+* **duplicateRuleCode** : code de la règle de détection de doublon ayant détecté cette identité comme doublon potentiel
+* **creationDate** : date de détection
+
+L'objet //AttributeDto// est composé des attributs suivants :
+* **key** : le code de l'attribut
+* **value** : la valeur de l'attribut
+* **type** : le type de l'attribut
+* **certificationLevel** : le niveau de certification de l'attribut
+* **certifier** : le code du processus de certification de l'attribut.
+* **certificationDate** : la date de certification de l'attribut.
+* **lastUpdateDate** : date de dernière mise à jour de l'attribut.
+* **lastUpdateClientCode** : code client ayant réalisé la dernière mise à jour de l'attribut.
+
+
+== 3.2 - Les opérations ==
+{{{ warning |
+Toutes les opérations nécessitent de fournir le code de l'application appelante dans le but de valider que les requêtes respectent le contrat de service de celle-ci.
+Par exemple, si lors d'une demande de création d'identité, l'application n'a pas l'autorisation d'écrire un des attributs spécifiés dans la requête, la demande est rejetée avec un statut retraçant ce défaut. Si ce paramètre n'est pas spécifié dans les appels la librairie retourne une //IdentityStoreException//. Si aucun contrat de service n'est trouvé pour l'application, la librairie renvoie une //IdentityStoreException//.
+}}}
+
+
+=== Création d'une suspicion de doublon ===
+La création d'une suspicion de doublon dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+final SuspiciousIdentityChangeResponse response = qualityService.createSuspiciousIdentity( request, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **request** : une //SuspiciousIdentityChangeRequest// contenant les informations sur la suspicion de doublon à créer
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //SuspiciousIdentityChangeResponse//.
+
+==== Validation de la requête ====
+Si l'objet //SuspiciousIdentityChangeRequest// n'est pas présent, ou que son objet //SuspiciousIdentityDto// n'est pas présent, la création est refusée, la librairie retourne une //IdentityStoreException//.
+
+Si l'objet //SuspiciousIdentityDto// n'a pas son attribut **customerId** renseigné, la création est refusée, la librairie retourne une //IdentityStoreException//.
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la création à travers des statuts et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| L'identité est déjà signalée comme une suspicion de doublon | ResponseStatusType.CONFLICT | 409 | already reported |
+| Le référentiel ne trouve pas l'identité correspondante | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| La création est acceptée et réalisée sans erreur | ResponseStatusType.SUCCESS | 201 | N/A |
+
+
+==== Exemple de création d'une suspicion de doublon ====
+
+{{{ code |
+final SuspiciousIdentityChangeRequest request = new SuspiciousIdentityChangeRequest( );
+final SuspiciousIdentityDto suspiciousIdentity = new SuspiciousIdentityDto( );
+suspiciousIdentity.setCustomerId( cuid );
+request.setSuspiciousIdentity( suspiciousIdentity );
+final SuspiciousIdentityChangeResponse response = qualityService.createSuspiciousIdentity( request, clientCode, author );
+assert Objects.equals( response.getStatus( ).getType( ), ResponseStatusType.SUCCESS );
+}}}
+
+
+=== Récupération de toutes les règles de détection de doublons ===
+La récupération de toutes les règles de détection de doublons dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+final DuplicateRuleSummarySearchResponse response = service.getAllDuplicateRules( clientCode, author, priority );
+}}}
+Cette méthode possède 3 paramètres :
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+* **priority** : niveau de priorité minimum des règles à retourner
+
+Et retourne un objet //DuplicateRuleSummarySearchResponse//.
+
+
+==== Validation de la requête ====
+Pas de validation particulière
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la récupération à travers des statuts et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Le référentiel ne trouve pas de règle de détection de doublon correspondante | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| La recherche est réalisée sans erreur | ResponseStatusType.OK | 200 | N/A |
+
+
+==== Exemple de récupération de toutes les règles de détection de doublons de niveau minimum 5 ====
+
+{{{ code |
+final DuplicateRuleSummarySearchResponse response = qualityService.getAllDuplicateRules( clientCode, author, 5 );
+assert response != null && Objects.equals( response.getStatus( ).getType( ), ResponseStatusType.OK ) && !response.getDuplicateRuleSummaries( ).isEmpty( );
+}}}
+
+
+=== Recherche de suspicions de doublon ===
+La recherche de suspicions de doublon dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+final SuspiciousIdentitySearchResponse response = qualityService.getSuspiciousIdentities( request, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **request** : une //SuspiciousIdentitySearchRequest// contenant les critères de recherche
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //SuspiciousIdentitySearchResponse//.
+
+
+==== Validation de la requête ====
+Si l'objet //SuspiciousIdentitySearchRequest// n'est pas présent, la librairie retourne une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la recherche à travers des statuts et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Le référentiel ne trouve pas de suspicion de doublon correspondants | ResponseStatusType.NOT_FOUND | 404 | N/A |
+| La requête contient un numéro de page inférieur à 1 | ResponseStatusType.BAD_REQUEST | 400 | Pagination should start at index 1 |
+| La requête contient un numéro de page suppérieur au nombre total de pages | ResponseStatusType.BAD_REQUEST | 400 | Pagination index should not exceed total number of pages. |
+| La recherche est réalisée sans erreur | ResponseStatusType.OK | 200 | N/A |
+
+
+==== Exemple de recherche de suspicions de doublon ====
+
+{{{ code |
+final SuspiciousIdentitySearchRequest request = new SuspiciousIdentitySearchRequest( );
+request.setRuleCode( duplicateRuleCode );
+final ArrayList<SearchAttribute> attributes = new ArrayList<>( );
+final SearchAttribute searchAttribute = new SearchAttribute( );
+searchAttribute.setKey( Constants.PARAM_BIRTH_COUNTRY_CODE );
+searchAttribute.setValue( "99100" );
+searchAttribute.setTreatmentType( AttributeTreatmentType.STRICT );
+attributes.add( searchAttribute );
+request.setAttributes( attributes );
+final SuspiciousIdentitySearchResponse response = qualityService.getSuspiciousIdentities( request, clientCode, author );
+assert Objects.equals( response.getStatus( ).getType( ), ResponseStatusType.OK ) && !response.getSuspiciousIdentities( ).isEmpty( );
+}}}
+
+
+=== Récupération des doublons potentiels d'une identité ===
+La récupération des doublons potentiels d'une identité dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+final DuplicateSearchResponse response = qualityService.getDuplicates( customerId, duplicateRuleCode, clientCode, author );
+}}}
+Cette méthode possède 4 paramètres :
+* **customerId** : le Customer ID de l'identité 
+* **duplicateRuleCode** : le code de la règle de détection de doublon ayant servie à identifier les doublons potentiels
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //DuplicateSearchResponse//.
+
+
+==== Validation de la requête ====
+Si les deux paramètres **customerId** et **duplicateRuleCode** ne sont pas présents, la librairie retourne une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de la récupération à travers des statuts et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Le référentiel ne trouve pas de règle de détection correspondante | ResponseStatusType.NOT_FOUND | 404 | Duplicate rule not found |
+| Le référentiel ne trouve pas de doublons potentiels pour cette identité et cette règle de détection | ResponseStatusType.NOT_FOUND | 404 | No potential duplicate found |
+| La recherche est réalisée sans erreur | ResponseStatusType.OK | 200 | N/A |
+
+
+==== Exemple de récupération des doublons potentiels d'une identité ====
+
+{{{ code |
+final DuplicateSearchResponse response = qualityService.getDuplicates( customerId, duplicateRuleCode, clientCode, author );
+assert response.getStatus( ).getType( ) == ResponseStatusType.OK && !duplicateSearchResponse.getIdentities( ).isEmpty( );
+}}}
+
+
+=== Marquage comme non-doublons de deux identités suspectées d'être en doublon (aussi appellé **exclusion**) ===
+L'exlusion de deux identités dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+final SuspiciousIdentityExcludeResponse response = qualityService.excludeIdentities( request, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **request** : une //SuspiciousIdentityExcludeRequest// contenant les informations nécessaires à l'exclusion
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //SuspiciousIdentityExcludeResponse//.
+
+
+==== Validation de la requête ====
+Si l'objet //SuspiciousIdentityExcludeRequest// n'est pas présent, ou si ses deux attributs **identityCuid1** et **identityCuid2** ne sont pas présents, la librairie retourne une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de l'exclusion à travers des statuts et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Le référentiel ne trouve pas l'identité correspondante | ResponseStatusType.NOT_FOUND | 404 | Identity not found |
+| Les deux identités sont déjà exclues des suspicions | ResponseStatusType.CONFLICT | 409 | Identities are already excluded from duplicate suspicions |
+| L'exclusion est réalisée sans erreur | ResponseStatusType.SUCCESS | 201 | N/A |
+
+
+==== Exemple d'exclusion de deux identités ====
+
+{{{ code |
+final SuspiciousIdentityExcludeRequest excludeRequest = new SuspiciousIdentityExcludeRequest( );
+excludeRequest.setIdentityCuid1( customerId1 );
+excludeRequest.setIdentityCuid2( customerId2 );
+final SuspiciousIdentityExcludeResponse excludeResponse = qualityService.excludeIdentities( excludeRequest, clientCode, author );
+assert Objects.equals( excludeResponse.getStatus( ).getType( ), ResponseStatusType.SUCCESS );
+}}}
+
+
+=== Annulation d'exclusion ===
+L'annulation d'exclusion de deux identités dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+final SuspiciousIdentityExcludeResponse response = qualityService.cancelIdentitiesExclusion( request, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **request** : une //SuspiciousIdentityExcludeRequest// contenant les informations nécessaires à l'annulation de l'exclusion
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //SuspiciousIdentityExcludeResponse//.
+
+
+==== Validation de la requête ====
+Si l'objet //SuspiciousIdentityExcludeRequest// n'est pas présent, ou si ses deux attributs **identityCuid1** et **identityCuid2** ne sont pas présents, la librairie retourne une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement de l'exclusion à travers des statuts et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Le référentiel ne trouve pas l'identité correspondante | ResponseStatusType.NOT_FOUND | 404 | Identity not found |
+| Les deux identités ne sont pas exclues des suspicions | ResponseStatusType.CONFLICT | 409 | Identities are not excluded from duplicate suspicions |
+| L'annulation d'exclusion est réalisée sans erreur | ResponseStatusType.SUCCESS | 201 | N/A |
+
+
+==== Exemple d'exclusion de deux identités ====
+
+{{{ code |
+final SuspiciousIdentityExcludeRequest excludeRequest = new SuspiciousIdentityExcludeRequest( );
+excludeRequest.setIdentityCuid1( customerId1 );
+excludeRequest.setIdentityCuid2( customerId2 );
+final SuspiciousIdentityExcludeResponse cancelResponse = qualityService.cancelIdentitiesExclusion( excludeRequest, clientCode, author );
+assert Objects.equals( cancelResponse.getStatus( ).getType( ), ResponseStatusType.SUCCESS );
+}}}
+
+
+=== Vérouillage et dévérouillage d'une suspicion de doublon ===
+Le vérouillage et dévérouillage d'une suspicion de doublon dans le référentiel est réalisée à l'aide du code suivant :
+{{{ code |
+final SuspiciousIdentityLockResponse response = qualityService.lockIdentity( request, clientCode, author );
+}}}
+Cette méthode possède 3 paramètres :
+* **request** : une //SuspiciousIdentityLockRequest// contenant les informations nécessaires au vérouillage ou dévérouillage
+* **clientCode** : le code de l'application cliente dans l'identitystore
+* **author** : l'auteur de la requête
+
+Et retourne un objet //SuspiciousIdentityLockResponse//.
+
+
+==== Validation de la requête ====
+Si l'objet //SuspiciousIdentityLockRequest// n'est pas présent, ou si son attribut **customerId** n'est pas présent, la librairie retourne une //IdentityStoreException//.
+
+
+==== Réponse ====
+La réponse renvoyée par la librairie permet de retracer le déroulement du vérouillage ou dévérouillage à travers des statuts et des messages.
+
+|= Scénario |= Status |= Code |= Message |
+| Le référentiel ne trouve pas l'identité correspondante | ResponseStatusType.NOT_FOUND | 404 | Identity not found |
+| Le référentiel ne trouve pas la suspicion de doublon correspondante | ResponseStatusType.NOT_FOUND | 404 | Identity not found |
+| Demande de vérouillage sur une suspicion déjà vérouillée par un autre agent | ResponseStatusType.UNAUTHORIZED | 403 | Suspicious identity is locked by //author_name// |
+| Demande de dévérouillage sur une suspicion non vérouillée | ResponseStatusType.UNAUTHORIZED | 403 | Suspicious identity is already unlocked. |
+| Demande de dévérouillage sur une suspicion vérouillée par un autre agent | ResponseStatusType.UNAUTHORIZED | 403 | Suspicious identity is locked by //author_name//. You are not allowed to unlock. |
+| Le vérouillage ou dévérouillage est réalisé sans erreur | ResponseStatusType.SUCCESS | 201 | N/A |
+
+
+==== Exemple de vérouillage et dévérouillage d'une suspicion de doublon ====
+
+{{{ code |
+final SuspiciousIdentityLockRequest lockRequest = new SuspiciousIdentityLockRequest( );
+lockRequest.setLocked( true );
+lockRequest.setCustomerId( customerId );
+final SuspiciousIdentityLockResponse lockResponse = qualityService.lockIdentity( lockRequest, clientCode, author );
+assert Objects.equals( lockResponse.getStatus( ).getType( ), ResponseStatusType.SUCCESS ) && lockResponse.isLocked( );
+
+final SuspiciousIdentityLockRequest unLockRequest = new SuspiciousIdentityLockRequest( );
+unLockRequest.setLocked( false );
+unLockRequest.setCustomerId( customerId );
+final SuspiciousIdentityLockResponse unLockResponse = qualityService.lockIdentity( unLockRequest, clientCode, author );
+assert Objects.equals( unLockResponse.getStatus( ).getType( ), ResponseStatusType.SUCCESS ) && !unLockResponse.isLocked( );
+}}}
+
