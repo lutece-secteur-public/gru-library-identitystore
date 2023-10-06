@@ -74,7 +74,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
      * 
      * @param transportProvider
      */
-    protected IdentityTransportRest( IHttpTransportProvider transportProvider )
+    public IdentityTransportRest( IHttpTransportProvider transportProvider )
     {
         super( transportProvider );
 
