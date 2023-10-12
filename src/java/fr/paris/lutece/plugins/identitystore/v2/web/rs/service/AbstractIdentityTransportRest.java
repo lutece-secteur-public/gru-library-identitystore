@@ -61,7 +61,7 @@ import java.util.Map;
  */
 abstract class AbstractIdentityTransportRest implements IIdentityTransportProvider
 {
-    private final static Logger _logger = Logger.getLogger(AbstractIdentityTransportRest.class);
+    private final static Logger _logger = Logger.getLogger( AbstractIdentityTransportRest.class );
     private static final ObjectMapper _mapper;
 
     static
