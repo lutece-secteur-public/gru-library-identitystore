@@ -51,6 +51,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvid
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.util.http.SecurityUtil;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
@@ -90,7 +91,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentitySearchResponse getIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author )
             throws AppException, IdentityStoreException
     {
-        _logger.debug( "Get identity attributes of " + strCustomerId );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkCustomerId( strCustomerId );
 
@@ -112,7 +112,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityChangeResponse updateIdentity( final String strCustomerId, final IdentityChangeRequest identityChange, final String strClientCode,
             final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Update identity attributes" );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkIdentityChange( identityChange, true );
         IdentityRequestValidator.instance( ).checkIdentityForUpdate( identityChange.getIdentity( ).getConnectionId( ), strCustomerId );
@@ -135,7 +134,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Create identity" );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkIdentityChange( identityChange, false );
 
@@ -155,7 +153,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityChangeResponse deleteIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Delete identity" );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkCustomerId( strCustomerId );
 
@@ -177,7 +174,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentitySearchResponse searchIdentities( final IdentitySearchRequest identitySearchRequest, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Search identities" );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkIdentitySearch( identitySearchRequest );
 
@@ -200,7 +196,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     @Deprecated
     public ServiceContractSearchResponse getServiceContract( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Get active service contract" );
         this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
@@ -216,7 +211,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityChangeResponse importIdentity( final IdentityChangeRequest identityChange, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Import identity" );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkIdentityChange( identityChange, false );
 
@@ -236,8 +230,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityMergeResponse mergeIdentities( final IdentityMergeRequest identityMerge, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-
-        _logger.debug( "merge identities [master cuid= " + identityMerge.getPrimaryCuid( ) + "][secondary cuid = " + identityMerge.getSecondaryCuid( ) + "]" );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkMergeRequest( identityMerge );
 
@@ -257,9 +249,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityMergeResponse unMergeIdentities( final IdentityMergeRequest identityMerge, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-
-        _logger.debug(
-                "unmerge identities [master cuid= " + identityMerge.getPrimaryCuid( ) + "][secondary cuid = " + identityMerge.getSecondaryCuid( ) + "]" );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkCancelMergeRequest( identityMerge );
 
@@ -276,7 +265,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityHistoryGetResponse getIdentityHistory( final String strCustomerId, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Get identity history [cuid=" + strCustomerId + "]" );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkCustomerId( strCustomerId );
 
@@ -293,11 +281,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityHistorySearchResponse searchIdentityHistory( final IdentityHistorySearchRequest request, final String strClientCode,
             final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Search identity history with request [cuid=" + request.getCustomerId( ) + "][client_code=" + request.getClientCode( ) + "][author_name="
-                + request.getAuthorName( ) + "][change_type=" + ( request.getIdentityChangeType( ) != null ? request.getIdentityChangeType( ).name( ) : "" )
-                + "][nb_days_from=" + request.getNbDaysFrom( ) + "][metadata="
-                + request.getMetadata( ).entrySet( ).stream( ).map( entry -> entry.getKey( ) + " : " + entry.getValue( ) ).collect( Collectors.joining( ", " ) )
-                + "]" );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkIdentityHistory( request );
 
@@ -314,7 +297,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public UpdatedIdentitySearchResponse getUpdatedIdentities( final String strDays, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Get updated identities since " + strDays + " days ago" );
         this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
@@ -333,7 +315,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     public IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Uncertify identity [cuid=" + strCustomerId + "]" );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkCustomerId( strCustomerId );
 

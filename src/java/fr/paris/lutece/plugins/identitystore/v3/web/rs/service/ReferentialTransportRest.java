@@ -70,7 +70,6 @@ public class ReferentialTransportRest extends AbstractTransportRest implements I
     @Override
     public ProcessusSearchResponse getProcessList( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Get process list" );
         this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
@@ -85,7 +84,6 @@ public class ReferentialTransportRest extends AbstractTransportRest implements I
     @Override
     public LevelSearchResponse getLevelList( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Get level list" );
         this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );

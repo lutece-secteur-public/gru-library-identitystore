@@ -115,7 +115,6 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
     {
         String strToken = StringUtils.EMPTY;
 
-        _logger.debug( "LibraryIdentityStore - IdentityTransportApiManagerRest.getToken with URL_TOKEN property [" + _strApiManagerEndPoint + "]" );
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
         Map<String, String> mapParams = new HashMap<String, String>( );
@@ -141,7 +140,6 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
         }
         catch( JsonProcessingException e )
         {
-            _logger.debug( "LibraryIdentityStore - IdentityTransportApiManagerRest.getToken invalid response [" + strOutput + "]" );
         }
 
         return strToken;

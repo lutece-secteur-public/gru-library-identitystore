@@ -100,8 +100,6 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
     {
         String strToken = StringUtils.EMPTY;
 
-        _logger.debug( "AccessManager Rest Transport getToken with URL_TOKEN property [" + _strAccessManagerEndPointUrl + "]" );
-
         Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
         Map<String, String> mapParams = new HashMap<String, String>( );
 
@@ -136,7 +134,6 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
         }
         catch( JsonProcessingException e )
         {
-            _logger.debug( "ApiManagerRest.getToken invalid response [" + strOutput + "]" );
             handleException( e );
         }
 

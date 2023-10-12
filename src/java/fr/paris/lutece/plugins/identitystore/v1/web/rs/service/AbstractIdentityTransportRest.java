@@ -64,7 +64,6 @@ import java.util.Map;
 abstract class AbstractIdentityTransportRest implements IIdentityTransportProvider
 {
     private static ObjectMapper _mapper;
-    private static Logger _logger = Logger.getLogger( AbstractIdentityTransportRest.class );
 
     static
     {
@@ -127,7 +126,6 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
     @Override
     public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode ) throws AppException, IdentityStoreException
     {
-        _logger.debug( "Get identity attributes of " + strIdConnection );
 
         checkFetchParameters( strIdConnection, strCustomerId, strClientCode );
 
@@ -151,7 +149,6 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
     @Override
     public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityStoreException
     {
-        _logger.debug( "Update identity attributes" );
         checkUpdateParameters( identityChange );
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
@@ -168,8 +165,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         }
         catch( JsonProcessingException e )
         {
-            String strError = "AbstractIdentityTransportRest - Error serializing IdentityChangeDto : ";
-            _logger.error( strError + e.getMessage( ), e );
+            final String strError = "AbstractIdentityTransportRest - Error serializing IdentityChangeDto : ";
             throw new IdentityStoreException( strError, e );
         }
 
@@ -229,7 +225,6 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
     @Override
     public IdentityDto createIdentity( IdentityChangeDto identityChange ) throws IdentityStoreException
     {
-        _logger.debug( "Create identity" );
         checkCreateParameters( identityChange );
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
@@ -247,7 +242,6 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         catch( JsonProcessingException e )
         {
             String strError = "AbstractIdentityTransportRest - Error serializing IdentityChangeDto : ";
-            _logger.error( strError + e.getMessage( ), e );
             throw new IdentityStoreException( strError, e );
         }
 
@@ -266,7 +260,6 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
     @Override
     public ResponseDto deleteIdentity( String strIdConnection, String strClientCode ) throws AppException, IdentityStoreException
     {
-        _logger.debug( "Delete identity with connection id " + strIdConnection );
 
         checkDeleteParameters( strClientCode );
 
@@ -286,7 +279,6 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
     @Override
     public IdentityDto certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode ) throws IdentityStoreException
     {
-        _logger.debug( "Certify identity attributes" );
         checkUpdateParameters( identityChange );
 
         Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
@@ -304,8 +296,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         }
         catch( JsonProcessingException e )
         {
-            String strError = "AbstractIdentityTransportRest - Error serializing IdentityChangeDto : ";
-            _logger.error( strError + e.getMessage( ), e );
+            final String strError = "AbstractIdentityTransportRest - Error serializing IdentityChangeDto : ";
             throw new IdentityStoreException( strError, e );
         }
 

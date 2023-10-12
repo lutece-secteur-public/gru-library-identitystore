@@ -73,7 +73,6 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     public ServiceContractsSearchResponse getServiceContractList( final String strTargetClientCode, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Get serivce contract list of " + strTargetClientCode );
         this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
@@ -88,7 +87,6 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     @Override
     public ServiceContractsSearchResponse getAllServiceContractList( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Get all serivce contract list" );
         this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
@@ -104,7 +102,6 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     public ServiceContractSearchResponse getActiveServiceContract( final String strTargetClientCode, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Get active serivce contract of " + strTargetClientCode );
         this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
@@ -120,7 +117,6 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     public ServiceContractSearchResponse getServiceContract( final Integer nServiceContractId, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "Get serivce contract [id=" + nServiceContractId + "]" );
         this.checkCommonHeaders( strClientCode, author );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
@@ -136,8 +132,6 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     public ServiceContractChangeResponse createServiceContract( final ServiceContractDto serviceContract, final String strClientCode,
             final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Create new service contract of " + serviceContract.getClientCode( ) );
-        _logger.debug( serviceContract );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkServiceContract( serviceContract );
 
@@ -154,8 +148,6 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     public ServiceContractChangeResponse updateServiceContract( final ServiceContractDto serviceContract, final Integer nServiceContractId,
             final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Update service contract [id=" + nServiceContractId + "] of " + serviceContract.getClientCode( ) );
-        _logger.debug( serviceContract );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkServiceContract( serviceContract );
         IdentityRequestValidator.instance( ).checkContractId( nServiceContractId );
@@ -175,8 +167,6 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     public ServiceContractChangeResponse closeServiceContract( final ServiceContractDto serviceContract, final Integer nServiceContractId,
             final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "Close serivce contract [id=" + nServiceContractId + "] of " + serviceContract.getClientCode( ) );
-        _logger.debug( serviceContract );
         this.checkCommonHeaders( strClientCode, author );
         IdentityRequestValidator.instance( ).checkServiceContract( serviceContract );
         IdentityRequestValidator.instance( ).checkContractId( nServiceContractId );
