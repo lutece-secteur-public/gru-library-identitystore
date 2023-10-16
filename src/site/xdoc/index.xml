@@ -9,6 +9,9 @@
                 <p>
                     This library provides services to communicate with Identity Store REST API.
                 </p>
+                <p>
+                    Further information can be found on the [official wiki](https://lutece.paris.fr/support/wiki/gru-library-identitystore-v3.html).
+                </p>
             </subsection>
             <subsection name="Services">
                 <p>

@@ -9,6 +9,8 @@
 
 This library provides services to communicate with Identity Store REST API.
 
+Further information can be found on the [official wiki](https://lutece.paris.fr/support/wiki/gru-library-identitystore-v3.html).
+
 ## Services
 
 The main service is `fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService` which provides methods to call Identity Store.

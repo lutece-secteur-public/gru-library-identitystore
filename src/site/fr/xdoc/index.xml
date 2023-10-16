@@ -9,6 +9,9 @@
                 <p>
                     Cette librairie fournit des services pour communiquer avec l'API REST d'Identity Store.
                 </p>
+                <p>
+                    Pour plus d'information, la documentation de la librairie est disponible sur le [wiki officiel](https://lutece.paris.fr/support/wiki/gru-library-identitystore-v3.html).
+                </p>
             </subsection>
             <subsection name="Services">
                 <p>
