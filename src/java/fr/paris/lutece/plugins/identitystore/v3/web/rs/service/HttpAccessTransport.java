@@ -62,7 +62,7 @@ import java.util.Map;
  */
 public class HttpAccessTransport implements IHttpTransportProvider
 {
-    private static Logger _logger = Logger.getLogger( HttpAccessTransport.class );
+    private static final Logger _logger = Logger.getLogger( HttpAccessTransport.class );
 
     protected HttpAccess _httpClient;
     protected String _strEndPoint;
@@ -338,7 +338,6 @@ public class HttpAccessTransport implements IHttpTransportProvider
      */
     public void setApiEndPointUrl( String strApiEndPointUrl )
     {
-
         _strEndPoint = strApiEndPointUrl;
     }
 
@@ -349,7 +348,6 @@ public class HttpAccessTransport implements IHttpTransportProvider
      */
     public String getApiEndPointUrl( )
     {
-
         return _strEndPoint;
     }
 

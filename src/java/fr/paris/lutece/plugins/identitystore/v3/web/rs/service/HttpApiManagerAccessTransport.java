@@ -38,7 +38,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -61,7 +60,6 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
     /** The Constant PARAMS_GRANT_TYPE_VALUE. */
     private static final String PARAMS_GRANT_TYPE_VALUE = "client_credentials";
 
-    private static Logger _logger = Logger.getLogger( HttpApiManagerAccessTransport.class );
     private static final ObjectMapper _objectMapper = new ObjectMapper( );
 
     /** URL for REST service apiManager */
@@ -100,8 +98,8 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
     {
         String strToken = StringUtils.EMPTY;
 
-        Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
-        Map<String, String> mapParams = new HashMap<String, String>( );
+        final Map<String, String> mapHeadersRequest = new HashMap<String, String>( );
+        final Map<String, String> mapParams = new HashMap<String, String>( );
 
         mapParams.put( PARAMS_GRANT_TYPE, PARAMS_GRANT_TYPE_VALUE );
 
