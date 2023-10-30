@@ -46,6 +46,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRe
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -333,20 +334,20 @@ public class IdentityService
     }
 
     /**
-     * get identities that have been updated during the previous `days`.
+     * get identities that have been updated, according to given request.
      * 
-     * @param strDays
-     *            max number of days since the last update
+     * @param request
+     *            the request
      * @param strClientCode
      *            client code of calling application
      * @param author
      *            the author of the request
      * @return the list of identities
      */
-    public UpdatedIdentitySearchResponse getUpdatedIdentities( final String strDays, final String strClientCode, final RequestAuthor author )
-            throws IdentityStoreException
+    public UpdatedIdentitySearchResponse getUpdatedIdentities( final UpdatedIdentitySearchRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException
     {
-        return _transportProvider.getUpdatedIdentities( strDays, strClientCode, author );
+        return _transportProvider.getUpdatedIdentities( request, strClientCode, author );
     }
 
     /**

@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRe
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
@@ -294,21 +295,19 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     }
 
     @Override
-    public UpdatedIdentitySearchResponse getUpdatedIdentities( final String strDays, final String strClientCode, final RequestAuthor author )
-            throws IdentityStoreException
+    public UpdatedIdentitySearchResponse getUpdatedIdentities( final UpdatedIdentitySearchRequest request, final String strClientCode,
+            final RequestAuthor author ) throws IdentityStoreException
     {
         this.checkCommonHeaders( strClientCode, author );
+        IdentityRequestValidator.instance( ).checkUpdatedIdentitySearchRequest( request );
 
         final Map<String, String> mapHeadersRequest = new HashMap<>( );
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final HashMap<String, String> mapParams = new HashMap<>( );
-        mapParams.put( Constants.PARAM_DAYS, strDays );
-
         final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.UPDATED_IDENTITIES_PATH;
-        return _httpTransport.doGet( url, mapParams, mapHeadersRequest, UpdatedIdentitySearchResponse.class, _mapper );
+        return _httpTransport.doPostJSON( url, null, mapHeadersRequest, request, UpdatedIdentitySearchResponse.class, _mapper );
     }
 
     @Override
