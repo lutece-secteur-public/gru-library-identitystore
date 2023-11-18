@@ -43,12 +43,12 @@ import fr.paris.lutece.plugins.identitystore.v3.web.service.CustomResponseStatus
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.httpaccess.HttpAccess;
 import fr.paris.lutece.util.httpaccess.InvalidResponseStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.net.URIBuilder;
-import org.apache.log4j.Logger;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -62,8 +62,6 @@ import java.util.Map;
  */
 public class HttpAccessTransport implements IHttpTransportProvider
 {
-    private static final Logger _logger = Logger.getLogger( HttpAccessTransport.class );
-
     protected HttpAccess _httpClient;
     protected String _strEndPoint;
 
@@ -305,7 +303,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
     protected void handleException( Exception e ) throws IdentityStoreException
     {
         String strError = "LibraryIdentityStore - Error HttpAccessTransport :";
-        _logger.error( strError + e.getMessage( ), e );
+        AppLogService.error( strError + e.getMessage( ), e );
 
         if ( e instanceof InvalidResponseStatus && HttpStatus.SC_NOT_FOUND == ( (InvalidResponseStatus) e ).getResponseStatus( )
                 || e instanceof IdentityNotFoundException )

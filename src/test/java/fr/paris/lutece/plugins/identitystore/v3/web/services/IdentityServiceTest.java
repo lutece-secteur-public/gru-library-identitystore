@@ -54,7 +54,6 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.util.httpaccess.HttpAccessService;
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -74,7 +73,6 @@ import java.util.ArrayList;
 public class IdentityServiceTest
 {
     private static final String CLIENT_CODE = "TEST";
-    private static Logger _logger = Logger.getLogger( IdentityServiceTest.class );
     @Resource( name = "testIdentityService.api.httpAccess.v3" )
     private IdentityService _identityServiceApiHttpAccess;
     @Resource( name = "testIdentityService.rest.httpAccess.v3" )

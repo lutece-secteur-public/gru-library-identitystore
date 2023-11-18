@@ -56,8 +56,8 @@ import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportPr
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -69,7 +69,6 @@ import java.util.List;
  */
 public class MockIdentityTransportRest implements IIdentityTransportProvider
 {
-    private static final Logger _logger = Logger.getLogger( MockIdentityTransportRest.class );
     private final List<IdentityDto> _listIdentities;
     private final String CONNECTION_ID_PREFIX = "conn_";
     private final String CUSTOMER_ID_PREFIX = "cust_";
@@ -84,7 +83,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
 
     public MockIdentityTransportRest( )
     {
-        _logger.info( "MockIdentityTransportRest is used" );
+        AppLogService.info( "MockIdentityTransportRest is used" );
         _listIdentities = new ArrayList<IdentityDto>( );
     }
 
@@ -109,7 +108,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.updateIdentity not managed return existing identity if possible" );
+        AppLogService.debug( "MockIdentityTransportRest.updateIdentity not managed return existing identity if possible" );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
         response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
@@ -127,7 +126,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.createIdentity always return ok" );
+        AppLogService.debug( "MockIdentityTransportRest.createIdentity always return ok" );
 
         IdentityDto identity = identityChange.getIdentity( );
 
@@ -154,7 +153,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.importIdentity always return ok" );
+        AppLogService.debug( "MockIdentityTransportRest.importIdentity always return ok" );
 
         IdentityDto identity = identityChange.getIdentity( );
 
@@ -180,7 +179,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     @Override
     public IdentityMergeResponse mergeIdentities( IdentityMergeRequest identityMerge, String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.mergeIdentities always return ok" );
+        AppLogService.debug( "MockIdentityTransportRest.mergeIdentities always return ok" );
 
         IdentityMergeResponse response = new IdentityMergeResponse( );
         response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
@@ -192,7 +191,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     public IdentityMergeResponse unMergeIdentities( IdentityMergeRequest identityMerge, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.unMergeIdentities always return ok" );
+        AppLogService.debug( "MockIdentityTransportRest.unMergeIdentities always return ok" );
 
         IdentityMergeResponse response = new IdentityMergeResponse( );
         response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
@@ -203,7 +202,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     @Override
     public IdentityHistoryGetResponse getIdentityHistory( String strCustomerId, String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.getIdentityHistory always return empty history" );
+        AppLogService.debug( "MockIdentityTransportRest.getIdentityHistory always return empty history" );
 
         final IdentityHistoryGetResponse response = new IdentityHistoryGetResponse( );
         final IdentityHistory history = new IdentityHistory( );
@@ -218,7 +217,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     public IdentityHistorySearchResponse searchIdentityHistory( IdentityHistorySearchRequest request, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.getIdentityHistory always return empty history" );
+        AppLogService.debug( "MockIdentityTransportRest.getIdentityHistory always return empty history" );
 
         final IdentityHistorySearchResponse history = new IdentityHistorySearchResponse( );
         history.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
@@ -229,7 +228,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     @Override
     public IdentityChangeResponse deleteIdentity( String strCustomerId, String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.deleteIdentity always return ok" );
+        AppLogService.debug( "MockIdentityTransportRest.deleteIdentity always return ok" );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
         response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
@@ -241,7 +240,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     public IdentitySearchResponse searchIdentities( IdentitySearchRequest identitySearchRequest, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.searchIdentities always return ok" );
+        AppLogService.debug( "MockIdentityTransportRest.searchIdentities always return ok" );
 
         IdentitySearchResponse response = new IdentitySearchResponse( );
         response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
@@ -252,7 +251,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     @Override
     public ServiceContractSearchResponse getServiceContract( String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.getServiceContract always return ok" );
+        AppLogService.debug( "MockIdentityTransportRest.getServiceContract always return ok" );
 
         ServiceContractSearchResponse response = new ServiceContractSearchResponse( );
         response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
@@ -264,7 +263,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     public UpdatedIdentitySearchResponse getUpdatedIdentities( UpdatedIdentitySearchRequest request, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.getUpdatedIdentities always return ok" );
+        AppLogService.debug( "MockIdentityTransportRest.getUpdatedIdentities always return ok" );
 
         UpdatedIdentitySearchResponse response = new UpdatedIdentitySearchResponse( );
         response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
@@ -275,7 +274,7 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     @Override
     public IdentityChangeResponse uncertifyIdentity( String strCustomerId, String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportRest.uncertifyIdentity always return ok" );
+        AppLogService.debug( "MockIdentityTransportRest.uncertifyIdentity always return ok" );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
         response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );

@@ -43,6 +43,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.service.IServiceContractTran
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.datastore.DatastoreService;
 
+import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -50,10 +51,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MockServiceContractTransportDataStore implements IServiceContractTransportProvider
 {
-
-    /** logger */
-    private static Logger _logger = Logger.getLogger( MockServiceContractTransportDataStore.class );
-
     private static final String KEY_DATASTORE_MOCK_SERVICE_CONTRACT_PREFIX = "identitystore.mock.servicecontract.";
 
     /** mapper */
@@ -71,7 +68,7 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
      */
     public MockServiceContractTransportDataStore( )
     {
-        _logger.info( "MockServiceContractTransportDataStore is used" );
+        AppLogService.info( "MockServiceContractTransportDataStore is used" );
     }
 
     /**
@@ -82,7 +79,7 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
      */
     public MockServiceContractTransportDataStore( final IHttpTransportProvider httpTransport )
     {
-        _logger.info( "MockServiceContractTransportDataStore is used" );
+        AppLogService.info( "MockServiceContractTransportDataStore is used" );
     }
 
     /**
@@ -100,7 +97,7 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
     public ServiceContractsSearchResponse getServiceContractList( String strTargetClientCode, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "[MOCK] Get service contract list of " + strTargetClientCode );
+        AppLogService.debug( "[MOCK] Get service contract list of " + strTargetClientCode );
 
         return getMockServiceContractListFromDatastore( strTargetClientCode );
     }
@@ -108,7 +105,7 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
     @Override
     public ServiceContractsSearchResponse getAllServiceContractList( String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "[MOCK] Get all service contracts list" );
+        AppLogService.debug( "[MOCK] Get all service contracts list" );
 
         return getMockServiceContractListFromDatastore( "all" );
     }
@@ -117,7 +114,7 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
     public ServiceContractSearchResponse getActiveServiceContract( String strTargetClientCode, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "[MOCK] Get active service contract of " + strTargetClientCode );
+        AppLogService.debug( "[MOCK] Get active service contract of " + strTargetClientCode );
 
         return getMockServiceContractFromDatastore( strTargetClientCode );
     }
@@ -126,7 +123,7 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
     public ServiceContractSearchResponse getServiceContract( Integer nServiceContractId, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "[MOCK] Get service contract [id=" + nServiceContractId + "]" );
+        AppLogService.debug( "[MOCK] Get service contract [id=" + nServiceContractId + "]" );
 
         return getMockServiceContractFromDatastore( strClientCode );
     }
@@ -135,7 +132,7 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
     public ServiceContractChangeResponse createServiceContract( ServiceContractDto serviceContract, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "[MOCK] Create new service contract of " + serviceContract.getClientCode( ) );
+        AppLogService.debug( "[MOCK] Create new service contract of " + serviceContract.getClientCode( ) );
 
         return null;
     }
@@ -144,7 +141,7 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
     public ServiceContractChangeResponse updateServiceContract( ServiceContractDto serviceContract, Integer nServiceContractId, String strClientCode,
             RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "[MOCK] Update service contract [id=" + nServiceContractId + "] of " + serviceContract.getClientCode( ) );
+        AppLogService.debug( "[MOCK] Update service contract [id=" + nServiceContractId + "] of " + serviceContract.getClientCode( ) );
 
         return null;
     }
@@ -153,7 +150,7 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
     public ServiceContractChangeResponse closeServiceContract( ServiceContractDto serviceContract, Integer nServiceContractId, String strClientCode,
             RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "[MOCK] Close service contract [id=" + nServiceContractId + "] of " + serviceContract.getClientCode( ) );
+        AppLogService.debug( "[MOCK] Close service contract [id=" + nServiceContractId + "] of " + serviceContract.getClientCode( ) );
 
         return null;
     }
@@ -175,7 +172,7 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
         }
         catch( Exception e )
         {
-            _logger.error( "MockServiceContractFromDatastore : Error while mapping DS data to ServiceContractsSearchResponse", e );
+            AppLogService.error( "MockServiceContractFromDatastore : Error while mapping DS data to ServiceContractsSearchResponse", e );
 
             return null;
         }
@@ -198,7 +195,7 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
         }
         catch( Exception e )
         {
-            _logger.error( "MockServiceContractFromDatastore : Error while mapping DS data to ServiceContractsSearchResponse", e );
+            AppLogService.error( "MockServiceContractFromDatastore : Error while mapping DS data to ServiceContractsSearchResponse", e );
 
             return null;
         }

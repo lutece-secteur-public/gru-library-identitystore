@@ -47,9 +47,9 @@ import fr.paris.lutece.plugins.identitystore.v2.web.service.IHttpTransportProvid
 import fr.paris.lutece.plugins.identitystore.v2.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -61,7 +61,6 @@ import java.util.Map;
  */
 abstract class AbstractIdentityTransportRest implements IIdentityTransportProvider
 {
-    private final static Logger _logger = Logger.getLogger( AbstractIdentityTransportRest.class );
     private static final ObjectMapper _mapper;
 
     static
@@ -166,7 +165,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         catch( JsonProcessingException e )
         {
             String strError = "AbstractIdentityTransportRest - Error serializing IdentityChangeDto : ";
-            _logger.error( strError + e.getMessage( ), e );
+            AppLogService.error( strError + e.getMessage( ), e );
             throw new IdentityStoreException( strError, e );
         }
 
@@ -212,7 +211,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         catch( JsonProcessingException e )
         {
             String strError = "AbstractIdentityTransportRest - Error serializing IdentityChangeDto : ";
-            _logger.error( strError + e.getMessage( ), e );
+            AppLogService.error( strError + e.getMessage( ), e );
             throw new IdentityStoreException( strError, e );
         }
 

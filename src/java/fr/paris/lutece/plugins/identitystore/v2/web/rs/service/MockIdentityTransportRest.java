@@ -33,16 +33,15 @@
  */
 package fr.paris.lutece.plugins.identitystore.v2.web.rs.service;
 
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ApplicationRightsDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ResponseDto;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.portal.service.util.AppException;
-
+import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -54,14 +53,13 @@ import java.util.Map;
  */
 public class MockIdentityTransportRest extends AbstractIdentityTransportRest
 {
-    private static Logger _logger = Logger.getLogger( MockIdentityTransportRest.class );
     private List<IdentityDto> _listIdentities;
     private final String CONNECTION_ID_PREFIX = "conn_";
     private final String CUSTOMER_ID_PREFIX = "cust_";
 
     public MockIdentityTransportRest( )
     {
-        _logger.error( "MockIdentityTransportRest is used" );
+        AppLogService.error( "MockIdentityTransportRest is used" );
         _listIdentities = new ArrayList<IdentityDto>( );
     }
 
@@ -95,7 +93,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
     @Override
     public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException
     {
-        _logger.debug( "MockIdentityTransportRest.updateIdentity not managed return existing identity if possible" );
+        AppLogService.debug( "MockIdentityTransportRest.updateIdentity not managed return existing identity if possible" );
 
         return getIdentity( identityChange.getIdentity( ).getConnectionId( ), identityChange.getIdentity( ).getCustomerId( ),
                 identityChange.getAuthor( ).getApplicationCode( ) );
@@ -107,7 +105,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
     @Override
     public InputStream downloadFileAttribute( String strIdConnection, String strCustomerId, String strAttributeKey, String strClientAppCode )
     {
-        _logger.debug( "MockIdentityTransportRest.downloadFileAttribute not managed return null" );
+        AppLogService.debug( "MockIdentityTransportRest.downloadFileAttribute not managed return null" );
 
         return null;
     }
@@ -139,7 +137,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
     @Override
     public ApplicationRightsDto getApplicationRights( String strClientAppCode ) throws AppException
     {
-        _logger.debug( "MockIdentityTransportRest.getApplicationRights not managed return empty rights" );
+        AppLogService.debug( "MockIdentityTransportRest.getApplicationRights not managed return empty rights" );
         ApplicationRightsDto appRightsDto = new ApplicationRightsDto( );
         appRightsDto.setAppRights( new ArrayList<>( ) );
         appRightsDto.setApplicationCode( strClientAppCode );
@@ -162,7 +160,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
     @Override
     public ResponseDto deleteIdentity( String strConnectionId, String strApplicationCode )
     {
-        _logger.debug( "MockIdentityTransportRest.deleteIdentity always return ok" );
+        AppLogService.debug( "MockIdentityTransportRest.deleteIdentity always return ok" );
         ResponseDto response = new ResponseDto( );
         response.setStatus( "OK" );
         response.setMessage( "OK" );

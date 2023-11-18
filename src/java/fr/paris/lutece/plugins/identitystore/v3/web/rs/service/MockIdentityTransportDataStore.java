@@ -55,16 +55,14 @@ import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundExcep
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * WARNING this is a mock transport for LuteceTestCase purpose
  */
 public class MockIdentityTransportDataStore implements IIdentityTransportProvider
 {
-    private static Logger _logger = Logger.getLogger( MockIdentityTransportDataStore.class );
-
     private static final String KEY_DATASTORE_MOCK_IDENTITY_CHANGE_PREFIX = "identitystore.mock.identity.change.data.";
 
     /** mapper */
@@ -80,7 +78,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
     public MockIdentityTransportDataStore( )
     {
 
-        _logger.error( "MockIdentityTransportDatastore is used" );
+        AppLogService.error( "MockIdentityTransportDatastore is used" );
     }
 
     /**
@@ -104,7 +102,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
     public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author )
             throws IdentityNotFoundException, AppException
     {
-        _logger.debug( "MockIdentityTransportDatastore.updateIdentity not managed return existing identity if possible" );
+        AppLogService.debug( "MockIdentityTransportDatastore.updateIdentity not managed return existing identity if possible" );
 
         return getMockIdentityChangeFromDatastore( customerId );
     }
@@ -115,7 +113,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
     @Override
     public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author ) throws AppException
     {
-        _logger.debug( "MockIdentityTransportDataStore.createIdentity not managed " );
+        AppLogService.debug( "MockIdentityTransportDataStore.createIdentity not managed " );
 
         return getMockIdentityChangeFromDatastore( identityChange.getIdentity( ).getConnectionId( ) );
     }
@@ -124,7 +122,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
     public IdentityChangeResponse importIdentity( IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportDataStore.importIdentity not managed " );
+        AppLogService.debug( "MockIdentityTransportDataStore.importIdentity not managed " );
 
         return getMockIdentityChangeFromDatastore( identityChange.getIdentity( ).getConnectionId( ) );
     }
@@ -176,7 +174,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
     @Override
     public IdentityChangeResponse deleteIdentity( String strCustomerId, String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
-        _logger.debug( "MockIdentityTransportDatastore.deleteIdentity always return ok" );
+        AppLogService.debug( "MockIdentityTransportDatastore.deleteIdentity always return ok" );
 
         IdentityChangeResponse response = new IdentityChangeResponse( );
         response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
@@ -200,7 +198,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
         }
         catch( Exception e )
         {
-            _logger.error( "MockIdentityFromDatastore : Error while mapping DS data to IdentityDto", e );
+            AppLogService.error( "MockIdentityFromDatastore : Error while mapping DS data to IdentityDto", e );
 
             return null;
         }
@@ -222,7 +220,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
         }
         catch( Exception e )
         {
-            _logger.error( "MockIdentityFromDatastore : Error while mapping DS data to IdentityDto", e );
+            AppLogService.error( "MockIdentityFromDatastore : Error while mapping DS data to IdentityDto", e );
 
             return null;
         }

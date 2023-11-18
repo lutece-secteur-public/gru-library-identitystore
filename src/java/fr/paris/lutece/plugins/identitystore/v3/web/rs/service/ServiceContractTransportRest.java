@@ -43,16 +43,12 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IServiceContractTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ServiceContractTransportRest extends AbstractTransportRest implements IServiceContractTransportProvider
 {
-
-    /** logger */
-    private static final Logger _logger = Logger.getLogger( ServiceContractTransportRest.class );
 
     /** URL for identityStore REST service */
     private final String _strIdentityStoreEndPoint;

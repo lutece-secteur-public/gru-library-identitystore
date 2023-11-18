@@ -40,17 +40,12 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IReferentialTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ReferentialTransportRest extends AbstractTransportRest implements IReferentialTransportProvider
 {
-
-    /** logger */
-    private static final Logger _logger = Logger.getLogger( ReferentialTransportRest.class );
-
     /** URL for identityStore REST service */
     private final String _strIdentityStoreEndPoint;
 

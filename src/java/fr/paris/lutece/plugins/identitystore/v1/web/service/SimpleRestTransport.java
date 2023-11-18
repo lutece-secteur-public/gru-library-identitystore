@@ -34,21 +34,14 @@
 package fr.paris.lutece.plugins.identitystore.v1.web.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import fr.paris.lutece.plugins.identitystore.v1.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-
+import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.commons.fileupload.FileItem;
-
-import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
-
-import java.io.File;
-
-import java.util.Map;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -57,14 +50,14 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.util.Map;
 
 /**
  * RestTransport class, direct access to RestService (no use of HttpAccess lib)
  */
 public class SimpleRestTransport implements IHttpTransportProvider
 {
-    private static Logger _logger = Logger.getLogger( SimpleRestTransport.class );
-
     /**
      * {@inheritDoc}
      * 
@@ -83,7 +76,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
             if ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) )
             {
                 String strError = "LibraryIdentityStore - Error SimpleRestTransport.doPost, status code return " + response.getStatus( );
-                _logger.error( strError );
+                AppLogService.error( strError );
                 throw new IdentityStoreException( strError );
             }
             else
@@ -119,7 +112,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
             if ( ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) ) && ( response.getStatus( ) != Response.Status.CREATED.getStatusCode( ) ) )
             {
                 String strError = "LibraryIdentityStore - Error SimpleRestTransport.doPostJSON, status code return " + response.getStatus( );
-                _logger.error( strError );
+                AppLogService.error( strError );
                 throw new IdentityStoreException( strError );
             }
             else
@@ -159,7 +152,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
                 if ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) )
                 {
                     String strError = "LibraryIdentityStore - Error SimpleRestTransport.doGet, status code return " + response.getStatus( );
-                    _logger.error( strError );
+                    AppLogService.error( strError );
                     throw new IdentityStoreException( strError );
                 }
                 else
@@ -253,7 +246,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
                 if ( response.getStatus( ) != Response.Status.OK.getStatusCode( ) )
                 {
                     String strError = "LibraryIdentityStore - Error SimpleRestTransport.doDelete, status code return " + response.getStatus( );
-                    _logger.error( strError );
+                    AppLogService.error( strError );
                     throw new IdentityStoreException( strError );
                 }
                 else
@@ -280,7 +273,7 @@ public class SimpleRestTransport implements IHttpTransportProvider
     private void handleException( Exception e ) throws IdentityStoreException
     {
         String strError = "LibraryIdentityStore - Error SimpleRestTransport : ";
-        _logger.error( strError + e.getMessage( ), e );
+        AppLogService.error( strError + e.getMessage( ), e );
         throw new IdentityStoreException( strError, e );
     }
 

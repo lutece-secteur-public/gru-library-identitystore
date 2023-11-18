@@ -38,38 +38,29 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.AuthorDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.service.MockIdentityTransportRest;
 import fr.paris.lutece.plugins.identitystore.v2.web.service.IdentityService;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.httpaccess.HttpAccessService;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
-
-import org.apache.log4j.Logger;
-
 import org.junit.Test;
-
 import org.junit.runner.RunWith;
-
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * test of NotificationService
@@ -80,7 +71,6 @@ import javax.annotation.Resource;
 } )
 public class IdentityServiceTest
 {
-    private static Logger _logger = Logger.getLogger( IdentityServiceTest.class );
     @Resource( name = "testIdentityService.api.httpAccess" )
     private IdentityService _identityServiceApiHttpAccess;
     @Resource( name = "testIdentityService.rest.httpAccess" )
@@ -183,7 +173,7 @@ public class IdentityServiceTest
         catch( IOException e )
         {
             // TODO Auto-generated catch block
-            _logger.error( messagePrefix + " - error while writing to file item", e );
+            AppLogService.error( messagePrefix + " - error while writing to file item", e );
         }
 
         HashMap<String, FileItem> mapFileItems = new HashMap<String, FileItem>( );

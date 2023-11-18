@@ -52,22 +52,15 @@ import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvid
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
-import fr.paris.lutece.util.http.SecurityUtil;
-import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  *
  */
 public class IdentityTransportRest extends AbstractTransportRest implements IIdentityTransportProvider
 {
-
-    /** logger */
-    private static final Logger _logger = Logger.getLogger( IdentityTransportRest.class );
-
     /** URL for identityStore REST service */
     private final String _strIdentityStoreEndPoint;
 

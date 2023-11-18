@@ -33,24 +33,17 @@
  */
 package fr.paris.lutece.plugins.identitystore.v1.web.rs.service;
 
-import fr.paris.lutece.plugins.identitystore.v1.web.service.IIdentityTransportProvider;
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-
-import org.apache.commons.lang3.StringUtils;
-
-import org.apache.log4j.Logger;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.HashMap;
-import java.util.Map;
+import fr.paris.lutece.plugins.identitystore.v1.web.service.IIdentityTransportProvider;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * IdentityRestClientService
@@ -67,7 +60,6 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
 
     /** The Constant PARAMS_GRANT_TYPE_VALUE. */
     private static final String PARAMS_GRANT_TYPE_VALUE = "client_credentials";
-    private static Logger _logger = Logger.getLogger( IdentityTransportApiManagerRest.class );
     private static final ObjectMapper _objectMapper = new ObjectMapper( );
 
     /** URL for REST service apiManager */

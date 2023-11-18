@@ -34,36 +34,29 @@
 package fr.paris.lutece.plugins.identitystore.v1.web.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import fr.paris.lutece.plugins.identitystore.v1.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.httpaccess.HttpAccess;
 import fr.paris.lutece.util.httpaccess.InvalidResponseStatus;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
-
 import org.apache.hc.core5.http.HttpStatus;
-
 import org.apache.hc.core5.net.URIBuilder;
-import org.apache.log4j.Logger;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 
 /**
  * IHttpTransportProvider which use library-httpaccess
  */
 public class HttpAccessTransport implements IHttpTransportProvider
 {
-    private static Logger _logger = Logger.getLogger( HttpAccessTransport.class );
-
     /**
      * {@inheritDoc}
      * 
@@ -228,7 +221,7 @@ public class HttpAccessTransport implements IHttpTransportProvider
     private void handleException( Exception e ) throws IdentityStoreException
     {
         String strError = "LibraryIdentityStore - Error HttpAccessTransport :";
-        _logger.error( strError + e.getMessage( ), e );
+        AppLogService.error( strError + e.getMessage( ), e );
 
         if ( e instanceof InvalidResponseStatus && HttpStatus.SC_NOT_FOUND == ( (InvalidResponseStatus) e ).getResponseStatus( ) )
         {
