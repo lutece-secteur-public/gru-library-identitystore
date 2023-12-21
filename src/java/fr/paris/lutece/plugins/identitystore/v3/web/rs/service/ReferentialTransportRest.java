@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.AttributeSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.LevelSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.ProcessusSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
@@ -88,5 +89,19 @@ public class ReferentialTransportRest extends AbstractTransportRest implements I
 
         final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.REFERENTIAL_PATH + Constants.REFERENTIAL_LEVEL_PATH;
         return _httpTransport.doGet( url, null, mapHeadersRequest, LevelSearchResponse.class, _mapper );
+    }
+
+    @Override
+    public AttributeSearchResponse getAttributeKeyList( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
+    {
+        this.checkCommonHeaders( strClientCode, author );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.REFERENTIAL_PATH + Constants.REFERENTIAL_ATTRIBUTE_KEYS_PATH;
+        return _httpTransport.doGet( url, null, mapHeadersRequest, AttributeSearchResponse.class, _mapper );
     }
 }

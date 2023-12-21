@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.AttributeSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.LevelSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.ProcessusSearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
@@ -66,6 +67,19 @@ public interface IReferentialTransportProvider
      * @throws IdentityStoreException
      */
     LevelSearchResponse getLevelList( final String clientCode, final RequestAuthor author ) throws IdentityStoreException;
+
+    /**
+     * get attribute keys list
+     *
+     * @param clientCode
+     *            the client code of the calling application
+     * @param author
+     *            the author of the request
+     *
+     * @return the list
+     * @throws IdentityStoreException
+     */
+    AttributeSearchResponse getAttributeKeyList( final String clientCode, final RequestAuthor author ) throws IdentityStoreException;
 
     default void checkCommonHeaders( final String clientCode, final RequestAuthor author ) throws IdentityStoreException
     {

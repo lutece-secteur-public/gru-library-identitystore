@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.AttributeSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.LevelSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.referentiel.ProcessusSearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
@@ -96,6 +97,16 @@ public class ReferentialService
     public LevelSearchResponse getLevelList( final String clientCode, final RequestAuthor author ) throws IdentityStoreException
     {
         return this._transportProvider.getLevelList( clientCode, author );
+    }
+
+    /**
+     * Get the attribute keys
+     *
+     * @return list of levels
+     */
+    public AttributeSearchResponse getAttributeKeyList( final String clientCode, final RequestAuthor author ) throws IdentityStoreException
+    {
+        return this._transportProvider.getAttributeKeyList( clientCode, author );
     }
 
 }
