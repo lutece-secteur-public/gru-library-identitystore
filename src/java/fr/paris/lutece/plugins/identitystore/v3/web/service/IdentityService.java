@@ -39,6 +39,8 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.exporting.IdentityExportRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.exporting.IdentityExportResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistoryGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchResponse;
@@ -368,6 +370,21 @@ public class IdentityService
             throws IdentityStoreException
     {
         return _transportProvider.uncertifyIdentity( strCustomerId, strClientCode, author );
+    }
+
+    /**
+     * Exports a list of identities according to the provided request and client code.
+     *
+     * @param request
+     *            the export request
+     * @param strClientCode
+     *            the client code
+     * @return IdentityExportResponse
+     */
+    public IdentityExportResponse exportIdentities( final IdentityExportRequest request, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
+    {
+        return _transportProvider.exportIdentities( request, strClientCode, author );
     }
 
     /**

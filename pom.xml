@@ -15,13 +15,13 @@
  
     <properties>
         <jerseyVersion>2.37</jerseyVersion>
-		<springVersion>5.3.18</springVersion> <!-- for tests -->
+        <springVersion>5.3.18</springVersion> <!-- for tests -->
 
         <componentName>GRU Library Identity Store</componentName>
         <jiraProjectName>LIBIDSTORE</jiraProjectName>
         <jiraComponentId>13451</jiraComponentId>
     </properties>
-	    
+        
     <repositories>
         <repository>
             <id>lutece</id>
@@ -33,22 +33,22 @@
 
     <dependencies>
         <dependency>
-	    	<groupId>fr.paris.lutece.plugins</groupId>
-		<artifactId>library-identitybusiness</artifactId>
-		<version>[3.1.1,)</version>
-		<type>jar</type>
-	</dependency>
+            <groupId>fr.paris.lutece.plugins</groupId>
+            <artifactId>library-identitybusiness</artifactId>
+            <version>[3.1.3-SNAPSHOT,)</version>
+            <type>jar</type>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.glassfish.jersey.core</groupId>
-	    <artifactId>jersey-client</artifactId>
-	    <version>${jerseyVersion}</version>
-	</dependency>
-	<dependency>
-	    <groupId>org.glassfish.jersey.media</groupId>
-	    <artifactId>jersey-media-multipart</artifactId>
-	    <version>${jerseyVersion}</version>
-	</dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>${jerseyVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>${jerseyVersion}</version>
+        </dependency>
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>library-httpaccess</artifactId>

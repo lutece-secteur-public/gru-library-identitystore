@@ -38,6 +38,8 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.exporting.IdentityExportRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.exporting.IdentityExportResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistoryGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchResponse;
@@ -318,6 +320,25 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.UNCERTIFY_ATTRIBUTES_PATH + "/"
                 + strCustomerId;
         return _httpTransport.doPutJSON( url, null, mapHeadersRequest, null, IdentityChangeResponse.class, _mapper );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IdentityExportResponse exportIdentities( final IdentityExportRequest request, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
+    {
+        this.checkCommonHeaders( strClientCode, author );
+        IdentityRequestValidator.instance( ).checkExportRequest( request );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final String url = _strIdentityStoreEndPoint + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.EXPORT_IDENTITIES_PATH;
+        return _httpTransport.doPostJSON( url, null, mapHeadersRequest, request, IdentityExportResponse.class, _mapper );
     }
 
 }
