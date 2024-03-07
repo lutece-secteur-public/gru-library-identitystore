@@ -34,10 +34,7 @@
 package fr.paris.lutece.plugins.identitystore.v3.web.service;
 
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractChangeResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractsSearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 
 /**
@@ -47,7 +44,7 @@ public class ServiceContractService
 {
 
     /** transport provider */
-    private IServiceContractTransportProvider _transportProvider;
+    protected IServiceContractTransportProvider _transportProvider;
 
     /**
      * Simple constructor.
@@ -81,37 +78,6 @@ public class ServiceContractService
     }
 
     /**
-     * Get all service contract associated to the given client code.
-     *
-     * @param strTargetClientCode
-     *            the client code.
-     * @param strClientCode
-     *            client code of calling application
-     * @param author
-     *            the author of the request
-     * @return ServiceContractsSearchResponse
-     */
-    public ServiceContractsSearchResponse getServiceContractList( final String strTargetClientCode, final String strClientCode, final RequestAuthor author )
-            throws IdentityStoreException
-    {
-        return this._transportProvider.getServiceContractList( strTargetClientCode, strClientCode, author );
-    }
-
-    /**
-     * Get all service contracts.
-     *
-     * @param strClientCode
-     *            client code of calling application
-     * @param author
-     *            the author of the request
-     * @return ServiceContractsSearchResponse
-     */
-    public ServiceContractsSearchResponse getAllServiceContractList( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
-    {
-        return this._transportProvider.getAllServiceContractList( strClientCode, author );
-    }
-
-    /**
      * Get the active service contract associated to the given client code.
      *
      * @param strTargetClientCode
@@ -126,81 +92,6 @@ public class ServiceContractService
             throws IdentityStoreException
     {
         return this._transportProvider.getActiveServiceContract( strTargetClientCode, strClientCode, author );
-    }
-
-    /**
-     * Get the service contract associated to the given ID and client code.
-     *
-     * @param nServiceContractId
-     *            the ID.
-     * @param strClientCode
-     *            client code of calling application
-     * @param author
-     *            the author of the request
-     * @return ServiceContractSearchResponse
-     */
-    public ServiceContractSearchResponse getServiceContract( final Integer nServiceContractId, final String strClientCode, final RequestAuthor author )
-            throws IdentityStoreException
-    {
-        return this._transportProvider.getServiceContract( nServiceContractId, strClientCode, author );
-    }
-
-    /**
-     * Create a new Service Contract associated with the given client code.<br/>
-     * The service contract is created from the provided {@link ServiceContractDto}.
-     *
-     * @param serviceContract
-     *            the service contract to create.
-     * @param strClientCode
-     *            client code of calling application
-     * @param author
-     *            the author of the request
-     * @return ServiceContractChangeResponse
-     */
-    public ServiceContractChangeResponse createServiceContract( final ServiceContractDto serviceContract, final String strClientCode,
-            final RequestAuthor author ) throws IdentityStoreException
-    {
-        return this._transportProvider.createServiceContract( serviceContract, strClientCode, author );
-    }
-
-    /**
-     * Updates a service contract.<br/>
-     * The service contract is updated from the provided {@link ServiceContractDto}.<br/>
-     *
-     * @param serviceContract
-     *            the service contract to update
-     * @param nServiceContractId
-     *            the service contract ID
-     * @param strClientCode
-     *            client code of calling application
-     * @param author
-     *            the author of the request
-     * @return ServiceContractChangeResponse
-     */
-    public ServiceContractChangeResponse updateServiceContract( final ServiceContractDto serviceContract, final Integer nServiceContractId,
-            final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
-    {
-        return this._transportProvider.updateServiceContract( serviceContract, nServiceContractId, strClientCode, author );
-    }
-
-    /**
-     * Closes a service contract by specifying an end date.<br/>
-     * The service contract is updated from the provided {@link ServiceContractDto}.<br/>
-     *
-     * @param serviceContract
-     *            the service contract to close
-     * @param nServiceContractId
-     *            the service contract ID
-     * @param strClientCode
-     *            client code of calling application
-     * @param author
-     *            the author of the request
-     * @return ServiceContractChangeResponse
-     */
-    public ServiceContractChangeResponse closeServiceContract( final ServiceContractDto serviceContract, final Integer nServiceContractId,
-            final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
-    {
-        return this._transportProvider.closeServiceContract( serviceContract, nServiceContractId, strClientCode, author );
     }
 
 }

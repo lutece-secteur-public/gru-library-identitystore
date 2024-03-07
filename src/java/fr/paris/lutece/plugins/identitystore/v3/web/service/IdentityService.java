@@ -44,8 +44,6 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.exporting.IdentityExp
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistoryGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistorySearchResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeRequest;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.merge.IdentityMergeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchRequest;
@@ -61,8 +59,8 @@ import java.util.List;
 public class IdentityService
 {
     /** transport provider */
-    private IIdentityTransportProvider _transportProvider;
-    private List<IExternalAttributeSource> _listExternalAttributesSource;
+    protected IIdentityTransportProvider _transportProvider;
+    protected List<IExternalAttributeSource> _listExternalAttributesSource;
 
     /**
      * Simple Constructor
@@ -249,59 +247,6 @@ public class IdentityService
     }
 
     /**
-     * import an identity
-     *
-     * @param identityChange
-     *            change to apply to identity
-     * @param strClientCode
-     *            client code of calling application
-     * @param author
-     *            the author of the request
-     * @return identity filled according to application rights for user identified by connection id
-     * @throws IdentityStoreException
-     */
-    public IdentityChangeResponse importIdentity( final IdentityChangeRequest identityChange, final String strClientCode, final RequestAuthor author )
-            throws IdentityStoreException
-    {
-        return _transportProvider.importIdentity( identityChange, strClientCode, author );
-    }
-
-    /**
-     * Merge two identities.
-     * 
-     * @param identityMerge
-     *            the request containing the master cuid, the secondary cuid, and a list of attribute to be taken from the secondary identity and put on the
-     *            master identity.
-     * @param strClientCode
-     *            client code of calling application
-     * @param author
-     *            the author of the request
-     * @return IdentityMergeResponse
-     */
-    public IdentityMergeResponse mergeIdentities( final IdentityMergeRequest identityMerge, final String strClientCode, final RequestAuthor author )
-            throws IdentityStoreException
-    {
-        return _transportProvider.mergeIdentities( identityMerge, strClientCode, author );
-    }
-
-    /**
-     * Unmerge two identities.
-     *
-     * @param identityMerge
-     *            the request containing the master cuid, the secondary cuid
-     * @param strClientCode
-     *            client code of calling application
-     * @param author
-     *            the author of the request
-     * @return IdentityMergeResponse
-     */
-    public IdentityMergeResponse unMergeIdentities( IdentityMergeRequest identityMerge, final String strClientCode, final RequestAuthor author )
-            throws IdentityStoreException
-    {
-        return _transportProvider.unMergeIdentities( identityMerge, strClientCode, author );
-    }
-
-    /**
      * Gives the identity history (identity+attributes) from a customerID
      *
      * @param strCustomerId
@@ -350,26 +295,6 @@ public class IdentityService
             final RequestAuthor author ) throws IdentityStoreException
     {
         return _transportProvider.getUpdatedIdentities( request, strClientCode, author );
-    }
-
-    /**
-     * Dé-certification d'une identité.<br/>
-     * Une identité ne pouvant pas posséder d'attributs non-certifiés, une dé-certification implique la certification de ses attributs avec le processus défini
-     * par la property : <code>identitystore.identity.uncertify.processus</code> (par défaut : "dec", qui correspond au niveau le plus faible de certification
-     * (auto-déclaratif))
-     *
-     * @param strCustomerId
-     *            the customer ID
-     * @param strClientCode
-     *            client code of calling application
-     * @param author
-     *            the author of the request
-     * @return IdentityChangeResponse
-     */
-    public IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author )
-            throws IdentityStoreException
-    {
-        return _transportProvider.uncertifyIdentity( strCustomerId, strClientCode, author );
     }
 
     /**
