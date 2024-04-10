@@ -55,8 +55,8 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentit
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.ResponseStatusFactory;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
+import fr.paris.lutece.plugins.identitystore.web.exception.ResourceNotFoundException;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.commons.lang3.StringUtils;
@@ -93,14 +93,14 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
      * {@inheritDoc}
      */
     @Override
-    public IdentitySearchResponse getIdentity( String strCustomerId, String strClientCode, RequestAuthor author ) throws IdentityNotFoundException, AppException
+    public IdentitySearchResponse getIdentity( String strCustomerId, String strClientCode, RequestAuthor author ) throws ResourceNotFoundException, AppException
     {
         if ( StringUtils.isEmpty( strCustomerId ) )
         {
             throw new AppException( "params wrong in mock" );
         }
 
-        throw new IdentityNotFoundException( "not found in mock list" );
+        throw new ResourceNotFoundException("not found in mock list", "" );
     }
 
     /**

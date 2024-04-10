@@ -37,7 +37,7 @@ import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ApplicationRightsDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.ResponseDto;
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
+import fr.paris.lutece.plugins.identitystore.web.exception.ResourceNotFoundException;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.commons.fileupload.FileItem;
@@ -67,7 +67,7 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode ) throws IdentityNotFoundException, AppException
+    public IdentityDto getIdentity( String strIdConnection, String strCustomerId, String strClientCode ) throws ResourceNotFoundException, AppException
     {
         if ( StringUtils.isEmpty( strIdConnection ) && StringUtils.isEmpty( strCustomerId ) )
         {
@@ -84,14 +84,14 @@ public class MockIdentityTransportRest extends AbstractIdentityTransportRest
             }
         }
 
-        throw new IdentityNotFoundException( "not found in mock list" );
+        throw new ResourceNotFoundException("not found in mock list", "" );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityNotFoundException, AppException
+    public IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws ResourceNotFoundException, AppException
     {
         AppLogService.debug( "MockIdentityTransportRest.updateIdentity not managed return existing identity if possible" );
 

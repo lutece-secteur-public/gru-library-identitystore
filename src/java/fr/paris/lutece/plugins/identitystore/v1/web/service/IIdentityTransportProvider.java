@@ -36,14 +36,11 @@ package fr.paris.lutece.plugins.identitystore.v1.web.service;
 import fr.paris.lutece.plugins.identitystore.v1.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.v1.web.rs.dto.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v1.web.rs.dto.ResponseDto;
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
-
 import org.apache.commons.fileupload.FileItem;
 
 import java.io.InputStream;
-
 import java.util.Map;
 
 /**
@@ -61,8 +58,6 @@ public interface IIdentityTransportProvider
      * @param strApplicationCode
      *            application code of calling application
      * @return identity if found
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
      *
@@ -79,8 +74,6 @@ public interface IIdentityTransportProvider
      * @return the updated identity
      * @throws AppException
      *             if error occured while updating identity
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
      */
     IdentityDto updateIdentity( IdentityChangeDto identityChange, Map<String, FileItem> mapFileItem ) throws IdentityStoreException;
 
@@ -109,8 +102,6 @@ public interface IIdentityTransportProvider
      * @param strApplicationCode
      *            the application code
      * @return the {@code ResponseDto} object
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
      * @throws AppException
      *             if inconsistent parameters provided, or errors occurs...
      */
@@ -129,8 +120,6 @@ public interface IIdentityTransportProvider
      * @return inputstream of attribute file
      * @throws AppException
      *             if error occured while retrieving file attribute
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
      */
     InputStream downloadFileAttribute( String strConnectionId, String strCustomerId, String strAttributeKey, String strClientAppCode );
 
@@ -144,8 +133,6 @@ public interface IIdentityTransportProvider
      * @return the updated identity
      * @throws AppException
      *             if error occured while updating identity
-     * @throws IdentityNotFoundException
-     *             if no identity found for input parameters
      */
     IdentityDto certifyAttributes( IdentityChangeDto identityChange, String strCertifierCode ) throws IdentityStoreException;
 }
