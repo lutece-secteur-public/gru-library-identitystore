@@ -53,7 +53,6 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentit
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.ResponseStatusFactory;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -102,7 +101,7 @@ public class MockIdentityTransportDataStore implements IIdentityTransportProvide
      */
     @Override
     public IdentityChangeResponse updateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author )
-            throws IdentityNotFoundException, AppException
+            throws AppException
     {
         AppLogService.debug( "MockIdentityTransportDatastore.updateIdentity not managed return existing identity if possible" );
 

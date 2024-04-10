@@ -49,7 +49,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearch
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
-import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
+import fr.paris.lutece.plugins.identitystore.web.exception.ResourceNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
 
@@ -68,7 +68,7 @@ public interface IIdentityTransportProvider
      * @param author
      *            author of the request
      * @return identity if found
-     * @throws IdentityNotFoundException
+     * @throws ResourceNotFoundException
      *             if no identity found for input parameters
      * @throws AppException
      *             if inconsitent parmeters provided, or errors occurs...
@@ -94,7 +94,7 @@ public interface IIdentityTransportProvider
      *
      * @throws AppException
      *             if error occurred while updating identity
-     * @throws IdentityNotFoundException
+     * @throws ResourceNotFoundException
      */
     IdentityChangeResponse createIdentity( final IdentityChangeRequest identityChange, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException;
@@ -114,7 +114,7 @@ public interface IIdentityTransportProvider
      *
      * @throws AppException
      *             if error occurred while updating identity
-     * @throws IdentityNotFoundException
+     * @throws ResourceNotFoundException
      */
     IdentityChangeResponse updateIdentity( final String customerId, final IdentityChangeRequest identityChange, final String strClientCode,
             final RequestAuthor author ) throws IdentityStoreException;
@@ -127,7 +127,7 @@ public interface IIdentityTransportProvider
      * @param author
      *            the author of the request
      * @return the {@code ResponseDto} object
-     * @throws IdentityNotFoundException
+     * @throws ResourceNotFoundException
      *             if no identity found for input parameters
      * @throws AppException
      *             if inconsistent parameters provided, or errors occurs...
