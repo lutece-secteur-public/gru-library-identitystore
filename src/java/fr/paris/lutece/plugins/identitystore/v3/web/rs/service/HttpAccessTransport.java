@@ -50,8 +50,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.net.URIBuilder;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -106,8 +104,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
             Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
-        mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
-        mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
+        mapHeadersRequest.put( Constants.ACCEPT, Constants.APPLICATION_JSON );
+        mapHeadersRequest.put( Constants.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
 
         T oResponse = null;
 
@@ -137,8 +135,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
             Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
-        mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
-        mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
+        mapHeadersRequest.put( Constants.ACCEPT, Constants.APPLICATION_JSON );
+        mapHeadersRequest.put( Constants.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
 
         T oResponse = null;
 
@@ -168,8 +166,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
             Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
-        mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
-        mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
+        mapHeadersRequest.put( Constants.ACCEPT, Constants.APPLICATION_JSON );
+        mapHeadersRequest.put( Constants.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
 
         List<T> oResponse = null;
 
@@ -258,8 +256,8 @@ public class HttpAccessTransport implements IHttpTransportProvider
             Class<T> responseJsonClass, ObjectMapper mapper ) throws IdentityStoreException
     {
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
-        mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
-        mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
+        mapHeadersRequest.put( Constants.ACCEPT, Constants.APPLICATION_JSON );
+        mapHeadersRequest.put( Constants.CONTENT_TYPE, Constants.CONTENT_FORMAT_CHARSET );
 
         T oResponse = null;
 

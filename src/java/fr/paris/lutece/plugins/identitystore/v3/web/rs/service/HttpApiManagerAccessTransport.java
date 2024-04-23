@@ -36,11 +36,9 @@ package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -103,9 +101,9 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
 
         mapParams.put( PARAMS_GRANT_TYPE, PARAMS_GRANT_TYPE_VALUE );
 
-        mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
-        mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED );
-        mapHeadersRequest.put( HttpHeaders.AUTHORIZATION, TYPE_AUTHENTIFICATION_BASIC + " " + _strAccessManagerCredentials );
+        mapHeadersRequest.put( Constants.ACCEPT, Constants.APPLICATION_JSON );
+        mapHeadersRequest.put( Constants.CONTENT_TYPE, Constants.APPLICATION_FORM_URLENCODED );
+        mapHeadersRequest.put( Constants.AUTHORIZATION, TYPE_AUTHENTIFICATION_BASIC + " " + _strAccessManagerCredentials );
 
         final Map<String, String> mapHeadersResponse = new HashMap<>( );
         String strOutput = StringUtils.EMPTY;
@@ -150,7 +148,7 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
 
         if ( StringUtils.isNotBlank( strToken ) )
         {
-            mapHeadersRequest.put( HttpHeaders.AUTHORIZATION, TYPE_AUTHENTIFICATION_BEARER + " " + strToken );
+            mapHeadersRequest.put( Constants.AUTHORIZATION, TYPE_AUTHENTIFICATION_BEARER + " " + strToken );
         }
     }
 }

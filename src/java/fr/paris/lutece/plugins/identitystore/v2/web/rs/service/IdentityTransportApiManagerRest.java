@@ -36,13 +36,11 @@ package fr.paris.lutece.plugins.identitystore.v2.web.rs.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.paris.lutece.plugins.identitystore.v2.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v2.web.service.IIdentityTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,9 +110,9 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
 
         mapParams.put( PARAMS_GRANT_TYPE, PARAMS_GRANT_TYPE_VALUE );
 
-        mapHeadersRequest.put( HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON );
-        mapHeadersRequest.put( HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED );
-        mapHeadersRequest.put( HttpHeaders.AUTHORIZATION, TYPE_AUTHENTIFICATION + " " + _strApiManagerCredentials );
+        mapHeadersRequest.put( Constants.ACCEPT, Constants.APPLICATION_JSON );
+        mapHeadersRequest.put( Constants.CONTENT_TYPE, Constants.APPLICATION_FORM_URLENCODED );
+        mapHeadersRequest.put( Constants.AUTHORIZATION, TYPE_AUTHENTIFICATION + " " + _strApiManagerCredentials );
 
         String strOutput = getHttpTransport( ).doPost( _strApiManagerEndPoint, mapParams, mapHeadersRequest );
 
@@ -149,7 +147,7 @@ public final class IdentityTransportApiManagerRest extends AbstractIdentityTrans
 
         if ( StringUtils.isNotBlank( strToken ) )
         {
-            mapHeadersRequest.put( HttpHeaders.AUTHORIZATION, TYPE_AUTHENTIFICATION + " " + strToken );
+            mapHeadersRequest.put( Constants.AUTHORIZATION, TYPE_AUTHENTIFICATION + " " + strToken );
         }
     }
 }
