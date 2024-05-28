@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.UncertifyIdentityRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.exporting.IdentityExportRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.exporting.IdentityExportResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistoryGetResponse;
@@ -49,6 +50,15 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearch
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskListGetResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskCreateRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskCreateResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskGetResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskGetStatusResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskSearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskSearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskUpdateStatusRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskUpdateStatusResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.ResourceNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -252,7 +262,8 @@ public interface IIdentityTransportProvider
      * Dé-certification d'une identité.<br/>
      * Une identité ne pouvant pas posséder d'attributs non-certifiés, une dé-certification implique la certification de ses attributs avec le processus défini
      * par la property : <code>identitystore.identity.uncertify.processus</code> (par défaut : "dec", qui correspond au niveau le plus faible de certification
-     * (auto-déclaratif))
+     * (auto-déclaratif))<br/>
+     * Tous les attributs de l'identité seront dé-certifiés.
      *
      * @param strCustomerId
      *            the customer ID
@@ -266,6 +277,26 @@ public interface IIdentityTransportProvider
             throws IdentityStoreException;
 
     /**
+     * Dé-certification d'une identité.<br/>
+     * Une identité ne pouvant pas posséder d'attributs non-certifiés, une dé-certification implique la certification de ses attributs avec le processus défini
+     * par la property : <code>identitystore.identity.uncertify.processus</code> (par défaut : "dec", qui correspond au niveau le plus faible de certification
+     * (auto-déclaratif))<br/>
+     * Seuls les attributs présents dans la requête seront dé-certifiés. Si la requête est vide ou null, tous les attributs seront dé-certifiés.
+     *
+     * @param request
+     *            the uncertify request
+     * @param strCustomerId
+     *            the customer ID
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
+     * @return IdentityChangeResponse
+     */
+    IdentityChangeResponse uncertifyIdentity(final UncertifyIdentityRequest request, final String strCustomerId, final String strClientCode, final RequestAuthor author)
+            throws IdentityStoreException;
+
+    /**
      * Exports a list of identities according to the provided request and client code.
      *
      * @param request
@@ -276,6 +307,69 @@ public interface IIdentityTransportProvider
      */
     IdentityExportResponse exportIdentities( final IdentityExportRequest request, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException;
+
+    /**
+     * Create a task related to an {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto} by its customer ID.
+     * @param request the task creation request
+     * @param strClientCode the client code calling the request
+     * @param author the author of the request
+     * @return the code of the created task used to identify that task for further usage
+     * @throws IdentityStoreException in case of error
+     */
+    IdentityTaskCreateResponse createIdentityTask( final IdentityTaskCreateRequest request, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
+
+    /**
+     * Update the {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskStatusType} of the task.
+     * @param request the task status update request
+     * @param taskCode the code of the task returned at creation time
+     * @param strClientCode the client code calling the request
+     * @param author the author of the request
+     * @return an {@link IdentityTaskUpdateStatusResponse}
+     * @throws IdentityStoreException in case of error
+     */
+    IdentityTaskUpdateStatusResponse updateIdentityTaskStatus( final String taskCode, final IdentityTaskUpdateStatusRequest request, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
+
+    /**
+     * Get the {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskStatusType} of the task.
+     * @param taskCode the code of the task returned at creation time
+     * @param strClientCode the client code calling the request
+     * @param author the author of the request
+     * @return an {@link IdentityTaskGetStatusResponse}
+     * @throws IdentityStoreException in case of error
+     */
+    IdentityTaskGetStatusResponse getIdentityTaskStatus( final String taskCode, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
+
+    /**
+     * Get the task.
+     * @param taskCode the code of the task returned at creation time
+     * @param strClientCode the client code calling the request
+     * @param author the author of the request
+     * @return an {@link IdentityTaskGetResponse}
+     * @throws IdentityStoreException in case of error
+     */
+    IdentityTaskGetResponse getIdentityTaskList(final String taskCode, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
+
+    /**
+     * Get the tasks related to a given resource.
+     * @param resourceId the ID of the resource
+     * @param resourceType the type of the resource
+     * @param strClientCode the client code calling the request
+     * @param author the author of the request
+     * @return an {@link IdentityTaskGetResponse}
+     * @throws IdentityStoreException in case of error
+     */
+    IdentityTaskListGetResponse getIdentityTaskList(final String resourceId, final String resourceType, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
+
+
+    /**
+     * Search for tasks.
+     * @param request the search request
+     * @param strClientCode the client code calling the request
+     * @param author the author of the request
+     * @return an {@link IdentityTaskSearchResponse}
+     * @throws IdentityStoreException in case of error
+     */
+    IdentityTaskSearchResponse searchIdentityTasks( final IdentityTaskSearchRequest request, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
 
     default void checkCommonHeaders( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {
