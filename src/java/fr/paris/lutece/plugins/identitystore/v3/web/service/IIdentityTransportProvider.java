@@ -49,6 +49,14 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearch
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskCreateRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskCreateResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskGetResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskGetStatusResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskSearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskSearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskUpdateStatusRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskUpdateStatusResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -276,6 +284,57 @@ public interface IIdentityTransportProvider
      */
     IdentityExportResponse exportIdentities( final IdentityExportRequest request, final String strClientCode, final RequestAuthor author )
             throws IdentityStoreException;
+
+    /**
+     * Create a task related to an {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto} by its customer ID.
+     * @param request the task creation request
+     * @param strClientCode the client code calling the request
+     * @param author the author of the request
+     * @return the code of the created task used to identify that task for further usage
+     * @throws IdentityStoreException in case of error
+     */
+    IdentityTaskCreateResponse createIdentityTask( final IdentityTaskCreateRequest request, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
+
+    /**
+     * Update the {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskStatusType} of the task.
+     * @param request the task status update request
+     * @param taskCode the code of the task returned at creation time
+     * @param strClientCode the client code calling the request
+     * @param author the author of the request
+     * @return an {@link IdentityTaskUpdateStatusResponse}
+     * @throws IdentityStoreException in case of error
+     */
+    IdentityTaskUpdateStatusResponse updateIdentityTaskStatus( final String taskCode, final IdentityTaskUpdateStatusRequest request, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
+
+    /**
+     * Get the {@link fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskStatusType} of the task.
+     * @param taskCode the code of the task returned at creation time
+     * @param strClientCode the client code calling the request
+     * @param author the author of the request
+     * @return an {@link IdentityTaskGetStatusResponse}
+     * @throws IdentityStoreException in case of error
+     */
+    IdentityTaskGetStatusResponse getIdentityTaskStatus( final String taskCode, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
+
+    /**
+     * Get the task.
+     * @param taskCode the code of the task returned at creation time
+     * @param strClientCode the client code calling the request
+     * @param author the author of the request
+     * @return an {@link IdentityTaskGetResponse}
+     * @throws IdentityStoreException in case of error
+     */
+    IdentityTaskGetResponse getIdentityTask( final String taskCode, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
+
+    /**
+     * Search for tasks.
+     * @param request the search request
+     * @param strClientCode the client code calling the request
+     * @param author the author of the request
+     * @return an {@link IdentityTaskSearchResponse}
+     * @throws IdentityStoreException in case of error
+     */
+    IdentityTaskSearchResponse searchIdentityTasks( final IdentityTaskSearchRequest request, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
 
     default void checkCommonHeaders( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
     {

@@ -44,6 +44,7 @@ import fr.paris.lutece.plugins.identitystore.v1.web.rs.dto.ResponseDto;
 import fr.paris.lutece.plugins.identitystore.v1.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v1.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v1.web.service.IIdentityTransportProvider;
+import fr.paris.lutece.plugins.identitystore.v3.web.utils.LibConstants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -137,7 +138,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         mapParams.put( Constants.PARAM_ID_CONNECTION, strIdConnection );
         mapParams.put( Constants.PARAM_ID_CUSTOMER, strCustomerId );
 
-        IdentityDto identityDto = _httpTransport.doGet( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V1 + Constants.IDENTITY_PATH, mapParams,
+        IdentityDto identityDto = _httpTransport.doGet( _strIdentityStoreEndPoint + LibConstants.IDENTITYSTORE_BASE_PATH + Constants.VERSION_PATH_V1 + Constants.IDENTITY_PATH, mapParams,
                 mapHeadersRequest, IdentityDto.class, _mapper );
 
         return identityDto;
@@ -170,7 +171,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         }
 
         IdentityDto identityDto = _httpTransport.doPostMultiPart(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V1 + Constants.IDENTITY_PATH + Constants.UPDATE_IDENTITY_PATH, mapParams, mapHeadersRequest,
+                _strIdentityStoreEndPoint + LibConstants.IDENTITYSTORE_BASE_PATH + Constants.VERSION_PATH_V1 + Constants.IDENTITY_PATH + Constants.UPDATE_IDENTITY_PATH, mapParams, mapHeadersRequest,
                 mapFileItem, IdentityDto.class, _mapper );
 
         return identityDto;
@@ -246,7 +247,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         }
 
         IdentityDto identityDto = _httpTransport.doPostMultiPart(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V1 + Constants.IDENTITY_PATH + Constants.CREATE_IDENTITY_PATH, mapParams, mapHeadersRequest,
+                _strIdentityStoreEndPoint + LibConstants.IDENTITYSTORE_BASE_PATH + Constants.VERSION_PATH_V1 + Constants.IDENTITY_PATH + Constants.CREATE_IDENTITY_PATH, mapParams, mapHeadersRequest,
                 null, IdentityDto.class, _mapper );
 
         return identityDto;
@@ -270,7 +271,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         Map<String, String> mapParams = new HashMap<String, String>( );
         mapParams.put( Constants.PARAM_ID_CONNECTION, strIdConnection );
 
-        ResponseDto responseDto = _httpTransport.doDelete( _strIdentityStoreEndPoint + Constants.VERSION_PATH_V1 + Constants.IDENTITY_PATH, mapParams,
+        ResponseDto responseDto = _httpTransport.doDelete( _strIdentityStoreEndPoint + LibConstants.IDENTITYSTORE_BASE_PATH + Constants.VERSION_PATH_V1 + Constants.IDENTITY_PATH, mapParams,
                 mapHeadersRequest, ResponseDto.class, _mapper );
 
         return responseDto;
@@ -301,7 +302,7 @@ abstract class AbstractIdentityTransportRest implements IIdentityTransportProvid
         }
 
         IdentityDto identityDto = _httpTransport.doPostMultiPart(
-                _strIdentityStoreEndPoint + Constants.VERSION_PATH_V1 + Constants.IDENTITY_PATH + Constants.CERTIFY_ATTRIBUTES_PATH, mapParams,
+                _strIdentityStoreEndPoint + LibConstants.IDENTITYSTORE_BASE_PATH + Constants.VERSION_PATH_V1 + Constants.IDENTITY_PATH + Constants.CERTIFY_ATTRIBUTES_PATH, mapParams,
                 mapHeadersRequest, null, IdentityDto.class, _mapper );
 
         return identityDto;

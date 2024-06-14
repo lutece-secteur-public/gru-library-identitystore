@@ -52,6 +52,14 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearch
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskCreateRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskCreateResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskGetResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskGetStatusResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskSearchRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskSearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskUpdateStatusRequest;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskUpdateStatusResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.ResponseStatusFactory;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IIdentityTransportProvider;
@@ -294,5 +302,30 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         response.setStatus( ResponseStatusFactory.ok( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
 
         return response;
+    }
+
+    @Override
+    public IdentityTaskCreateResponse createIdentityTask(IdentityTaskCreateRequest request, String strClientCode, RequestAuthor author) throws IdentityStoreException {
+        return null;
+    }
+
+    @Override
+    public IdentityTaskUpdateStatusResponse updateIdentityTaskStatus(String taskCode, IdentityTaskUpdateStatusRequest request, String strClientCode, RequestAuthor author) throws IdentityStoreException {
+        return null;
+    }
+
+    @Override
+    public IdentityTaskGetStatusResponse getIdentityTaskStatus(String taskCode, String strClientCode, RequestAuthor author) throws IdentityStoreException {
+        return null;
+    }
+
+    @Override
+    public IdentityTaskGetResponse getIdentityTask(String taskCode, String strClientCode, RequestAuthor author) throws IdentityStoreException {
+        return null;
+    }
+
+    @Override
+    public IdentityTaskSearchResponse searchIdentityTasks(IdentityTaskSearchRequest request, String strClientCode, RequestAuthor author) throws IdentityStoreException {
+        return null;
     }
 }
