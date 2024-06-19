@@ -42,7 +42,6 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContr
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IServiceContractTransportProvider;
-import fr.paris.lutece.plugins.identitystore.v3.web.utils.LibConstants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 
 import java.util.HashMap;
@@ -53,6 +52,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
 
     /** URL for identityStore REST service */
     private final String _strIdentityStoreEndPoint;
+    private final String _strIdentityPath;
 
     /**
      * Constructor with IHttpTransportProvider parameter
@@ -64,7 +64,22 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
     {
         super( httpTransport );
         _strIdentityStoreEndPoint = httpTransport.getApiEndPointUrl( );
+        _strIdentityPath = Constants.CONSTANT_DEFAULT_IDENTITY_PATH;
     }
+    
+    /**
+     * Constructor with IHttpTransportProvider parameter
+     *
+     * @param httpTransport
+     *            the provider to use
+     */
+    public ServiceContractTransportRest( final IHttpTransportProvider httpTransport, String strIdentityPath )
+    {
+        super( httpTransport );
+        _strIdentityStoreEndPoint = httpTransport.getApiEndPointUrl( );
+        _strIdentityPath = strIdentityPath;
+    }
+
 
     @Override
     public ServiceContractsSearchResponse getServiceContractList( final String strTargetClientCode, final String strClientCode, final RequestAuthor author )
@@ -77,7 +92,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreEndPoint + LibConstants.IDENTITYSTORE_BASE_PATH + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH + "/list/" + strTargetClientCode;
+        final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH + "/list/" + strTargetClientCode;
         return _httpTransport.doGet( url, null, mapHeadersRequest, ServiceContractsSearchResponse.class, _mapper );
     }
 
@@ -91,7 +106,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreEndPoint + LibConstants.IDENTITYSTORE_BASE_PATH + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH;
+        final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH;
         return _httpTransport.doGet( url, null, mapHeadersRequest, ServiceContractsSearchResponse.class, _mapper );
     }
 
@@ -106,7 +121,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreEndPoint + LibConstants.IDENTITYSTORE_BASE_PATH + Constants.VERSION_PATH_V3 + Constants.ACTIVE_SERVICE_CONTRACT_PATH + "/" + strTargetClientCode;
+        final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.ACTIVE_SERVICE_CONTRACT_PATH + "/" + strTargetClientCode;
         return _httpTransport.doGet( url, null, mapHeadersRequest, ServiceContractSearchResponse.class, _mapper );
     }
 
@@ -121,7 +136,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreEndPoint + LibConstants.IDENTITYSTORE_BASE_PATH + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH + "/" + nServiceContractId;
+        final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH + "/" + nServiceContractId;
         return _httpTransport.doGet( url, null, mapHeadersRequest, ServiceContractSearchResponse.class, _mapper );
     }
 
@@ -137,7 +152,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreEndPoint + LibConstants.IDENTITYSTORE_BASE_PATH + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH;
+        final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH;
         return _httpTransport.doPostJSON( url, null, mapHeadersRequest, serviceContract, ServiceContractChangeResponse.class, _mapper );
     }
 
@@ -156,7 +171,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
 
         final Map<String, String> mapParams = new HashMap<>( );
 
-        final String url = _strIdentityStoreEndPoint + LibConstants.IDENTITYSTORE_BASE_PATH + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH + "/" + nServiceContractId;
+        final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH + "/" + nServiceContractId;
         return _httpTransport.doPutJSON( url, mapParams, mapHeadersRequest, serviceContract, ServiceContractChangeResponse.class, _mapper );
     }
 
@@ -175,7 +190,7 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
 
         final Map<String, String> mapParams = new HashMap<>( );
 
-        final String url = _strIdentityStoreEndPoint + LibConstants.IDENTITYSTORE_BASE_PATH + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH + "/" + nServiceContractId
+        final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH + "/" + nServiceContractId
                 + Constants.SERVICECONTRACT_END_DATE_PATH;
         return _httpTransport.doPutJSON( url, mapParams, mapHeadersRequest, serviceContract, ServiceContractChangeResponse.class, _mapper );
     }
