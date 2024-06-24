@@ -379,7 +379,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.TASK_PATH;
+        final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.VERSION_PATH_V1 + Constants.TASK_PATH;
         return _httpTransport.doPostJSON( url, null, mapHeadersRequest, request, IdentityTaskCreateResponse.class, _mapper );
     }
 
@@ -394,7 +394,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.TASK_PATH + Constants.TASK_STATUS_PATH + "/" + taskCode;
+        final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.VERSION_PATH_V1 + Constants.TASK_PATH + Constants.TASK_STATUS_PATH + "/" + taskCode;
         return _httpTransport.doPutJSON( url, null, mapHeadersRequest, request, IdentityTaskUpdateStatusResponse.class, _mapper );
     }
 
@@ -408,7 +408,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.TASK_PATH + Constants.TASK_STATUS_PATH + "/" + taskCode;
+        final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.VERSION_PATH_V1 + Constants.TASK_PATH + Constants.TASK_STATUS_PATH + "/" + taskCode;
         return _httpTransport.doGet( url, null, mapHeadersRequest, IdentityTaskGetStatusResponse.class, _mapper );
     }
 
@@ -422,7 +422,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.TASK_PATH + "/" + taskCode;
+        final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.VERSION_PATH_V1 + Constants.TASK_PATH + "/" + taskCode;
         return _httpTransport.doGet( url, null, mapHeadersRequest, IdentityTaskGetResponse.class, _mapper );
     }
 
@@ -436,7 +436,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
-        final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.TASK_PATH + Constants.SEARCH_TASK_PATH;
+        final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.VERSION_PATH_V1 + Constants.TASK_PATH + Constants.SEARCH_TASK_PATH;
         return _httpTransport.doPostJSON( url, null, mapHeadersRequest, request, IdentityTaskSearchResponse.class, _mapper );
     }
 
