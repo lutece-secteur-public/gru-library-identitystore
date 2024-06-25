@@ -50,7 +50,9 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentit
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.UpdatedIdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskCreateRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskCreateResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskGetStatusResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskListGetResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.portal.service.util.AppException;
 
@@ -340,6 +342,21 @@ public class IdentityService
     {
         return _transportProvider.getIdentityTaskStatus( taskCode, strClientCode, author );
     }
+
+    /**
+     * Get the tasks related to a given resource.
+     * @param resourceId the ID of the resource
+     * @param resourceType the type of the resource
+     * @param strClientCode the client code calling the request
+     * @param author the author of the request
+     * @return an {@link IdentityTaskGetResponse}
+     * @throws IdentityStoreException in case of error
+     */
+    public IdentityTaskListGetResponse getIdentityTaskList(final String resourceId, final String resourceType, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException
+    {
+        return _transportProvider.getIdentityTaskList( resourceId, resourceType, strClientCode, author );
+    }
+
 
     /**
      * Complete attribute list with external sources

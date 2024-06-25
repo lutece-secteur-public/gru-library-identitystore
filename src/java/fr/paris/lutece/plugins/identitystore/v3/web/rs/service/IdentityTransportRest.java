@@ -54,6 +54,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskCrea
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskCreateResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskGetStatusResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskListGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskSearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskUpdateStatusRequest;
@@ -413,7 +414,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     }
 
     @Override
-    public IdentityTaskGetResponse getIdentityTask(String taskCode, String strClientCode, RequestAuthor author) throws IdentityStoreException {
+    public IdentityTaskGetResponse getIdentityTaskList( final String taskCode, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException {
         this.checkCommonHeaders( strClientCode, author );
         IdentityTaskRequestValidator.instance( ).validateTaskCode( taskCode );
 
@@ -424,6 +425,26 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
 
         final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.VERSION_PATH_V1 + Constants.TASK_PATH + "/" + taskCode;
         return _httpTransport.doGet( url, null, mapHeadersRequest, IdentityTaskGetResponse.class, _mapper );
+    }
+
+    @Override
+    public IdentityTaskListGetResponse getIdentityTaskList( final String resourceId, final String resourceType, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException {
+        this.checkCommonHeaders( strClientCode, author );
+        IdentityTaskRequestValidator.instance( ).validateTaskResourceId( resourceId );
+        IdentityTaskRequestValidator.instance( ).validateTaskResourceType( resourceType );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final HashMap<String, String> queryParams = new HashMap<>();
+        queryParams.put( Constants.PARAM_RESOURCE_ID, resourceId );
+        queryParams.put( Constants.PARAM_RESOURCE_TYPE, resourceType );
+
+        final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.VERSION_PATH_V1 + Constants.TASK_PATH;
+
+        return _httpTransport.doGet( url, queryParams, mapHeadersRequest, IdentityTaskListGetResponse.class, _mapper );
     }
 
     @Override

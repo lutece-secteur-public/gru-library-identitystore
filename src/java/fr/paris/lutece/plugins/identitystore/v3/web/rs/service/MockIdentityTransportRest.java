@@ -56,6 +56,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskCrea
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskCreateResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskGetStatusResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskListGetResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskSearchRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.task.IdentityTaskUpdateStatusRequest;
@@ -320,7 +321,12 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     }
 
     @Override
-    public IdentityTaskGetResponse getIdentityTask(String taskCode, String strClientCode, RequestAuthor author) throws IdentityStoreException {
+    public IdentityTaskGetResponse getIdentityTaskList(String taskCode, String strClientCode, RequestAuthor author) throws IdentityStoreException {
+        return null;
+    }
+
+    @Override
+    public IdentityTaskListGetResponse getIdentityTaskList(String resourceId, String resourceType, String strClientCode, RequestAuthor author) throws IdentityStoreException {
         return null;
     }
 
