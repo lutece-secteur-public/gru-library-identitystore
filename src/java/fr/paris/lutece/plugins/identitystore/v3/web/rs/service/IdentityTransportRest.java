@@ -39,6 +39,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.UncertifyIdentityRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.exporting.IdentityExportRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.exporting.IdentityExportResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.history.IdentityHistoryGetResponse;
@@ -334,8 +335,21 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         return _httpTransport.doPostJSON( url, null, mapHeadersRequest, request, UpdatedIdentitySearchResponse.class, _mapper );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IdentityChangeResponse uncertifyIdentity( final String strCustomerId, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
+    {
+        return this.uncertifyIdentity(null, strCustomerId, strClientCode, author);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IdentityChangeResponse uncertifyIdentity( final UncertifyIdentityRequest request, final String strCustomerId, final String strClientCode, final RequestAuthor author)
             throws IdentityStoreException
     {
         this.checkCommonHeaders( strClientCode, author );
@@ -347,9 +361,10 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
         final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.UNCERTIFY_ATTRIBUTES_PATH + "/"
-                + strCustomerId;
-        return _httpTransport.doPutJSON( url, null, mapHeadersRequest, null, IdentityChangeResponse.class, _mapper );
+                           + strCustomerId;
+        return _httpTransport.doPutJSON( url, null, mapHeadersRequest, request, IdentityChangeResponse.class, _mapper );
     }
+
 
     /**
      * {@inheritDoc}
