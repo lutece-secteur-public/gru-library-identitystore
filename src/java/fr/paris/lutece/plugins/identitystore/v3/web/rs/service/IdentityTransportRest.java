@@ -131,7 +131,7 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @throws IdentityStoreException
      */
     @Override
@@ -153,6 +153,28 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
 
     /**
      * {@inheritDoc}
+     *
+     * @throws IdentityStoreException
+     */
+    @Override
+    public IdentityChangeResponse testUpdateIdentity( final String strCustomerId, final IdentityChangeRequest identityChange, final String strClientCode,
+                                                      final RequestAuthor author ) throws IdentityStoreException
+    {
+        this.checkCommonHeaders( strClientCode, author );
+        IdentityRequestValidator.instance( ).checkIdentityChange( identityChange, true );
+        IdentityRequestValidator.instance( ).checkIdentityForUpdate( identityChange.getIdentity( ).getConnectionId( ), strCustomerId );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + "/" + strCustomerId + Constants.CONTROL_PATH;
+        return _httpTransport.doPutJSON( url, null, mapHeadersRequest, identityChange, IdentityChangeResponse.class, _mapper );
+    }
+
+    /**
+     * {@inheritDoc}
      * 
      * @throws IdentityStoreException
      */
@@ -169,6 +191,27 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
         final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH;
+        return _httpTransport.doPostJSON( url, null, mapHeadersRequest, identityChange, IdentityChangeResponse.class, _mapper );
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws IdentityStoreException
+     */
+    @Override
+    public IdentityChangeResponse testCreateIdentity( IdentityChangeRequest identityChange, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException
+    {
+        this.checkCommonHeaders( strClientCode, author );
+        IdentityRequestValidator.instance( ).checkIdentityChange( identityChange, false );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.IDENTITY_PATH + Constants.CONTROL_PATH;
         return _httpTransport.doPostJSON( url, null, mapHeadersRequest, identityChange, IdentityChangeResponse.class, _mapper );
     }
 

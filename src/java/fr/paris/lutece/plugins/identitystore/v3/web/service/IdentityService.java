@@ -195,6 +195,29 @@ public class IdentityService
     }
 
     /**
+     * Test the data validity for the update of an Identity<br/>
+     * Send the data through all the controls. Even if all the controls are passing correctly, the identity will NOT be updated.
+     *
+     * @param customerId
+     *            the id of the customer
+     * @param identityChange
+     *            change to apply to identity
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
+     * @return the updated identity
+     * @throws AppException
+     *             if error occured while updating identity
+     * @throws IdentityStoreException
+     */
+    public IdentityChangeResponse testUpdateIdentity( final String customerId, final IdentityChangeRequest identityChange, final String strClientCode,
+                                                      final RequestAuthor author ) throws AppException, IdentityStoreException
+    {
+        return _transportProvider.updateIdentity( customerId, identityChange, strClientCode, author );
+    }
+
+    /**
      * Creates an identity only if the identity does not already exist. The identity is created from the provided attributes.
      * <p>
      * The order to test if the identity exists: - by using the provided customer id if present - by using the provided connection id if present
@@ -215,6 +238,28 @@ public class IdentityService
     {
         return _transportProvider.createIdentity( identityChange, strClientCode, author );
     }
+
+    /**
+     * Test the data validity for the creation of a new Identity<br/>
+     * Send the data through all the controls. Even if all the controls are passing correctly, an identity will NOT be created.
+     *
+     * @param identityChange
+     *            change to apply to identity
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
+     * @return the created identity
+     * @throws AppException
+     *             if error occured while updating identity
+     * @throws IdentityStoreException
+     */
+    public IdentityChangeResponse testCreateIdentity( final IdentityChangeRequest identityChange, final String strClientCode, final RequestAuthor author )
+            throws AppException, IdentityStoreException
+    {
+        return _transportProvider.testCreateIdentity( identityChange, strClientCode, author );
+    }
+
 
     /**
      * Deletes an identity from the specified customer_Id

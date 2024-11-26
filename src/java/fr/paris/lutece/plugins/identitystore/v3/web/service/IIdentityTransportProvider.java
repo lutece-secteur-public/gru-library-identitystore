@@ -110,8 +110,27 @@ public interface IIdentityTransportProvider
             throws IdentityStoreException;
 
     /**
+     * Test the data validity for the creation of a new Identity<br/>
+     * Send the data through all the controls. Even if all the controls are passing correctly, an identity will NOT be created.
+     *
+     * @param identityChange
+     *            change to apply to identity
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
+     * @return the {@link IdentityChangeResponse}
+     *
+     * @throws AppException
+     *             if error occurred while updating identity
+     * @throws ResourceNotFoundException
+     */
+    IdentityChangeResponse testCreateIdentity( final IdentityChangeRequest identityChange, final String strClientCode, final RequestAuthor author )
+            throws IdentityStoreException;
+
+    /**
      * Updates an identity.
-     * 
+     *
      * @param customerId
      *            customer Id
      * @param identityChange
@@ -128,6 +147,27 @@ public interface IIdentityTransportProvider
      */
     IdentityChangeResponse updateIdentity( final String customerId, final IdentityChangeRequest identityChange, final String strClientCode,
             final RequestAuthor author ) throws IdentityStoreException;
+
+    /**
+     * Test the data validity for the update of an Identity<br/>
+     * Send the data through all the controls. Even if all the controls are passing correctly, the identity will NOT be updated.
+     *
+     * @param customerId
+     *            customer Id
+     * @param identityChange
+     *            change to apply to identity
+     * @param strClientCode
+     *            client code of calling application
+     * @param author
+     *            the author of the request
+     * @return the {@link IdentityChangeResponse}
+     *
+     * @throws AppException
+     *             if error occurred while updating identity
+     * @throws ResourceNotFoundException
+     */
+    IdentityChangeResponse testUpdateIdentity( final String customerId, final IdentityChangeRequest identityChange, final String strClientCode,
+                                               final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * Deletes an identity from the specified connectionId

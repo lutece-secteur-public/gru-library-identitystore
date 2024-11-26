@@ -135,6 +135,21 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
      * {@inheritDoc}
      */
     @Override
+    public IdentityChangeResponse testUpdateIdentity( String customerId, IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author )
+            throws IdentityStoreException
+    {
+        AppLogService.debug( "MockIdentityTransportRest.testUpdateIdentity not managed, always returns OK" );
+
+        IdentityChangeResponse response = new IdentityChangeResponse( );
+        response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
+
+        return response;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IdentityChangeResponse createIdentity( IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author )
             throws IdentityStoreException
     {
@@ -157,6 +172,21 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
         response.setCustomerId( identity.getCustomerId( ) );
         response.setConnectionId( identity.getConnectionId( ) );
         response.setCreationDate( new Timestamp( new Date( ).getTime( ) ) );
+
+        return response;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IdentityChangeResponse testCreateIdentity( IdentityChangeRequest identityChange, String strClientCode, RequestAuthor author )
+            throws IdentityStoreException
+    {
+        AppLogService.debug( "MockIdentityTransportRest.testCreateIdentity always return ok" );
+
+        IdentityChangeResponse response = new IdentityChangeResponse( );
+        response.setStatus( ResponseStatusFactory.success( ).setMessage( "OK" ).setMessageKey( Constants.PROPERTY_REST_INFO_SUCCESSFUL_OPERATION ) );
 
         return response;
     }
