@@ -373,6 +373,12 @@ public class MockIdentityTransportRest implements IIdentityTransportProvider
     }
 
     @Override
+    public IdentityTaskListGetResponse getIdentityTaskListBySecondaryCuid(String secondaryCuid, String strClientCode, RequestAuthor author) throws IdentityStoreException
+    {
+        return null;
+    }
+
+    @Override
     public IdentityTaskSearchResponse searchIdentityTasks(IdentityTaskSearchRequest request, String strClientCode, RequestAuthor author) throws IdentityStoreException {
         return null;
     }
