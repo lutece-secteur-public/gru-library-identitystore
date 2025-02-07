@@ -400,16 +400,6 @@ public interface IIdentityTransportProvider
      */
     IdentityTaskListGetResponse getIdentityTaskList(final String resourceId, final String resourceType, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
 
-    /**
-     * Get the tasks related to a given resource.
-     * @param secondaryCuid the ID of the resource
-     * @param strClientCode the client code calling the request
-     * @param author the author of the request
-     * @return an {@link IdentityTaskGetResponse}
-     * @throws IdentityStoreException in case of error
-     */
-    IdentityTaskListGetResponse getIdentityTaskListBySecondaryCuid(final String secondaryCuid, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
-
 
     /**
      * Search for tasks.
