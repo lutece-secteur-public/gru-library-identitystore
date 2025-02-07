@@ -463,24 +463,6 @@ public class IdentityTransportRest extends AbstractTransportRest implements IIde
     }
 
     @Override
-    public IdentityTaskListGetResponse getIdentityTaskListBySecondaryCuid(final String secondaryCuid, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException {
-        this.checkCommonHeaders( strClientCode, author );
-        IdentityTaskRequestValidator.instance( ).validateTaskSecondCuid( secondaryCuid );
-
-        final Map<String, String> mapHeadersRequest = new HashMap<>( );
-        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
-        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
-        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
-
-        final HashMap<String, String> queryParams = new HashMap<>();
-        queryParams.put( Constants.TASK_SECOND_CUID_PARAM, secondaryCuid );
-
-        final String url = _strIdentityStoreEndPoint + _strTaskStackPath + Constants.VERSION_PATH_V1 + Constants.TASK_PATH + Constants.MERGE_PATH;
-
-        return _httpTransport.doGet( url, queryParams, mapHeadersRequest, IdentityTaskListGetResponse.class, _mapper );
-    }
-
-    @Override
     public IdentityTaskSearchResponse searchIdentityTasks( final IdentityTaskSearchRequest request, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException {
         this.checkCommonHeaders( strClientCode, author );
         IdentityTaskRequestValidator.instance().validateTaskSearchRequest( request );
