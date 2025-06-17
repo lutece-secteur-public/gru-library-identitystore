@@ -39,6 +39,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import org.apache.commons.lang3.StringUtils;
+
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,6 +51,7 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
 {
     /** The Constant PARAMS_ACCES_TOKEN. */
     private static final String PARAMS_ACCES_TOKEN = "access_token";
+    private static final String PARAMS_VALIDITY = "expires_in";
     private static final String TYPE_AUTHENTIFICATION_BASIC = "Basic";
     private static final String TYPE_AUTHENTIFICATION_BEARER = "Bearer";
 
@@ -63,6 +66,10 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
     /** URL for REST service apiManager */
     private String _strAccessManagerEndPointUrl;
     private String _strAccessManagerCredentials;
+    
+    // instance variables
+    private String _strToken;
+    private LocalDateTime _dateExpiration;
 
     /**
      * setter of apiManagerEndPoint
@@ -88,11 +95,29 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
 
     /**
      * Gets the security token from API Manager
+     * refresh token if expired
      * 
      * @return the token
      * @throws IdentityStoreException
      */
     private String getToken( ) throws IdentityStoreException
+    {
+	if ( StringUtils.isEmpty(_strToken ) || _dateExpiration == null
+	        || LocalDateTime.now( ).isAfter( ( _dateExpiration.minusMinutes( 1 ) ) ) )
+	{
+	    refreshToken( );
+	}
+	
+	return _strToken;
+    }
+    
+    /**
+     * Refresh the bearer token
+     * @return 
+     *  
+     * @throws IdentityStoreException
+     */
+    private void refreshToken( ) throws IdentityStoreException
     {
         String strToken = StringUtils.EMPTY;
 
@@ -117,23 +142,24 @@ public final class HttpApiManagerAccessTransport extends HttpAccessTransport
             handleException( e );
         }
 
-        JsonNode strResponseApiManagerJsonObject = null;
-
         try
         {
-            strResponseApiManagerJsonObject = _objectMapper.readTree( strOutput );
-
-            if ( ( strResponseApiManagerJsonObject != null ) && strResponseApiManagerJsonObject.has( PARAMS_ACCES_TOKEN ) )
+            JsonNode jsonNode = _objectMapper.readTree( strOutput );
+            
+            if ( ( jsonNode != null ) && jsonNode.has( PARAMS_ACCES_TOKEN ) )
             {
-                strToken = strResponseApiManagerJsonObject.get( PARAMS_ACCES_TOKEN ).asText( );
+                JsonNode jsonTokenNode = jsonNode.get( PARAMS_ACCES_TOKEN );
+                _strToken = jsonTokenNode.textValue( );
+                
+                JsonNode jsonValidityNode = jsonNode.get( PARAMS_VALIDITY );
+                int nbSecondsValidityTime = jsonValidityNode.asInt( 0 );
+                _dateExpiration = LocalDateTime.now( ).plusSeconds( nbSecondsValidityTime );
             }
         }
         catch( JsonProcessingException e )
         {
             handleException( e );
         }
-
-        return strToken;
     }
 
     /**
