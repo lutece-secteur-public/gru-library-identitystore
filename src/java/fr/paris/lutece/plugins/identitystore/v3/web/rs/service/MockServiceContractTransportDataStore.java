@@ -49,6 +49,8 @@ import org.apache.log4j.Logger;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.Date;
+
 public class MockServiceContractTransportDataStore implements IServiceContractTransportProvider
 {
     private static final String KEY_DATASTORE_MOCK_SERVICE_CONTRACT_PREFIX = "identitystore.mock.servicecontract.";
@@ -106,6 +108,14 @@ public class MockServiceContractTransportDataStore implements IServiceContractTr
     public ServiceContractsSearchResponse getAllServiceContractList( String strClientCode, RequestAuthor author ) throws IdentityStoreException
     {
         AppLogService.debug( "[MOCK] Get all service contracts list" );
+
+        return getMockServiceContractListFromDatastore( "all" );
+    }
+
+    @Override
+    public ServiceContractsSearchResponse searchServiceContractList(final boolean bLoadDetails, final Date minEndDate, final String strClientCode,
+                                                                    final RequestAuthor author) throws IdentityStoreException {
+        AppLogService.debug( "[MOCK] search service contracts list" );
 
         return getMockServiceContractListFromDatastore( "all" );
     }

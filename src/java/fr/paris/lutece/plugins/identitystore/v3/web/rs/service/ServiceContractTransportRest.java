@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.identitystore.v3.web.rs.service;
 
+import fr.paris.lutece.plugins.identitystore.v3.business.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.IdentityRequestValidator;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractChangeResponse;
@@ -40,10 +41,12 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContr
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractsSearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
-import fr.paris.lutece.plugins.identitystore.v3.business.IHttpTransportProvider;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IServiceContractTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,6 +110,23 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
 
         final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH;
+        return _httpTransport.doGet( url, null, mapHeadersRequest, ServiceContractsSearchResponse.class, _mapper );
+    }
+
+    @Override
+    public ServiceContractsSearchResponse searchServiceContractList(final boolean bLoadDetails, final Date minEndDate, final String strClientCode,
+                                                                    final RequestAuthor author) throws IdentityStoreException {
+        this.checkCommonHeaders( strClientCode, author );
+
+        final Map<String, String> mapHeadersRequest = new HashMap<>( );
+        mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
+        mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
+
+        final String strLoadDetails = Boolean.toString(bLoadDetails);
+        final String strMinEndDate = minEndDate == null ? "" : LocalDate.from(minEndDate.toInstant()).format(DateTimeFormatter.ISO_LOCAL_DATE);
+
+        final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH + "/search/" + strLoadDetails + "/" + strMinEndDate;
         return _httpTransport.doGet( url, null, mapHeadersRequest, ServiceContractsSearchResponse.class, _mapper );
     }
 

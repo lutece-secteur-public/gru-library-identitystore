@@ -41,6 +41,8 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContr
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContractsSearchResponse;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 
+import java.util.Date;
+
 public interface IServiceContractTransportProvider
 {
 
@@ -68,6 +70,16 @@ public interface IServiceContractTransportProvider
      * @return ServiceContractsSearchResponse
      */
     ServiceContractsSearchResponse getAllServiceContractList( final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
+
+    /**
+     * Search service contracts according to the given criterias.
+     * @param bLoadDetails - true to load the attribute details as well, false to load only the base object
+     * @param minEndDate - the min end date
+     * @param strClientCode - client code of calling application
+     * @param author - the author of the request
+     * @return ServiceContractsSearchResponse
+     */
+    ServiceContractsSearchResponse searchServiceContractList( final boolean bLoadDetails, final Date minEndDate, final String strClientCode, final RequestAuthor author ) throws IdentityStoreException;
 
     /**
      * Get the active service contract associated to the given client code.
