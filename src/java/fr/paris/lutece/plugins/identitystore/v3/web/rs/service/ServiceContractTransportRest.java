@@ -43,6 +43,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.contract.ServiceContr
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IServiceContractTransportProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -122,11 +123,21 @@ public class ServiceContractTransportRest extends AbstractTransportRest implemen
         mapHeadersRequest.put( Constants.PARAM_CLIENT_CODE, strClientCode );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_NAME, author.getName( ) );
         mapHeadersRequest.put( Constants.PARAM_AUTHOR_TYPE, author.getType( ).name( ) );
-
         final String strLoadDetails = Boolean.toString(bLoadDetails);
-        final String strMinEndDate = minEndDate == null ? "" : LocalDate.from(minEndDate.toInstant()).format(DateTimeFormatter.ISO_LOCAL_DATE);
+        final String strMinEndDate = minEndDate == null ? null : LocalDate.from(minEndDate.toInstant()).format(DateTimeFormatter.ISO_LOCAL_DATE);
 
-        final String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH + "/search/" + strLoadDetails + "/" + strMinEndDate;
+        String url = _strIdentityStoreEndPoint + _strIdentityPath + Constants.VERSION_PATH_V3 + Constants.SERVICECONTRACTS_PATH + "/search";
+        if (!StringUtils.isAllBlank( strLoadDetails, strMinEndDate ) ) {
+            url += "?";
+            if (StringUtils.isNotBlank(strLoadDetails)) {
+                url += Constants.PARAM_LOAD_DETAILS + "=" + strLoadDetails;
+                if(StringUtils.isNotBlank(strMinEndDate)) {
+                    url += "&" + Constants.PARAM_MIN_END_DATE + "=" + strMinEndDate;
+                }
+            } else if(StringUtils.isNotBlank(strMinEndDate)) {
+                url += Constants.PARAM_MIN_END_DATE + "=" + strMinEndDate;
+            }
+        }
         return _httpTransport.doGet( url, null, mapHeadersRequest, ServiceContractsSearchResponse.class, _mapper );
     }
 
